@@ -12,3 +12,23 @@ services:
       - "5432:5432"
     expose:
       - "5432"
+
+  # Phase 1C: separate test DB on a different port so it never clashes with the
+  # dev DB above. Used by tests/sql/divergence.test.ts.
+  prode-test-db:
+    image: postgres:15.1
+    container_name: prode-test-db
+    restart: "no"
+    environment:
+      POSTGRES_DB: "prode_test"
+      POSTGRES_USER: "leniolabs"
+      POSTGRES_PASSWORD: "leniolabs"
+    ports:
+      - "5433:5432"
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U leniolabs -d prode_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
