@@ -26,10 +26,9 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html'],
       include: [
-        'utils/points.ts',
-        'utils/queries.ts',
-        'utils/raw.ts',
-        'lib/**/*.ts',
+        'src/utils/points.ts',
+        'src/utils/queries.ts',
+        'src/utils/raw.ts',
         'src/lib/**/*.ts',
       ],
       exclude: ['**/*.d.ts', '**/*.test.ts'],
@@ -37,7 +36,7 @@ export default defineConfig({
         // Per-file threshold only on the pure scoring module (fully testable without a DB).
         // utils/queries.ts and utils/raw.ts are excluded from enforcement because they
         // contain async Prisma and raw-SQL functions that require a live DB (Phase 1C scope).
-        'utils/points.ts': {
+        'src/utils/points.ts': {
           lines: 90,
           functions: 90,
           branches: 85,
