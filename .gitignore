@@ -3,7 +3,7 @@ node_modules/
 .pnp
 .pnp.js
 
-# env files (NEVER COMMIT — contain secrets)
+# env files (NEVER COMMIT, contain secrets)
 .env
 .env.local
 .env.development.local
@@ -42,6 +42,9 @@ yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# harness ad-hoc screenshots (committed baselines go to harness/baseline/)
+harness/screenshots/
 
 # misc
 *.local

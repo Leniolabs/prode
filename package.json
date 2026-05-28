@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:db:up": "docker compose up -d prode-test-db && TEST_DATABASE_URL=\"postgresql://leniolabs:leniolabs@localhost:5433/prode_test\" DATABASE_URL=\"postgresql://leniolabs:leniolabs@localhost:5433/prode_test\" npx prisma db push --skip-generate",
-    "test:db:reset": "docker compose rm -sfv prode-test-db && npm run test:db:up"
+    "test:db:reset": "docker compose rm -sfv prode-test-db && npm run test:db:up",
+    "screenshot": "tsx harness/screenshot.ts"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
@@ -44,8 +45,10 @@
     "@vitest/coverage-v8": "^4.1.7",
     "eslint": "8.26.0",
     "eslint-config-next": "13.0.0",
+    "playwright": "^1.60.0",
     "prisma": "^4.5.0",
     "ts-node": "^10.9.1",
+    "tsx": "^4.22.3",
     "typescript": "^4.8.4",
     "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.7"
