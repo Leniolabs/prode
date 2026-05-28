@@ -454,7 +454,7 @@ export async function getUserTemplateGroupMatches(user: User) {
     }));
 }
 
-const computeGroupMatchPoints = (
+export const computeGroupMatchPoints = (
   room: ProdeRoom,
   groupMatches: {
     matchId: string;
@@ -496,7 +496,7 @@ const computeGroupMatchPoints = (
   }, 0);
 };
 
-const computeFinalMatchPoints = (
+export const computeFinalMatchPoints = (
   room: ProdeRoom,
   finalMatches: {
     goalsLeft: number;
@@ -673,7 +673,7 @@ export async function getUserFullRanking(
   })?.[0] as Rank;
 }
 
-function finalMatchPoints(
+export function finalMatchPoints(
   room: ProdeRoom,
   userMatch: {
     goalsLeft: number;

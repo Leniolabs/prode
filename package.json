@@ -7,7 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "build-prod": "./setup.sh && next build"
+    "build-prod": "./setup.sh && next build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:db:up": "docker compose up -d prode-test-db && TEST_DATABASE_URL=\"postgresql://leniolabs:leniolabs@localhost:5433/prode_test\" DATABASE_URL=\"postgresql://leniolabs:leniolabs@localhost:5433/prode_test\" npx prisma db push --skip-generate",
+    "test:db:reset": "docker compose rm -sfv prode-test-db && npm run test:db:up"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
@@ -33,13 +38,16 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@types/node": "^18.11.7",
+    "@types/node": "^22.19.19",
     "@types/react": "18.0.23",
     "@types/react-dom": "18.0.7",
+    "@vitest/coverage-v8": "^4.1.7",
     "eslint": "8.26.0",
     "eslint-config-next": "13.0.0",
     "prisma": "^4.5.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.8.4"
+    "typescript": "^4.8.4",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.7"
   }
 }
