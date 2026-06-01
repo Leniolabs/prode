@@ -1,95 +1,55 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
-import FacebookProvider from "next-auth/providers/facebook";
-import GithubProvider from "next-auth/providers/github";
-import TwitterProvider from "next-auth/providers/twitter";
+import { Auth } from '@auth/core'
+import { authConfig } from '@/lib/auth/auth.config'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+/**
+ * Auth.js v5 Pages Router handler.
+ *
+ * Next.js Pages Router uses Node.js IncomingMessage/ServerResponse; Auth.js v5
+ * internally works with the Web Fetch Request/Response API. We bridge the two
+ * by constructing a Web Request from the incoming Pages Router request and
+ * writing the Web Response back to the ServerResponse.
+ */
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const host = req.headers['x-forwarded-host'] ?? req.headers['host'] ?? 'localhost'
+  const proto = req.headers['x-forwarded-proto'] ?? 'http'
+  const origin = `${proto}://${host}`
+  const url = new URL(req.url ?? '/', origin)
 
-import { prisma } from "../../../lib";
+  const headers = new Headers()
+  for (const [key, value] of Object.entries(req.headers)) {
+    if (value === undefined) continue
+    if (Array.isArray(value)) {
+      for (const v of value) headers.append(key, v)
+    } else {
+      headers.set(key, value)
+    }
+  }
 
-const isDev = process.env.NODE_ENV === "development";
+  const webReq = new Request(url.toString(), {
+    method: req.method ?? 'GET',
+    headers,
+    // Pages Router body is already parsed by Next.js for JSON; for auth routes
+    // (signin/signout/callback) it comes as a raw stream that needs to be
+    // forwarded. We only include a body for non-GET requests.
+    body: req.method !== 'GET' && req.method !== 'HEAD' ? JSON.stringify(req.body) : undefined,
+  })
 
-// For more information on each option (and a full list of options) go to
-// https://next-auth.js.org/configuration/options
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
-  pages: {
-    signIn: "/",
-  },
-  // CredentialsProvider requires JWT session strategy. We only switch in dev so
-  // production keeps the database-session setup. After Migration D (Auth.js 5)
-  // this whole config moves to lib/auth/auth.config.ts and the strategy gets
-  // re-evaluated as part of the cutover plan.
-  session: isDev ? { strategy: "jwt" } : undefined,
-  callbacks: isDev
-    ? {
-        async jwt({ token, user }) {
-          if (user) {
-            token.userId = user.id;
-            token.email = user.email;
-          }
-          return token;
-        },
-        async session({ session, token }) {
-          if (session.user && token.email) {
-            session.user.email = token.email as string;
-          }
-          return session;
-        },
-      }
-    : undefined,
-  providers: [
-    ...(isDev
-      ? [
-          CredentialsProvider({
-            id: "dev",
-            name: "Dev Login",
-            credentials: {
-              email: { label: "Email", type: "email" },
-            },
-            async authorize(credentials) {
-              if (!credentials?.email) return null;
-              const email = credentials.email;
-              let user = await prisma.user.findFirst({ where: { email } });
-              if (!user) {
-                user = await prisma.user.create({
-                  data: {
-                    email,
-                    name: email.split("@")[0],
-                  },
-                });
-              }
-              if (user.blocked) return null;
-              return {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                image: user.image,
-              };
-            },
-          }),
-        ]
-      : []),
-    FacebookProvider({
-      clientId: process.env.FACEBOOK_ID,
-      clientSecret: process.env.FACEBOOK_SECRET,
-    }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET,
-    }),
-    GithubProvider({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-    }),
-    TwitterProvider({
-      clientId: process.env.TWITTER_ID,
-      clientSecret: process.env.TWITTER_SECRET,
-      version: "2.0",
-    }),
-  ],
-};
+  const webRes = await Auth(webReq, authConfig)
 
-export default NextAuth(authOptions);
+  // Forward status
+  res.status(webRes.status)
+
+  // Forward headers
+  webRes.headers.forEach((value, key) => {
+    if (key.toLowerCase() === 'set-cookie') {
+      res.appendHeader('set-cookie', value)
+    } else {
+      res.setHeader(key, value)
+    }
+  })
+
+  // Forward body
+  const body = await webRes.text()
+  res.send(body)
+}

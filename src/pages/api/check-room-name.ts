@@ -1,16 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
+import { withAuth } from "@/lib/auth/withAuth";
 import { prisma } from "../../lib";
-import { getUserByEmail, getUserProdeById } from "../../utils/queries";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<{}>
-) {
-  const session = await getSession({ req });
-  if (!session || !session.user?.email) return res.status(401).json([]);
-
+export default withAuth(async (req, res) => {
   if (req.method === "GET") {
     const { name } = req.query;
 
@@ -26,4 +19,4 @@ export default async function handler(
   }
 
   res.status(400).send({});
-}
+});

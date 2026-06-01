@@ -1,10 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { ProdeUserFinalsMatch } from "@/generated/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
+import { withAuth } from "@/lib/auth/withAuth";
 import { prisma } from "../../lib";
 
-export default async function handler(
+export default withAuth(async (
   req: Omit<NextApiRequest, "body"> & {
     body: {
       name: string;
@@ -14,16 +13,13 @@ export default async function handler(
       image: string;
     };
   },
-  res: NextApiResponse<{}>
-) {
-  const session = await getSession({ req });
-
-  if (!session || !session.user?.email) return res.status(401).json([]);
-
+  res,
+  { user }
+) => {
   if (req.method === "PATCH") {
     await prisma.user.update({
       where: {
-        email: session.user.email,
+        id: user.id,
       },
       data: {
         name: req.body.name,
@@ -38,4 +34,4 @@ export default async function handler(
   }
 
   res.status(400).send({});
-}
+});

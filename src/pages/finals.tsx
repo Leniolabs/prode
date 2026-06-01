@@ -1,7 +1,7 @@
 import React from "react";
 import { Match, Stage, User } from "@/generated/prisma";
 import { GetServerSidePropsContext } from "next";
-import { getSession } from "next-auth/react";
+import { getPageSession } from "@/lib/auth/getPageSession";
 import { BrandLogo } from "../components/common/BrandLogo";
 import { Button } from "../components/common/Button";
 import { DesktopHeader, MobileHeader } from "../components/common/Header";
@@ -608,7 +608,7 @@ export default function Home(props: HomeProps) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getSession(context);
+  const session = await getPageSession(context);
   if (!session?.user?.email)
     return redirectToLogin(context.locale, context.req.url);
 

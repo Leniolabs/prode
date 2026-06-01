@@ -5,7 +5,8 @@ import { Button } from "../components/common/Button";
 import { HomeTitle } from "../components/common/HomeTitle";
 import Image from "next/image";
 import { LeniCamel, Register } from "../components/view/Index";
-import { getSession, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { getPageSession } from "@/lib/auth/getPageSession";
 import { finalsStarted, getUserByEmail } from "../utils/queries";
 import {
   redirectToBlocked,
@@ -52,7 +53,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const callbackUrl = context.query?.callbackUrl as string;
   const error = context.query?.error as string;
 
-  const session = await getSession(context);
+  const session = await getPageSession(context);
   const user = session?.user?.email
     ? await getUserByEmail(session.user.email)
     : null;

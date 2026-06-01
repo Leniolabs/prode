@@ -1,28 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
+import { withAuth } from "@/lib/auth/withAuth";
 import { prisma } from "../../../lib";
 
-export default async function handler(
-  req: Omit<NextApiRequest, "body"> & {
-    
-  },
-  res: NextApiResponse<{}>
-) {
-  const session = await getSession({ req });
-
-  if (!session || !session.user?.email) return res.status(401).send({});
-
+export default withAuth(async (req, res) => {
   if (req.method === "POST") {
-    const user = await prisma.user.findUnique({
-      where: {
-        email: session.user.email,
-      },
-    });
-
-    if (!user || user.email !== process.env.ADMIN_EMAIL)
-      return res.status(401).send({});
-
     //latest active prode
     const prode = await prisma.prode.findFirst({
       where: {
@@ -47,4 +29,4 @@ export default async function handler(
   }
 
   res.status(400).send({});
-}
+}, { ownership: 'admin' });

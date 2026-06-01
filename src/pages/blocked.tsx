@@ -4,7 +4,7 @@ import { Layout, Footer, Container } from "@/layout";
 import Image from "next/image";
 import { LeniCamel } from "../components/view/Index";
 import { redirectToLogin, redirectToRooms } from "../utils/redirect";
-import { getSession } from "next-auth/react";
+import { getPageSession } from "@/lib/auth/getPageSession";
 import { GetServerSidePropsContext } from "next";
 import { isUserBlocked } from "../utils/queries";
 import { LocaleSelect } from "../components/common/LocaleSelect";
@@ -25,7 +25,7 @@ export default function Home() {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getSession(context);
+  const session = await getPageSession(context);
   if (session?.user?.email) {
     const userBlocked = await isUserBlocked(session.user.email);
     if (!userBlocked) {

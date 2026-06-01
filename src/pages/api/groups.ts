@@ -1,11 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { ProdeUserGroupMatch } from "@/generated/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
+import { withAuth } from "@/lib/auth/withAuth";
 import { prisma } from "../../lib";
-import { getAllowedMatchesToModify, getUserByEmail } from "../../utils/queries";
+import { getAllowedMatchesToModify } from "../../utils/queries";
 
-export default async function handler(
+export default withAuth(async (
   req: Omit<NextApiRequest, "body"> & {
     body: {
       matches: Pick<
@@ -14,15 +14,10 @@ export default async function handler(
       >[];
     };
   },
-  res: NextApiResponse<{}>
-) {
+  res,
+  { user }
+) => {
   if (req.method === "POST") {
-    const session = await getSession({ req });
-    if (!session || !session.user?.email) return res.status(401).send({});
-
-    const user = await getUserByEmail(session.user.email);
-    if (!user) return res.status(401).send({});
-
     const { matches } = req.body;
     if (!matches) return res.status(400).json({});
 
@@ -83,4 +78,4 @@ export default async function handler(
   }
 
   res.status(400).send({});
-}
+});
