@@ -19,7 +19,7 @@ export function ShareProdeStoryButton(props: ShareProdeStoryButtonProps) {
   const [sharing, setSharing] = React.useState(false);
   const i18n = useLocalizedText();
   const [file, setFile] = React.useState<File>();
-  const videoFetchRef = React.useRef<Promise<void | AxiosResponse<any, any>>>();
+  const videoFetchRef = React.useRef<Promise<void | AxiosResponse<any, any>>>(undefined);
 
   const handleInstagramShare = React.useCallback(() => {
     if ("share" in window.navigator) {
