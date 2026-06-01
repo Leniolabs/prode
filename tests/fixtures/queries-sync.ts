@@ -4,7 +4,7 @@
  * Covers: syncronizeTemplate and syncronizeFinalsTemplate in utils/queries.ts.
  */
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/generated/prisma";
 
 // ---------------------------------------------------------------------------
 // ID factories — deterministic prefixes avoid collisions with other agents'

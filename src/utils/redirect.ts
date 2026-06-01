@@ -1,4 +1,4 @@
-import { Prode, ProdeRoom, User } from "@prisma/client";
+import { Prode, ProdeRoom, User } from "@/generated/prisma";
 
 export function redirectToResults(room: ProdeRoom, locale?: string) {
   return {

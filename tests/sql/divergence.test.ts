@@ -9,7 +9,9 @@
  */
 
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { PrismaClient, Stage } from "@prisma/client";
+import { PrismaClient, Stage } from "@/generated/prisma";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import { writeFileSync, mkdirSync } from "fs";
 import { dirname } from "path";
 
@@ -32,9 +34,8 @@ const TEST_DATABASE_URL =
   process.env.TEST_DATABASE_URL ??
   "postgresql://leniolabs:leniolabs@localhost:5433/prode_test";
 
-const prisma = new PrismaClient({
-  datasources: { db: { url: TEST_DATABASE_URL } },
-});
+const pool = new Pool({ connectionString: TEST_DATABASE_URL });
+const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 
 const REPORT_PATH = "tests/sql/divergence-report.md";
 

@@ -1,4 +1,4 @@
-import { Match } from "@prisma/client";
+import { Match } from "@/generated/prisma";
 
 export function getNextTenMinutesDate() {
   const now = new Date();

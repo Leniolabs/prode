@@ -8,7 +8,9 @@
  */
 
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/generated/prisma";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
 import { deleteUserProde } from "@/utils/queries";
 import {
@@ -31,9 +33,8 @@ const TEST_DATABASE_URL =
   process.env.TEST_DATABASE_URL ??
   "postgresql://leniolabs:leniolabs@localhost:5433/prode_test";
 
-const prisma = new PrismaClient({
-  datasources: { db: { url: TEST_DATABASE_URL } },
-});
+const pool = new Pool({ connectionString: TEST_DATABASE_URL });
+const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 
 beforeAll(async () => {
   // Sanity-check: throws if DB is unreachable, which correctly fails the suite.

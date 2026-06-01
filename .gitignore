@@ -27,6 +27,7 @@ coverage/
 # prisma
 prisma/migrations/.dev.sqlite
 prisma/.env
+src/generated/prisma/
 
 # logs
 *.log

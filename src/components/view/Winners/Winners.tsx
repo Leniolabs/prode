@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { User } from "@/generated/prisma";
 
 interface WinnersProps {
   firstPlace?: Pick<User, "id" | "email" | "name" | "image">;

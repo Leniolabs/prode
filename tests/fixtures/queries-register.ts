@@ -5,7 +5,7 @@
  * record. IDs are caller-supplied strings so tests can reference them.
  */
 
-import { PrismaClient, Stage } from "@prisma/client";
+import { PrismaClient, Stage } from "@/generated/prisma";
 
 // ---------------------------------------------------------------------------
 // cleanDB

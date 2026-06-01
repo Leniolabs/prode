@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { User } from "@/generated/prisma";
 
 export function getUserEmailDomain(user: User) {
   const split = (user.email || "").split("@");

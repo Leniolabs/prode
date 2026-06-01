@@ -6,7 +6,7 @@
  * that deleteUserProde tests need, and cleanDB in FK-safe order.
  */
 
-import { PrismaClient, Stage } from "@prisma/client";
+import { PrismaClient, Stage } from "@/generated/prisma";
 
 // ---------------------------------------------------------------------------
 // Re-export shared factories so callers only need one import
