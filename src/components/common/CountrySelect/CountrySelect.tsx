@@ -1,5 +1,4 @@
 import React from "react";
-import { useQuery } from "react-query";
 import { useCountries } from "../../../hooks";
 import { getCountries } from "../../../utils/api";
 import { className } from "../../../utils/classname";
