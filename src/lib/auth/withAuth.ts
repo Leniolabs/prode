@@ -1,8 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import type { ProdeRoom, User } from '@/generated/prisma'
-import { getPageSession } from './getPageSession'
-import { isRoomOwner, isAdmin } from './ownership'
+import { auth } from './index'
 import prisma from '@/lib/prisma'
+import { isRoomOwner, isAdmin } from './ownership'
+import { NextResponse } from 'next/server'
+import type { ProdeRoom, User } from '@/generated/prisma'
 
 export type AuthContext = {
   user: User
@@ -13,64 +13,34 @@ type WithAuthOptions = {
   ownership?: 'room' | 'admin'
 }
 
-type AuthedHandler<Req extends NextApiRequest = NextApiRequest> = (
-  req: Req,
-  res: NextApiResponse,
-  ctx: AuthContext
-) => Promise<void>
+type RouteContext = { params: Promise<Record<string, string>> }
 
-export function withAuth<Req extends NextApiRequest = NextApiRequest>(
-  handler: AuthedHandler<Req>,
+export function withAuth(
+  handler: (req: Request, ctx: AuthContext, routeCtx: RouteContext) => Promise<Response>,
   options: WithAuthOptions = {}
 ) {
-  return async (req: Req, res: NextApiResponse): Promise<void> => {
-    const session = await getPageSession(req)
+  return async (req: Request, routeCtx: RouteContext): Promise<Response> => {
+    const session = await auth()
+    if (!session?.user?.email) return NextResponse.json({}, { status: 401 })
 
-    if (!session?.user?.email) {
-      res.status(401).json({})
-      return
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    })
-
-    if (!user || user.blocked) {
-      res.status(401).json({})
-      return
-    }
+    const user = await prisma.user.findUnique({ where: { email: session.user.email } })
+    if (!user || user.blocked) return NextResponse.json({}, { status: 401 })
 
     if (options.ownership === 'admin') {
-      if (!isAdmin(user.email)) {
-        res.status(401).json({})
-        return
-      }
-      await handler(req, res, { user })
-      return
+      if (!isAdmin(user.email)) return NextResponse.json({}, { status: 403 })
+      return handler(req, { user }, routeCtx)
     }
 
     if (options.ownership === 'room') {
-      const id = (req.query?.id ?? req.query?.roomId) as string | undefined
-      if (!id) {
-        res.status(404).json({})
-        return
-      }
-
+      const params = await routeCtx.params
+      const id = params.id
+      if (!id) return NextResponse.json({}, { status: 400 })
       const room = await prisma.prodeRoom.findUnique({ where: { id } })
-      if (!room) {
-        res.status(404).json({})
-        return
-      }
-
-      if (!isRoomOwner(session, room)) {
-        res.status(403).json({})
-        return
-      }
-
-      await handler(req, res, { user, room })
-      return
+      if (!room) return NextResponse.json({}, { status: 404 })
+      if (!isRoomOwner(session, room)) return NextResponse.json({}, { status: 403 })
+      return handler(req, { user, room }, routeCtx)
     }
 
-    await handler(req, res, { user })
+    return handler(req, { user }, routeCtx)
   }
 }

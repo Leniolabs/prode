@@ -1,5 +1,5 @@
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/router";
+
 import React from "react";
 import { useLocalizedText } from "../../../../locale";
 import { className } from "../../../../utils/classname";
