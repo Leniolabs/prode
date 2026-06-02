@@ -1,4 +1,4 @@
-import { ProdeRoom, Stage } from "@/generated/prisma";
+import { Prisma, ProdeRoom, Stage } from "@/generated/prisma";
 
 export function getSubqueryFinals(room: ProdeRoom, stages?: Stage[]) {
   return `select
@@ -228,4 +228,144 @@ export function getUserRankingQuery(room: ProdeRoom, userProdeId: string) {
   return `select * from (${getRankingQuery(
     room
   )}) rankq WHERE rankq."id" = '${userProdeId}'`;
+}
+
+// ---------------------------------------------------------------------------
+// Prisma.Sql variants — used by queries.ts to call $queryRaw safely.
+// The structural SQL (point values, stage names, column aliases) is trusted
+// internal data wrapped in Prisma.raw(). Only the scalar ID values (room.id,
+// userProdeId) flow through the template literal as proper parameters.
+// ---------------------------------------------------------------------------
+
+function getRankingStructural(
+  room: ProdeRoom,
+  options?: { offset?: number; limit?: number }
+): string {
+  return `select *,
+  RANK () OVER (
+    ORDER BY rq."points" DESC, rq."email" ASC
+) ranking
+  FROM (select
+up."id",
+u."id" userId,
+u."name",
+u."email",
+u."image",
+u."prodePublic",
+case
+when fp."points" is not null and gp."points" is not null then gp."points" + fp."points"
+when gp."points" is not null then gp."points"
+when fp."points" is not null then fp."points"
+else 0 end points
+from "UserProde" up inner join "User" u on u."id" = up."userId"
+left outer join (${getSubqueryGroups(room)}) gp on gp."userProdeId" = up."id"
+left outer join (${getSubqueryFinals(room)}) fp on fp."userProdeId" = up."id"
+where up."prodeRoomId" = `;
+}
+
+function getRankingTail(options?: {
+  offset?: number;
+  limit?: number;
+}): string {
+  return `) rq
+order by rq."points" DESC, rq."email" ASC
+${options?.offset ? ` offset ${options.offset}` : ""} ${options?.limit ? ` limit ${options.limit}` : ""}`;
+}
+
+export function getRankingSql(
+  room: ProdeRoom,
+  options?: { offset?: number; limit?: number }
+): Prisma.Sql {
+  return Prisma.sql`${Prisma.raw(getRankingStructural(room, options))}${room.id}${Prisma.raw(getRankingTail(options))}`;
+}
+
+function getFullRankingStructural(
+  room: ProdeRoom,
+  options?: { offset?: number; limit?: number }
+): string {
+  return `select *,
+  RANK () OVER (
+    ORDER BY rq."points" DESC, rq."email" ASC
+) ranking
+  FROM (select
+up."id",
+u."id" userId,
+u."name",
+u."email",
+u."image",
+u."prodePublic",
+case when gpA."points" is not null then gpA."points" else 0 end GROUP_A,
+case when gpB."points" is not null then gpB."points" else 0 end GROUP_B,
+case when gpC."points" is not null then gpC."points" else 0 end GROUP_C,
+case when gpD."points" is not null then gpD."points" else 0 end GROUP_D,
+case when gpE."points" is not null then gpE."points" else 0 end GROUP_E,
+case when gpF."points" is not null then gpF."points" else 0 end GROUP_F,
+case when gpG."points" is not null then gpG."points" else 0 end GROUP_G,
+case when gpH."points" is not null then gpH."points" else 0 end GROUP_H,
+case when fp8."points" is not null then fp."points" else 0 end FINALS_8,
+case when fp4."points" is not null then fp."points" else 0 end FINALS_4,
+case when fp2."points" is not null then fp."points" else 0 end FINALS_2,
+case when fp1."points" is not null then fp."points" else 0 end FINAL,
+case
+when fp."points" is not null and gp."points" is not null then gp."points" + fp."points"
+when gp."points" is not null then gp."points"
+when fp."points" is not null then fp."points"
+else 0 end points
+from "UserProde" up inner join "User" u on u."id" = up."userId"
+left outer join (${getSubqueryGroups(room)}) gp on gp."userProdeId" = up."id"
+left outer join (${getSubqueryFinals(room)}) fp on fp."userProdeId" = up."id"
+left outer join (${getSubqueryFinals(room, [
+    "FINALS_8_1",
+    "FINALS_8_2",
+    "FINALS_8_3",
+    "FINALS_8_4",
+    "FINALS_8_5",
+    "FINALS_8_6",
+    "FINALS_8_7",
+    "FINALS_8_8",
+  ])}) fp8 on fp8."userProdeId" = up."id"
+left outer join (${getSubqueryFinals(room, [
+    "FINALS_4_1",
+    "FINALS_4_2",
+    "FINALS_4_3",
+    "FINALS_4_4",
+  ])}) fp4 on fp4."userProdeId" = up."id"
+left outer join (${getSubqueryFinals(room, [
+    "FINALS_2_1",
+    "FINALS_2_2",
+  ])}) fp2 on fp2."userProdeId" = up."id"
+left outer join (${getSubqueryFinals(room, [
+    "FINALS",
+    "THIRD_PLACE",
+  ])}) fp1 on fp1."userProdeId" = up."id"
+left outer join (${getSubqueryGroups(room, "GROUP_A")}) gpA on gpA."userProdeId" = up."id"
+left outer join (${getSubqueryGroups(room, "GROUP_B")}) gpB on gpB."userProdeId" = up."id"
+left outer join (${getSubqueryGroups(room, "GROUP_C")}) gpC on gpC."userProdeId" = up."id"
+left outer join (${getSubqueryGroups(room, "GROUP_D")}) gpD on gpD."userProdeId" = up."id"
+left outer join (${getSubqueryGroups(room, "GROUP_E")}) gpE on gpE."userProdeId" = up."id"
+left outer join (${getSubqueryGroups(room, "GROUP_F")}) gpF on gpF."userProdeId" = up."id"
+left outer join (${getSubqueryGroups(room, "GROUP_G")}) gpG on gpG."userProdeId" = up."id"
+left outer join (${getSubqueryGroups(room, "GROUP_H")}) gpH on gpH."userProdeId" = up."id"
+where up."prodeRoomId" = `;
+}
+
+export function getFullRankingSql(
+  room: ProdeRoom,
+  options?: { offset?: number; limit?: number }
+): Prisma.Sql {
+  return Prisma.sql`${Prisma.raw(getFullRankingStructural(room, options))}${room.id}${Prisma.raw(getRankingTail(options))}`;
+}
+
+export function getUserRankingSql(
+  room: ProdeRoom,
+  userProdeId: string
+): Prisma.Sql {
+  return Prisma.sql`select * from (${getRankingSql(room)}) rankq WHERE rankq."id" = ${userProdeId}`;
+}
+
+export function getUserFullRankingSql(
+  room: ProdeRoom,
+  userProdeId: string
+): Prisma.Sql {
+  return Prisma.sql`select * from (${getFullRankingSql(room)}) rankq WHERE rankq."id" = ${userProdeId}`;
 }

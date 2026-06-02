@@ -3,10 +3,10 @@ import { prisma } from "../lib";
 import { getNextTenMinutesDate } from "./date";
 import { matchCountriesMatchStatus, matchFinalResultStatus } from "@/lib/scoring";
 import {
-  getFullRankingQuery,
-  getRankingQuery,
-  getUserFullRankingQuery,
-  getUserRankingQuery,
+  getFullRankingSql,
+  getRankingSql,
+  getUserFullRankingSql,
+  getUserRankingSql,
 } from "./raw";
 
 export async function prodeEnded() {
@@ -494,11 +494,11 @@ export async function getRanking(
   page: number,
   pageLength: number
 ) {
-  const query = getRankingQuery(room, {
+  const query = getRankingSql(room, {
     offset: page * pageLength,
     limit: pageLength,
   });
-  const data: Rank[] = await prisma.$queryRawUnsafe(query);
+  const data: Rank[] = await prisma.$queryRaw(query);
 
   return data.map((row) => {
     return {
@@ -524,11 +524,11 @@ export async function getFullRanking(
   page: number,
   pageLength: number
 ) {
-  const query = getFullRankingQuery(room, {
+  const query = getFullRankingSql(room, {
     offset: page * pageLength,
     limit: pageLength,
   });
-  const data: Rank[] = await prisma.$queryRawUnsafe(query);
+  const data: Rank[] = await prisma.$queryRaw(query);
 
   return data.map((row) => {
     return {
@@ -568,8 +568,8 @@ export async function getFullRanking(
 }
 
 export async function getUserRanking(room: ProdeRoom, userProde: UserProde) {
-  const query = getUserRankingQuery(room, userProde.id);
-  const data: Rank[] = await prisma.$queryRawUnsafe(query);
+  const query = getUserRankingSql(room, userProde.id);
+  const data: Rank[] = await prisma.$queryRaw(query);
 
   return data.map((row) => {
     return {
@@ -594,8 +594,8 @@ export async function getUserFullRanking(
   room: ProdeRoom,
   userProde: UserProde
 ) {
-  const query = getUserFullRankingQuery(room, userProde.id);
-  const data: Rank[] = await prisma.$queryRawUnsafe(query);
+  const query = getUserFullRankingSql(room, userProde.id);
+  const data: Rank[] = await prisma.$queryRaw(query);
 
   return data.map((row) => {
     return {
