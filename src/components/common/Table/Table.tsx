@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../utils/classname";
-import styles from "./Table.module.scss";
 
 type TableColumn<T> = {
   header?: string;
@@ -21,13 +20,18 @@ interface TableProps<T> {
   clickable?: boolean | ((row: T) => boolean);
 }
 
+const ALIGN_MAP = { LEFT: "text-left", CENTER: "text-center", RIGHT: "text-right" };
+
 export function Table<T>(props: React.PropsWithChildren<TableProps<T>>) {
   return (
     <table
       className={className(
-        props.className,
-        styles.table,
-        props.stripped && styles.stripped
+        "w-full border-collapse [&_tr]:h-[55px] [&_th]:h-[55px] [&_tr]:text-xl [&_th]:text-xl",
+        "[&_thead]:bg-[#cbd2e9]",
+        "[&_thead_th]:text-[#1f2740] [&_thead_th]:font-semibold [&_thead_th]:text-left [&_thead_th]:px-3 [&_thead_th]:py-1.5",
+        "[&_tbody_td]:px-3 [&_tbody_td]:py-1.5 [&_tbody_td]:text-xl",
+        props.stripped && "[&_tbody_tr:nth-child(odd)]:bg-[#ffca3020]",
+        props.className
       )}
     >
       <thead>
@@ -37,9 +41,9 @@ export function Table<T>(props: React.PropsWithChildren<TableProps<T>>) {
               key={index}
               style={{ width: col.width }}
               className={className(
-                col.align ? styles[col.align] : "",
-                col.bold && styles.bold,
-                col.hideInMobile && styles.hideInMobile
+                col.align ? ALIGN_MAP[col.align] : "",
+                col.bold && "font-bold",
+                col.hideInMobile && "max-lg:hidden"
               )}
             >
               {col.header}
@@ -56,16 +60,16 @@ export function Table<T>(props: React.PropsWithChildren<TableProps<T>>) {
               props.clickable &&
                 (typeof props.clickable === "boolean" ||
                   props.clickable?.(row)) &&
-                styles.clickable
+                "hover:bg-[#ffca3020] hover:[&_*]:cursor-pointer"
             )}
           >
             {props.columns.map((col, colIndex) => (
               <td
                 key={colIndex}
                 className={className(
-                  col.align ? styles[col.align] : "",
-                  col.bold && styles.bold,
-                  col.hideInMobile && styles.hideInMobile
+                  col.align ? ALIGN_MAP[col.align] : "",
+                  col.bold && "font-bold",
+                  col.hideInMobile && "max-lg:hidden"
                 )}
               >
                 {col.accesor(row, index, arr)}

@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "@/utils/classname";
-import styles from "./Container.module.scss";
 
 interface ContainerProps {
   className?: string;
@@ -13,12 +12,15 @@ export function Container(props: React.PropsWithChildren<ContainerProps>) {
   return (
     <section
       className={className(
-        props.className,
-        styles.container,
-        props.direction === "COL" && styles.directionCol,
-        props.full && styles.full,
-        props.noPadding && styles.noPadding
+        "flex flex-wrap p-0 sm:px-4 sm:py-4 w-[90%] min-w-[80%] mx-auto mt-0 [header+&]:mt-8",
+        props.direction === "COL" && "flex-col",
+        props.full && "min-w-full w-full",
+        props.noPadding && "!p-0",
+        props.className
       )}
+      style={{
+        ["--tw-container-children" as string]: undefined,
+      }}
     >
       {props.children}
     </section>

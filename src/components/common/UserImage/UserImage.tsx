@@ -3,7 +3,6 @@ import { ON_ERROR_IMAGE } from "@/config/settings";
 import { className } from "../../../utils/classname";
 import { compressImage } from "../../../utils/images";
 import { EditIcon } from "../Icons";
-import styles from "./UserImage.module.scss";
 
 interface UserImageProps {
   className?: string;
@@ -52,9 +51,11 @@ export function UserImage(props: UserImageProps) {
   return (
     <div
       className={className(
-        styles.userImage,
-        props.small && styles.small,
-        props.big && styles.big,
+        "w-16 h-16 rounded-full bg-[#1f2740] border-none cursor-pointer flex relative",
+        "[&_img]:m-auto [&_img]:w-16 [&_img]:h-16 [&_img]:rounded-full [&_img]:border-none [&_img]:outline-none",
+        props.small && "!w-[2.2rem] !h-[2.2rem] [&_img]:!w-8 [&_img]:!h-8",
+        props.big && "!w-28 !h-28 [&_img]:!w-28 [&_img]:!h-28",
+        "group",
         props.className
       )}
       onClick={props.onClick}
@@ -76,7 +77,7 @@ export function UserImage(props: UserImageProps) {
             onChange={handleImageChange}
           />
           <div
-            className={styles.userImageEditable}
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#00000050] w-[calc(100%-4px)] h-[calc(100%-4px)] rounded-full m-0 flex [&>*]:m-auto opacity-0 transition-opacity duration-100 group-hover:opacity-100"
             onClick={handleImageChangeClick}
           >
             <EditIcon />

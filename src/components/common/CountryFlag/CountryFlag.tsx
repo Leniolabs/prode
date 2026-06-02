@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../utils/classname";
-import styles from "./CountryFlag.module.scss";
 
 interface CountryFlagProps {
   className?: string;
@@ -13,10 +12,10 @@ export function CountryFlag(props: React.PropsWithChildren<CountryFlagProps>) {
   return (
     <div
       className={className(
-        props.className,
-        styles.countryFlag,
-        props.tiny && styles.tiny,
-        props.disabled && styles.disabled
+        "flex items-center [&_img]:rounded-full [&_img]:m-auto",
+        props.tiny && "w-[14px] inline-flex [&_img]:w-[14px]",
+        props.disabled && "grayscale opacity-30",
+        props.className
       )}
     >
       <img

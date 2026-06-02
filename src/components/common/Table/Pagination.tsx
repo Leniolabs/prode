@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import React from "react";
 import { className } from "../../../utils/classname";
-import styles from "./Table.module.scss";
+
 
 interface PaginationProps {
   totalPages: number;
@@ -51,15 +51,15 @@ export function Pagination(props: PaginationProps) {
   }, [props.page, props.totalPages]);
 
   return (
-    <div className={styles.pagination}>
+    <div className={'tbl-pagination'}>
       <Link legacyBehavior href={prevPageLink || window.location.href}>
-        <a className={className(!prevPageLink && styles.disabled)}>{"‹"}</a>
+        <a className={className(!prevPageLink && 'tbl-disabled')}>{"‹"}</a>
       </Link>
-      <div className={styles.paginationNumber}>
+      <div className={'tbl-paginationNumber'}>
         {props.page + 1} / {props.totalPages}
       </div>
       <Link legacyBehavior href={nextPageLink || window.location.href}>
-        <a className={className(!nextPageLink && styles.disabled)}>{"›"}</a>
+        <a className={className(!nextPageLink && 'tbl-disabled')}>{"›"}</a>
       </Link>
     </div>
   );

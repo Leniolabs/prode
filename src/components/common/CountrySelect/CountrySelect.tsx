@@ -1,9 +1,7 @@
 import React from "react";
 import { useCountries } from "../../../hooks";
-import { getCountries } from "../../../utils/api";
 import { className } from "../../../utils/classname";
 import { CountryFlag } from "../CountryFlag";
-import styles from "./CountrySelect.module.scss";
 
 interface CountrySelectProps {
   id?: string;
@@ -38,27 +36,29 @@ export function CountrySelect(props: CountrySelectProps) {
 
   return (
     <div
-      className={className(styles.countrySelect, open && styles.open)}
+      className="cursor-pointer h-full relative w-full border border-[#233042] h-[34px]"
       onClick={handleClick}
     >
-      <div className={styles.countryLabel}>
+      <div className="p-0.5 flex items-center [&_label]:cursor-pointer [&_label]:ml-1">
         <CountryFlag code={selectedCountry?.code} />
         <label>{selectedCountry?.name}</label>
       </div>
-      <div className={styles.countrySelectDropdown}>
-        {[{ code: null, id: undefined, name: "None" }, ...(countries || [])].map(
-          (country) => (
-            <div
-              key={country.id}
-              className={styles.countryLabel}
-              onClick={handleCountryClick(country.id)}
-            >
-              {country.code && <CountryFlag code={country.code} />}
-              <label>{country.name}</label>
-            </div>
-          )
-        )}
-      </div>
+      {open && (
+        <div className="absolute top-full bg-[#f6f5f5cc] z-[100000] w-full max-h-[300px] overflow-y-scroll">
+          {[{ code: null, id: undefined, name: "None" }, ...(countries || [])].map(
+            (country) => (
+              <div
+                key={country.id}
+                className="p-0.5 flex items-center [&_label]:cursor-pointer [&_label]:ml-1 hover:bg-[#f6f5f5dd]"
+                onClick={handleCountryClick(country.id)}
+              >
+                {country.code && <CountryFlag code={country.code} />}
+                <label>{country.name}</label>
+              </div>
+            )
+          )}
+        </div>
+      )}
     </div>
   );
 }

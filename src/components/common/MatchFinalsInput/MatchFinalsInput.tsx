@@ -5,7 +5,7 @@ import { className } from "../../../utils/classname";
 import { formatDate } from "../../../utils/date";
 import { CountryFlag } from "../CountryFlag";
 import { CountrySelect } from "../CountrySelect";
-import styles from "./MatchFinalsInput.module.scss";
+
 
 interface MatchFinalsInputProps {
   className?: string;
@@ -333,10 +333,10 @@ export function MatchFinalsInput(
 
   return (
     <div
-      className={className(props.className, styles.matchFinalsInput)}
+      className={className(props.className, 'mfi-matchFinalsInput')}
       style={{ order: props.order }}
     >
-      <div className={styles.countryRow}>
+      <div className={'mfi-countryRow'}>
         {props.countryInput && (
           <CountrySelect
             id={props.countryLeftId}
@@ -344,10 +344,10 @@ export function MatchFinalsInput(
           />
         )}
         {!props.countryInput && (
-          <div className={className(styles.countryInput)}>
+          <div className={className('mfi-countryInput')}>
             {countryLeft?.code && (
               <CountryFlag
-                className={styles.countryFlag}
+                className={'mfi-countryFlag'}
                 code={countryLeft?.code}
               />
             )}
@@ -358,7 +358,7 @@ export function MatchFinalsInput(
           type="number"
           inputMode={"decimal"}
           tabIndex={props.order * 4}
-          className={className(styles.goalsLeft)}
+          className={className('mfi-goalsLeft')}
           defaultValue={props.goalsLeft}
           onChange={handleGoalsLeftChange}
           disabled={props.disabled}
@@ -369,7 +369,7 @@ export function MatchFinalsInput(
             type="number"
             inputMode={"decimal"}
             tabIndex={props.order * 4 + 2}
-            className={className(styles.penaltisLeft)}
+            className={className('mfi-penaltisLeft')}
             defaultValue={props.penaltisLeft ?? ""}
             onChange={handlePenaltisLeftChange}
             disabled={props.disabled}
@@ -377,7 +377,7 @@ export function MatchFinalsInput(
           />
         )}
       </div>
-      <div className={styles.countryRow}>
+      <div className={'mfi-countryRow'}>
         {props.countryInput && (
           <CountrySelect
             id={props.countryRightId}
@@ -385,10 +385,10 @@ export function MatchFinalsInput(
           />
         )}
         {!props.countryInput && (
-          <div className={className(styles.countryInput)}>
+          <div className={className('mfi-countryInput')}>
             {countryRight?.code && (
               <CountryFlag
-                className={styles.countryFlag}
+                className={'mfi-countryFlag'}
                 code={countryRight?.code}
               />
             )}
@@ -399,7 +399,7 @@ export function MatchFinalsInput(
           type="number"
           inputMode={"decimal"}
           tabIndex={props.order * 4 + 1}
-          className={className(styles.goalsRight)}
+          className={className('mfi-goalsRight')}
           defaultValue={props.goalsRight}
           onChange={handleGoalsRightChange}
           disabled={props.disabled}
@@ -410,7 +410,7 @@ export function MatchFinalsInput(
             type="number"
             inputMode={"decimal"}
             tabIndex={props.order * 4 + 3}
-            className={className(styles.penaltisRight)}
+            className={className('mfi-penaltisRight')}
             defaultValue={props.penaltisRight ?? ""}
             onChange={handlePenaltisRightChange}
             disabled={props.disabled}
@@ -418,7 +418,7 @@ export function MatchFinalsInput(
           />
         )}
       </div>
-      <div className={styles.date}>{date}</div>
+      <div className={'mfi-date'}>{date}</div>
     </div>
   );
 }

@@ -8,7 +8,7 @@ import { InstagramImageIcon } from "../Icons";
 import { InstagramReelIcon } from "../Icons/InstagramReelIcon";
 import { LoadingOverlay } from "../LoadingOverlay";
 import { Modal } from "../Modal";
-import styles from "./ShareButton.module.scss";
+
 
 interface ShareTodayMatchesButtonProps {
   big?: boolean;
@@ -83,13 +83,13 @@ export function ShareTodayMatchesVideoButton(
 
   return (
     <ButtonIcon
-      className={className(styles.mobile)}
+      className={className('sb-mobile')}
       big={props.big}
       onClick={sharing ? undefined : handleInstagramShare}
     >
       <InstagramReelIcon
         loading={sharing}
-        className={className(sharing && !file && styles.loading)}
+        className={className(sharing && !file && 'sb-loading')}
       />
       {sharing && (
         <LoadingOverlay

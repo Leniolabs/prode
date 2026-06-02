@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "@/utils/classname";
-import styles from "./Card.module.scss";
 
 interface CardProps {
   className?: string;
@@ -11,10 +10,17 @@ interface CardProps {
 export function Card(props: React.PropsWithChildren<CardProps>) {
   return (
     <section
-      className={className(props.className, styles.card)}
+      className={className(
+        "flex flex-col w-full mb-3 bg-[#f6f5f5cc]",
+        props.className
+      )}
       style={{ gridArea: props.gridArea }}
     >
-      {props.title && <div className={styles.cardTitle}>{props.title}</div>}
+      {props.title && (
+        <div className="py-1.5 px-0 text-center text-white bg-[#1f2740] relative text-xl font-bold min-h-[40px] flex w-full content-center justify-center items-center">
+          {props.title}
+        </div>
+      )}
       {props.children}
     </section>
   );

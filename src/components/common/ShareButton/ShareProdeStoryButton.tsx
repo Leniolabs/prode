@@ -7,7 +7,7 @@ import { ButtonIcon } from "../ButtonIcon";
 import { ShareIcon } from "../Icons";
 import { InstagramReelIcon } from "../Icons/InstagramReelIcon";
 import { LoadingOverlay } from "../LoadingOverlay";
-import styles from "./ShareButton.module.scss";
+
 
 interface ShareProdeStoryButtonProps {
   big?: boolean;
@@ -81,16 +81,16 @@ export function ShareProdeStoryButton(props: ShareProdeStoryButtonProps) {
   return (
     <ButtonIcon
       className={className(
-        styles.mobile,
-        styles.marginRightAuto,
-        styles.instagramButton
+        'sb-mobile',
+        'sb-marginRightAuto',
+        'sb-instagramButton'
       )}
       // big={props.big}
       onClick={sharing ? undefined : handleInstagramShare}
     >
       <InstagramReelIcon
         loading={sharing}
-        className={className(sharing && !file && styles.loading)}
+        className={className(sharing && !file && 'sb-loading')}
       />
       {sharing && (
         <LoadingOverlay

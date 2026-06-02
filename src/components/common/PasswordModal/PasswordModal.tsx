@@ -1,10 +1,7 @@
 import React from "react";
 import { useLocalizedText } from "../../../locale";
-import { className } from "../../../utils/classname";
 import { Button } from "../Button";
 import { Modal } from "../Modal";
-import { UserImage } from "../UserImage";
-import styles from "./PasswordModal.module.scss";
 
 interface PasswordModalProps {
   className?: string;
@@ -30,10 +27,10 @@ export function PasswordModal(
   }, [password, props.onClose]);
 
   return (
-    <Modal title={i18n.passwordCheckTitle} className={styles.passwordModal}>
+    <Modal title={i18n.passwordCheckTitle} className="flex justify-center flex-col p-3 min-h-max">
       <input
         placeholder={i18n.passwordCheckLabel}
-        className={styles.password}
+        className="p-3 bg-transparent outline-none shadow-none border border-[#1f2740] mb-3 text-[#1f2740]"
         value={password}
         onChange={onChange}
       />

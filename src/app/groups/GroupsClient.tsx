@@ -6,7 +6,6 @@ import { Button } from '@/components/common/Button'
 import { DesktopHeader, MobileHeader } from '@/components/common/Header'
 import { MatchInput } from '@/components/common/MatchInput'
 import { Layout, Footer, Container, Card, ContainerHeader, CardContent } from '@/layout'
-import commonStyles from '@/styles/CommonStyles.module.scss'
 import axios from 'axios'
 import { CardsContainer, GroupsContainer, LeniCard } from '@/components/view/Groups'
 import { Warning } from '@/components/common/Warning'
@@ -142,7 +141,7 @@ export default function GroupsClient(props: GroupsClientProps) {
           <ContainerHeader sticky title={i18n.groupsTitle} gridArea="matches-header">
             <Button
               disabled={!isModified}
-              className={commonStyles.marginLeftAuto}
+              className={"ml-auto"}
               onClick={handleSave}
             >
               {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}

@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../utils/classname";
-import styles from "./Form.module.scss";
 
 interface FormSectionTitleProps {
   className?: string;
@@ -8,7 +7,7 @@ interface FormSectionTitleProps {
 
 export function FormSectionTitle(props: React.PropsWithChildren<FormSectionTitleProps>) {
   return (
-    <div className={className(props.className, styles.formSectionTitle)}>
+    <div className={className("w-full bg-[#cbd2e9] text-xl text-center flex-[100%] py-[0.2em]", props.className)}>
       {props.children}
     </div>
   );

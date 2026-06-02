@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../../utils/classname";
-import styles from "./HeaderIndicator.module.scss";
 
 interface HeaderIndicatorProps {
   className?: string;
@@ -14,16 +13,13 @@ interface HeaderIndicatorProps {
 export function HeaderIndicator(
   props: React.PropsWithChildren<HeaderIndicatorProps>
 ) {
+  const leftAlign = props.align === "LEFT";
   return (
     <div
-      className={className(
-        props.className,
-        styles.headerIndicator,
-        props.align && styles[props.align]
-      )}
+      className={className("text-white mx-6", props.className)}
     >
-      <div className={styles.headerIndicatorValue}>{props.value}</div>
-      <div className={styles.headerIndicatorText}>{props.text}</div>
+      <div className={className("text-3xl font-bold", leftAlign ? "text-left" : "text-right")}>{props.value}</div>
+      <div className={className("text-xl font-bold", leftAlign ? "text-left" : "text-left")}>{props.text}</div>
     </div>
   );
 }

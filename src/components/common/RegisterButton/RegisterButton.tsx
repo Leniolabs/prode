@@ -1,25 +1,34 @@
 import { className } from "../../../utils/classname";
 import { FacebookIcon, GitHubIcon, GoogleIcon, TwitterIcon } from "../Icons";
-import styles from "./RegisterButton.module.scss";
 
 interface RegisterButtonProps {
   icon: "Twitter" | "Google" | "Github" | "Facebook";
   onClick?: () => void;
 }
 
+const ICON_COLORS: Record<RegisterButtonProps["icon"], string> = {
+  Twitter: "bg-[#50abf1] text-white text-center",
+  Google: "bg-white text-[#274159] text-center",
+  Github: "bg-white text-[#274159] text-center",
+  Facebook: "bg-[#1b4993] text-white text-center",
+};
+
 export function RegisterButton(props: RegisterButtonProps) {
   return (
     <div
-      className={className(styles.registerButton, styles[props.icon])}
+      className={className(
+        "p-[.5em] border border-gray-400 inline-flex flex-col justify-center rounded cursor-pointer font-normal",
+        ICON_COLORS[props.icon]
+      )}
       onClick={props.onClick}
     >
-      <div className={styles.registerButtonIcon}>
+      <div className="flex justify-center mb-[.3em]">
         {props.icon === "Twitter" && <TwitterIcon />}
         {props.icon === "Google" && <GoogleIcon />}
         {props.icon === "Github" && <GitHubIcon />}
         {props.icon === "Facebook" && <FacebookIcon />}
       </div>
-      <div className={styles.registerButtonLabel}>{props.icon}</div>
+      <div>{props.icon}</div>
     </div>
   );
 }

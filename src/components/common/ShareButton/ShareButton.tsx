@@ -1,11 +1,7 @@
-import axios from "axios";
 import React from "react";
-import { useLocalizedText } from "../../../locale";
 import { className } from "../../../utils/classname";
 import { ButtonIcon } from "../ButtonIcon";
 import { ShareIcon } from "../Icons";
-import { InstagramReelIcon } from "../Icons/InstagramReelIcon";
-import styles from "./ShareButton.module.scss";
 
 interface ShareButtonProps {
   big?: boolean;
@@ -29,7 +25,7 @@ export function ShareButton(props: ShareButtonProps) {
   return (
     <ButtonIcon
       big={props.big}
-      className={className(styles.mobile, styles.marginLeftAuto)}
+      className={className("lg:hidden ml-auto")}
       onClick={handleShare}
     >
       <ShareIcon />

@@ -6,7 +6,6 @@ import { Button } from '@/components/common/Button'
 import { HeaderMessage, LeniBall, HeaderMenu } from '@/components/common/Header'
 import { Layout, Footer, Header, Container, ContainerHeader } from '@/layout'
 import axios from 'axios'
-import commonStyles from '@/styles/CommonStyles.module.scss'
 import { getAdminFinalsMatchLooser, getAdminFinalsMatchWinner } from '@/utils/points'
 import { MatchFinalsInput } from '@/components/common/MatchFinalsInput'
 import {
@@ -109,7 +108,7 @@ export default function AdminFinalsClient(props: AdminFinalsClientProps) {
       <Container full>
         <FinalsContainer full admin>
           <ContainerHeader sticky title={i18n.finalsTitle} gridArea="matches-header">
-            <Button disabled={!isModified} className={commonStyles.marginLeftAuto} onClick={handleSave}>{i18n.buttonLabelSave}</Button>
+            <Button disabled={!isModified} className={"ml-auto"} onClick={handleSave}>{i18n.buttonLabelSave}</Button>
           </ContainerHeader>
           <BracketsContainer gridArea="matches">
             <BracketTitle full order={0}>{i18n.FINALS_8}</BracketTitle>

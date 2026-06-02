@@ -1,10 +1,9 @@
 import React from "react";
-import styles from "./LeniBall.module.scss";
 
 export function LeniBall() {
   return (
     <svg
-      className={styles.leniBall}
+      className="ml-[min(48px,2%)]"
       width="40"
       height="105"
       viewBox="0 0 40 105"

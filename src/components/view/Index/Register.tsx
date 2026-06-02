@@ -1,4 +1,3 @@
-import styles from "./Index.module.scss";
 import { RegisterButton } from "../../common/RegisterButton";
 import { signIn } from "next-auth/react";
 import React from "react";
@@ -18,14 +17,14 @@ export function Register(props: RegisterProps) {
   }, [props.authError]);
 
   return (
-    <div className={styles.register}>
-      <div className={styles.registerDivider}>
-        <div />
-        <div>Login</div>
-        <div />
+    <div>
+      <div className="flex mb-[1em] mt-[0.5em]">
+        <div className="w-2/5 border-b-[1.5px] border-[#1f274050] h-0.5 m-auto mr-5" />
+        <div className="text-center text-[#354156]">Login</div>
+        <div className="w-2/5 border-b-[1.5px] border-[#1f274050] h-0.5 m-auto ml-5" />
       </div>
-      {error && <div className={styles.registerError}>{error}</div>}
-      <div className={styles.registerButtons}>
+      {error && <div className="text-red-600">{error}</div>}
+      <div className="flex mt-0 mx-auto my-[3em] [&>div]:m-3 [&>div:first-child]:ml-auto [&>div:last-child]:mr-auto [&>div]:w-[85px] [&>div]:p-[0.6em]">
         <RegisterButton icon="Google" onClick={() => signIn("google")} />
         {/* <RegisterButton icon="Facebook" onClick={() => signIn("facebook")} /> */}
         <RegisterButton icon="Github" onClick={() => signIn("github")} />

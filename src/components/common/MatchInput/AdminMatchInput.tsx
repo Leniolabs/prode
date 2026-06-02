@@ -5,7 +5,7 @@ import { className } from "../../../utils/classname";
 import { formatDate } from "../../../utils/date";
 import { matchResultStatus } from "../../../utils/points";
 import { CountryFlag } from "../CountryFlag";
-import styles from "./MatchInput.module.scss";
+
 
 interface AdminMatchInputProps {
   className?: string;
@@ -72,15 +72,15 @@ export function AdminMatchInput(
   }, [props.date, i18n.locale]);
 
   return (
-    <div className={className(props.className, styles.matchInput)}>
+    <div className={className(props.className, 'mi-matchInput')}>
       <CountryFlag code={leftCountry?.code} />
       <label>{leftCountry?.name}</label>
-      <div className={styles.centerContainer}>
-        <div className={styles.inputsContainer}>
+      <div className={'mi-centerContainer'}>
+        <div className={'mi-inputsContainer'}>
           <input
             type="number"
             inputMode={"decimal"}
-            className={className(styles.leftGoals)}
+            className={className('mi-leftGoals')}
             defaultValue={props.goalsLeft ?? ""}
             onChange={handleLeftGoalsChange}
             disabled={props.disabled}
@@ -89,14 +89,14 @@ export function AdminMatchInput(
           <input
             type="number"
             inputMode={"decimal"}
-            className={className(styles.rightGoals)}
+            className={className('mi-rightGoals')}
             defaultValue={props.goalsRight ?? ""}
             onChange={handleRightGoalsChange}
             disabled={props.disabled}
             onBlur={handleRightInputBlur}
           />
         </div>
-        <div className={styles.date}>{date}</div>
+        <div className={'mi-date'}>{date}</div>
       </div>
       <label>{rightCountry?.name}</label>
       <CountryFlag code={rightCountry?.code} />

@@ -4,10 +4,8 @@ import React from "react";
 import { useLocalizedText } from "../../../../locale";
 import { className } from "../../../../utils/classname";
 import { CogIcon } from "../../Icons";
-import { Modal } from "../../Modal";
 import { UserImage } from "../../UserImage";
 import { HeaderModal } from "../HeaderModal";
-import styles from "./HeaderMenu.module.scss";
 
 interface HeaderMenuProps {
   className?: string;
@@ -60,11 +58,11 @@ export function HeaderMenu(props: React.PropsWithChildren<HeaderMenuProps>) {
 
   return (
     <div
-      className={className(props.className, styles.headerMenu)}
+      className={className("relative ml-3", props.className)}
       onClick={handleOpen}
     >
       <UserImage image={session?.data?.user?.image} />
-      <CogIcon className={styles.cogIcon} />
+      <CogIcon className="absolute right-0 bottom-0" />
       {modalOpen && (
         <HeaderModal
           image={session?.data?.user?.image}

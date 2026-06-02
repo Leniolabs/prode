@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../utils/classname";
-import styles from "./Toggle.module.scss";
 
 interface ToggleProps {
   className?: string;
@@ -17,14 +16,18 @@ export function Toggle(props: React.PropsWithChildren<ToggleProps>) {
   return (
     <div
       className={className(
-        styles.toggle,
-        props.className,
-        props.disabled && styles.disabled,
-        props.value && styles.toggled
+        "flex w-11 h-6 p-0.5 rounded-[15px] cursor-pointer",
+        props.value ? "bg-[#69b29a]" : "bg-[#cd5367]",
+        props.className
       )}
       onClick={handleClick}
     >
-      <div className={styles.innerToggle} />
+      <div
+        className={className(
+          "rounded-full w-5 h-5 bg-white transition-transform duration-100 ease-in-out cursor-pointer",
+          props.value && "translate-x-full"
+        )}
+      />
     </div>
   );
 }

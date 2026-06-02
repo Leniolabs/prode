@@ -2,12 +2,10 @@ import { signOut } from "next-auth/react";
 
 import React from "react";
 import { useLocalizedText } from "../../../../locale";
-import { className } from "../../../../utils/classname";
 import { Button } from "../../Button";
 import { Modal } from "../../Modal";
 import { Toggle } from "../../Toggle";
 import { UserImage } from "../../UserImage";
-import styles from "./HeaderModal.module.scss";
 
 interface HeaderModalProps {
   className?: string;
@@ -85,14 +83,14 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
 
   return (
     <Modal title={i18n.profileTitle} onClose={props.onCancel}>
-      <div className={styles.headerModalProfile}>
+      <div className="flex p-6 bg-[#edededcc]">
         <UserImage
           editable
-          className={styles.headerModalUserImage}
+          className="[&_img]:border-2 [&_img]:border-white"
           image={image || props.image}
           onChange={setImage}
         />
-        <div className={styles.headerModalInfo}>
+        <div className="ml-3 text-lg font-normal flex flex-col overflow-hidden [&>div]:whitespace-nowrap [&>div]:max-w-full [&>div]:flex [&>div]:items-center [&_svg]:mr-1.5 [&_label]:text-[#1f2740] [&_label]:font-bold [&_label]:mr-1.5">
           {props.position && (
             <div>
               <label>{i18n.profilePositionLabel}</label>
@@ -110,29 +108,33 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
               {props.position}
             </div>
           )}
-          <div className={styles.headerModalInfoLine}>
+          <div className="flex flex-wrap relative">
             <label>{i18n.profileMailLabel}</label>
             {props.email}
           </div>
-          <div className={styles.headerModalInfoLine}>
+          <div className="flex flex-wrap relative">
             <label>{i18n.profileNameLabel}</label>
-            <input value={name} onChange={handleNameChange} />
+            <input
+              className="text-base bg-white w-full text-[#1f2740] outline-none shadow-none border border-[#1f2740] max-w-full"
+              value={name}
+              onChange={handleNameChange}
+            />
           </div>
         </div>
       </div>
-      <div className={styles.headerModalSettings}>
-        <div className={styles.headerModalSettingsTitle}>
+      <div className="p-6">
+        <div className="text-2xl font-bold mb-6">
           {i18n.profileSettingsLabel}
         </div>
-        <div className={styles.headerModalSetting}>
+        <div className="flex w-full mb-3 [&_label]:text-lg [&_label]:font-bold [&_label]:mr-auto [&_input]:h-6 [&_input]:w-6 [&_input]:m-0 [&_select]:w-1/2 [&_select]:ml-auto [&_select]:bg-transparent [&_select]:text-[#1f2740]">
           <label>{i18n.profilePublicLabel}</label>
           <Toggle value={prodePublic} onChange={handleProdePublicChange} />
         </div>
-        <div className={styles.headerModalSetting}>
+        <div className="flex w-full mb-3 [&_label]:text-lg [&_label]:font-bold [&_label]:mr-auto">
           <label>{i18n.profileDarkModeLabel}</label>
           <Toggle value={dark} onChange={handleDarkChange} />
         </div>
-        <div className={styles.headerModalSetting}>
+        <div className="flex w-full mb-3 [&_label]:text-lg [&_label]:font-bold [&_label]:mr-auto [&_select]:w-1/2 [&_select]:ml-auto [&_select]:bg-transparent [&_select]:text-[#1f2740]">
           <label>{i18n.profileBackgroundLabel}</label>
           <select value={background} onChange={handleBackgroundChange}>
             <option value="background-1">Default</option>
@@ -141,7 +143,7 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
           </select>
         </div>
       </div>
-      <div className={styles.headerModalTitle}>
+      <div className="flex p-6 pt-0 justify-between">
         <Button variant="danger" onClick={handleLogout}>
           {i18n.buttonLabelExit}
         </Button>

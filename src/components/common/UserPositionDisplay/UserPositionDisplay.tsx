@@ -1,7 +1,5 @@
 import React from "react";
 import { className } from "../../../utils/classname";
-import { UserImage } from "../UserImage";
-import styles from "./UserPositionDisplay.module.scss";
 
 interface UserPositionDisplayProps {
   className?: string;
@@ -25,7 +23,7 @@ export function UserPositionDisplay(
   }, [props.position]);
 
   return (
-    <div className={className(props.className, styles.userPositionDisplay)}>
+    <div className={className("flex items-center", props.className)}>
       {medalColor && (
         <svg
           width="16"
@@ -37,7 +35,7 @@ export function UserPositionDisplay(
           <circle cx="8" cy="8" r="8" fill={medalColor} />
         </svg>
       )}
-      <div className={styles.userPosition}>{props.position}</div>
+      <div className="ml-1.5">{props.position}</div>
     </div>
   );
 }

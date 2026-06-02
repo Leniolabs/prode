@@ -1,6 +1,5 @@
 import { className } from "../../../utils/classname";
 import { InfoIcon } from "../Icons";
-import styles from "./Warning.module.scss";
 
 interface WarningProps {
   offset?: boolean;
@@ -11,15 +10,15 @@ export function Warning(props: React.PropsWithChildren<WarningProps>) {
   return (
     <div
       className={className(
-        styles.warning,
-        props.offset && styles.offset,
+        "bg-[#f6f5f5] text-[#1f2740] my-6 mx-auto flex p-3",
+        props.offset && "max-lg:mb-12",
         props.className
       )}
     >
-      <div className={styles.warningIcon}>
+      <div className="flex items-center mr-3">
         <InfoIcon />
       </div>
-      <div className={styles.warningContent}>{props.children}</div>
+      <div className="[&_a]:text-[#1f2740] [&_a]:underline">{props.children}</div>
     </div>
   );
 }

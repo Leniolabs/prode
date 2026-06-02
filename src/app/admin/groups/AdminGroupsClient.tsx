@@ -7,7 +7,6 @@ import { HeaderMessage, LeniBall, HeaderMenu } from '@/components/common/Header'
 import { AdminMatchInput } from '@/components/common/MatchInput'
 import { Layout, Footer, Header, Container, Card, ContainerHeader, CardContent } from '@/layout'
 import { CardsContainer, GroupsContainer } from '@/components/view/Groups'
-import commonStyles from '@/styles/CommonStyles.module.scss'
 import axios from 'axios'
 import { LocaleSelect } from '@/components/common/LocaleSelect'
 import { useLocalizedText } from '@/locale'
@@ -71,7 +70,7 @@ export default function AdminGroupsClient(props: AdminGroupsClientProps) {
       <Container>
         <GroupsContainer full admin>
           <ContainerHeader sticky title={i18n.groupsTitle} gridArea="matches-header">
-            <Button disabled={!isModified} className={commonStyles.marginLeftAuto} onClick={handleSave}>
+            <Button disabled={!isModified} className={"ml-auto"} onClick={handleSave}>
               {i18n.buttonLabelSave}
             </Button>
           </ContainerHeader>

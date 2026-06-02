@@ -11,7 +11,6 @@ import { HeaderIndicator } from "../HeaderIndicator";
 import { HeaderMenu } from "../HeaderMenu";
 import { HeaderMessage } from "../HeaderMessage";
 import { LeniBall } from "../LeniBall";
-import styles from "./DesktopHeader.module.scss";
 
 interface DesktopHeaderProps {
   id?: string;
@@ -53,7 +52,7 @@ export function DesktopHeader(
   }, []);
 
   return (
-    <Header className={styles.desktopHeader}>
+    <Header className="hidden lg:flex [&+a]:ml-1.5">
       <PageLogo />
       <HeaderMessage
         title={i18n.headerTitle}

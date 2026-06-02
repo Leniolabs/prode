@@ -5,7 +5,7 @@ import { className } from "../../../utils/classname";
 import { formatDate } from "../../../utils/date";
 import { getAdminFinalsMatchWinner } from "../../../utils/points";
 import { CountryFlag } from "../CountryFlag";
-import styles from "./UserMatchFinalsInput.module.scss";
+
 
 export function getResultStatus(userMatch: {
   goalsLeft: number;
@@ -568,21 +568,21 @@ export function UserMatchFinalsInput(
     <div
       className={className(
         props.className,
-        styles.matchFinalsInput,
-        props.highlight && styles.highlight
+        'umfi-matchFinalsInput',
+        props.highlight && 'umfi-highlight'
       )}
       style={{ order: props.order }}
     >
-      <div className={styles.countryRow}>
+      <div className={'umfi-countryRow'}>
         <div
           className={className(
-            styles.countryInput,
-            // countryStatus && styles[countryStatus]
+            'umfi-countryInput',
+            // countryStatus && countryStatus
           )}
         >
           {userCountryLeft?.code && (
             <CountryFlag
-              className={styles.countryFlag}
+              className={'umfi-countryFlag'}
               code={userCountryLeft?.code}
             />
           )}
@@ -593,8 +593,8 @@ export function UserMatchFinalsInput(
           inputMode={"decimal"}
           tabIndex={props.order * 4}
           className={className(
-            styles.goalsLeft,
-            resultStatus && styles[resultStatus]
+            'umfi-goalsLeft',
+            resultStatus && resultStatus
           )}
           defaultValue={props.userGoalsLeft ?? ""}
           onChange={handleGoalsLeftChange}
@@ -603,14 +603,14 @@ export function UserMatchFinalsInput(
         />
         {showPenaltis && (
           <>
-            <div className={styles.penaltisDivider} />
+            <div className={'umfi-penaltisDivider'} />
             <input
               type="number"
               inputMode={"decimal"}
               tabIndex={props.order * 4 + 2}
               className={className(
-                styles.penaltisLeft,
-                penaltisStatus && styles[penaltisStatus]
+                'umfi-penaltisLeft',
+                penaltisStatus && penaltisStatus
               )}
               defaultValue={props.userPenaltisLeft ?? ""}
               onChange={handlePenaltisLeftChange}
@@ -620,16 +620,16 @@ export function UserMatchFinalsInput(
           </>
         )}
       </div>
-      <div className={styles.countryRow}>
+      <div className={'umfi-countryRow'}>
         <div
           className={className(
-            styles.countryInput,
-            // countryStatus && styles[countryStatus]
+            'umfi-countryInput',
+            // countryStatus && countryStatus
           )}
         >
           {userCountryRight?.code && (
             <CountryFlag
-              className={styles.countryFlag}
+              className={'umfi-countryFlag'}
               code={userCountryRight?.code}
             />
           )}
@@ -640,8 +640,8 @@ export function UserMatchFinalsInput(
           inputMode={"decimal"}
           tabIndex={props.order * 4 + 1}
           className={className(
-            styles.goalsRight,
-            resultStatus && styles[resultStatus]
+            'umfi-goalsRight',
+            resultStatus && resultStatus
           )}
           defaultValue={props.userGoalsRight ?? ""}
           onChange={handleGoalsRightChange}
@@ -650,14 +650,14 @@ export function UserMatchFinalsInput(
         />
         {showPenaltis && (
           <>
-            <div className={styles.penaltisDivider} />
+            <div className={'umfi-penaltisDivider'} />
             <input
               type="number"
               inputMode={"decimal"}
               tabIndex={props.order * 4 + 3}
               className={className(
-                styles.penaltisRight,
-                penaltisStatus && styles[penaltisStatus]
+                'umfi-penaltisRight',
+                penaltisStatus && penaltisStatus
               )}
               defaultValue={props.userPenaltisRight ?? ""}
               onChange={handlePenaltisRightChange}
@@ -669,10 +669,10 @@ export function UserMatchFinalsInput(
       </div>
       {filled ? (
         <>
-          <div className={styles.date}>
+          <div className={'umfi-date'}>
             <span>Resultado:</span>
             <CountryFlag
-              className={styles.countryFlag}
+              className={'umfi-countryFlag'}
               code={countryLeft?.code}
               tiny
               disabled={getAdminFinalsMatchWinner(props) !== countryLeft?.id}
@@ -690,7 +690,7 @@ export function UserMatchFinalsInput(
               </>
             )}
             <CountryFlag
-              className={styles.countryFlag}
+              className={'umfi-countryFlag'}
               code={countryRight?.code}
               tiny
               disabled={getAdminFinalsMatchWinner(props) !== countryRight?.id}
@@ -698,7 +698,7 @@ export function UserMatchFinalsInput(
           </div>
         </>
       ) : (
-        <div className={styles.date}>{date}</div>
+        <div className={'umfi-date'}>{date}</div>
       )}
     </div>
   );

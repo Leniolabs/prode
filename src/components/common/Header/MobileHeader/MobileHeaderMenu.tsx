@@ -9,7 +9,6 @@ import { HeaderDivider } from "../HeaderDivider";
 import { HeaderIndicator } from "../HeaderIndicator";
 import { HeaderMenu } from "../HeaderMenu";
 import { HeaderMessage } from "../HeaderMessage";
-import styles from "./MobileHeader.module.scss";
 
 interface MobileHeaderMenuProps {
   open?: boolean;
@@ -60,22 +59,22 @@ export function MobileHeaderMenu(
   );
 
   return (
-    <div className={styles.mobileHeaderMenu}>
+    <div className="fixed top-0 left-0 w-screen h-screen bg-[#1f2740] z-[999] p-3">
       <HeaderMessage
-        className={styles.mobileHeaderMessage}
+        className="[&>div:first-child]:text-xl [&>div:nth-child(2)]:text-xl pt-0"
         title={props.title}
         subtitle={props.subtitle}
         prodeTitle={props.prodeTitle}
       />
-      <div className={styles.closeIcon} onClick={props.onClose}>
+      <div className="absolute right-3 top-3 cursor-pointer" onClick={props.onClose}>
         <CloseIcon />
       </div>
       {props.userRanking &&
         (props.userRanking.points || props.userRanking.points === 0) &&
         (props.userRanking.ranking || props.userRanking.ranking === 0) && (
           <>
-            <div className={styles.divider} />
-            <div className={styles.userRanking}>
+            <div className="border border-white/30 w-full" />
+            <div className="flex py-5 justify-center [&>:first-child]:ml-1.5 [&>:first-child]:mr-3 [&>:last-child]:mr-auto">
               <HeaderMenu
                 prodePublic={props.userRanking?.prodePublic}
                 dark={props.userRanking?.dark}
@@ -93,10 +92,10 @@ export function MobileHeaderMenu(
                 text={i18n.headerRankingLabel}
               />
             </div>
-            <div className={styles.divider} />
+            <div className="border border-white/30 w-full" />
           </>
         )}
-      <div className={styles.menuButtons}>
+      <div className="flex flex-col items-center mt-3 [&>*]:mb-3 [&>*]:!w-full [&>*]:justify-center">
         {props.list && (
           <Button invert href="/rooms">
             {i18n.buttonLabelProdeList}

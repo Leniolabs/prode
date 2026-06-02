@@ -5,7 +5,7 @@ import { className } from "../../../utils/classname";
 import { ButtonIcon } from "../ButtonIcon";
 import { ShareIcon } from "../Icons";
 import { InstagramReelIcon } from "../Icons/InstagramReelIcon";
-import styles from "./ShareButton.module.scss";
+
 import { ShareTodayMatchesVideoButton } from "./ShareTodayMatchesVideoButton";
 import { ShareTodayMatchesImageButton } from "./ShareTodayMatchesImageButton";
 
@@ -15,7 +15,7 @@ interface ShareTodayProps {
 
 export function ShareToday(props: ShareTodayProps) {
   return (
-    <div className={styles.shareToday}>
+    <div className={'sb-shareToday'}>
       <ShareTodayMatchesImageButton userProdeId={props.userProdeId} />
       <ShareTodayMatchesVideoButton userProdeId={props.userProdeId} />
     </div>

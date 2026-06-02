@@ -1,7 +1,6 @@
 import React from "react";
 import { className } from "../../../utils/classname";
 import { Toggle } from "../Toggle";
-import styles from "./Form.module.scss";
 
 type FormInputProps = {
   className?: string;
@@ -54,18 +53,25 @@ export function FormInput(props: React.PropsWithChildren<FormInputProps>) {
   return (
     <div
       className={className(
-        props.className,
-        styles.formInput,
-        props.inline && styles.inline
+        "mb-[2.5em] w-full relative",
+        props.inline && "flex flex-wrap",
+        props.className
       )}
     >
-      <div className={styles.formInputLabel}>{props.label}</div>
-      <div className={styles.formInputValue}>
+      <div className={className(
+        "text-lg mb-1.5 flex",
+        props.inline && "flex mb-0 items-center"
+      )}>{props.label}</div>
+      <div className={className(
+        "w-full [&_input]:w-full",
+        props.inline && "w-max ml-auto flex"
+      )}>
         {props.type === "boolean" && (
           <Toggle value={props.value} onChange={handleBooleanChange} />
         )}
         {props.type === "string" && (
           <input
+            className="border border-[#1f274050] outline-none bg-white text-[#1f2740] text-[15px] p-1"
             type="text"
             placeholder={props.placeholder}
             value={props.value}
@@ -73,14 +79,19 @@ export function FormInput(props: React.PropsWithChildren<FormInputProps>) {
           />
         )}
         {props.type === "number" && (
-          <input type="number" value={props.value} onChange={handleChange} />
+          <input
+            className="border border-[#1f274050] outline-none bg-white text-[#1f2740] text-[15px] p-1 max-w-[40px] text-right"
+            type="number"
+            value={props.value}
+            onChange={handleChange}
+          />
         )}
         {props.error && (
-          <label className={styles.formInputError}>{props.error}</label>
+          <label className="text-red-600 absolute top-full text-xs">{props.error}</label>
         )}
       </div>
       {props.legend && (
-        <div className={styles.formInputLegend}>{props.legend}</div>
+        <div className="w-4/5 flex-[100%] text-sm text-[#1f274080] lg:absolute top-[90%]">{props.legend}</div>
       )}
     </div>
   );

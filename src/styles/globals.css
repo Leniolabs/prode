@@ -1,4 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Brand colors */
+  --color-brand-dark: #1f2740;
+  --color-brand-dark-muted: #1f2740cc;
+  --color-brand-secondary: #343f52;
+  --color-brand-yellow: #ffca30;
+  --color-brand-bg: #f6f5f5cc;
+  --color-brand-text: #354156;
+  --color-brand-green: #69b29a;
+  --color-brand-red: #cd5367;
+  --color-brand-blue: #3baacd;
+  --color-brand-teal: #4db4b2;
+  --color-score-goals: #309e3a;
+  --color-score-winner: #0093dd;
+  --color-score-wrong: #f9aa51;
+}
 
 html,
 body {
@@ -25,3 +43,399 @@ a {
     background: black;
   }
 }
+
+/* Spin animation used by LoadingOverlay and ShareButton */
+@keyframes spin360 {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* BrandLogo cursor blink animation */
+@keyframes cursorBlink {
+  50% { opacity: 0; }
+}
+
+/* BrandLogo cursor move animation */
+@keyframes cursorMoveRight {
+  from { transform: translateX(-135px); }
+}
+
+/* BrandLogo online dot color animation */
+@keyframes onlineColor {
+  100% { fill: #3baacd; }
+}
+
+/* ============================================================
+   MatchInput (mi-*) — complex styles not expressible as Tailwind
+   ============================================================ */
+.mi-matchInput {
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 52px;
+}
+.mi-matchInput label { font-size: 14px; white-space: nowrap; overflow-x: hidden; margin: 0 4px; }
+.mi-matchInput label:last-of-type { margin-left: auto; }
+.mi-centerContainer {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.mi-inputsContainer { display: flex; }
+.mi-inputsContainer input {
+  font-size: 17px;
+  background: transparent;
+  max-width: 30px;
+  outline: none;
+  color: black;
+  text-align: center;
+  border: 1px solid #767676;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+.mi-inputsContainer input::-webkit-outer-spin-button,
+.mi-inputsContainer input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.mi-inputsContainer input[type="number"] { -moz-appearance: textfield; }
+.mi-inputsContainer input:disabled { opacity: 0.8; }
+.mi-inputsContainer input + input { margin-left: 6px; }
+.mi-inputsContainer input.GOALS_MATCH { background: #309e3a; border-color: #309e3a; }
+.mi-inputsContainer input.WINNER_MATCH { background: #0093dd; border-color: #0093dd; }
+.mi-inputsContainer input.WRONG { background: #f9aa51; border-color: #f9aa51; }
+.mi-date {
+  font-size: 13px;
+  color: #767676;
+  white-space: nowrap;
+  cursor: default;
+  display: flex;
+  align-items: center;
+}
+.mi-date:has(span) { margin-top: 4px; }
+.mi-date span { margin-right: 5px; }
+.mi-countryFlag {}
+
+/* ============================================================
+   MatchFinalsInput (mfi-*) — complex column-based input layout
+   ============================================================ */
+.mfi-matchFinalsInput { display: flex; flex-direction: column; position: relative; font-size: 16px; }
+.mfi-countryRow { display: flex; margin-bottom: 6px; position: relative; }
+.mfi-countryInput {
+  padding: 2px;
+  width: 100%;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #233042;
+}
+.mfi-countryInput .mfi-countryFlag img { width: 27px; height: 27px; }
+.mfi-countryInput label { margin-left: 4px; }
+.mfi-countryInput.MATCH { background: #309e3a; border-color: #309e3a; }
+.mfi-countryInput.WRONG { background: #f9aa51; border-color: #f9aa51; }
+.mfi-countryRow input {
+  margin-left: 6px;
+  width: 34px;
+  height: 100%;
+  border: 1px solid #233042;
+  background: transparent;
+  outline: none;
+  text-align: center;
+  color: #233042;
+}
+.mfi-countryRow input::-webkit-outer-spin-button,
+.mfi-countryRow input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.mfi-countryRow input[type="number"] { -moz-appearance: textfield; }
+.mfi-countryRow input:disabled { opacity: 0.8; }
+.mfi-goalsLeft, .mfi-goalsRight { padding: 6px; }
+.mfi-penaltisLeft {
+  font-size: 10px;
+  position: absolute;
+  right: 0;
+  height: 16px;
+  width: 16px;
+  bottom: 0;
+  text-align: center;
+}
+.mfi-penaltisRight {
+  font-size: 10px;
+  position: absolute;
+  right: 0;
+  height: 16px;
+  width: 16px;
+  bottom: 0;
+  text-align: center;
+}
+.mfi-countryRow input.GOALS_MATCH { background: #309e3a; border-color: #309e3a; }
+.mfi-countryRow input.WINNER_MATCH { background: #0093dd; border-color: #0093dd; }
+.mfi-countryRow input.WRONG { background: #f9aa51; border-color: #f9aa51; }
+.mfi-date { font-size: 14px; color: #233042; }
+.mfi-countryFlag {}
+
+/* ============================================================
+   UserMatchFinalsInput (umfi-*) — complex column-based input layout
+   ============================================================ */
+.umfi-matchFinalsInput {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  font-size: 16px;
+}
+@media screen and (max-width: 1024px) {
+  .umfi-matchFinalsInput { margin-bottom: 24px; }
+}
+.umfi-matchFinalsInput.umfi-highlight input,
+.umfi-matchFinalsInput.umfi-highlight .umfi-countryInput {
+  border-color: #4db4b2 !important;
+  background-color: #4db4b230;
+}
+.umfi-countryRow { display: flex; margin-bottom: 6px; position: relative; }
+.umfi-countryInput {
+  padding: 2px;
+  width: 100%;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #233042;
+}
+.umfi-countryInput .umfi-countryFlag img { width: 27px; height: 27px; }
+.umfi-countryInput label { margin-left: 4px; }
+.umfi-countryInput.MATCH { background: #309e3a; }
+.umfi-countryInput.WRONG { background: #f9aa51; }
+.umfi-penaltisDivider { display: none; }
+@media screen and (max-width: 1024px) {
+  .umfi-penaltisDivider {
+    display: block;
+    position: relative;
+    border-left: 1px solid #233042cc;
+    margin-top: 7px;
+    height: 20px;
+    z-index: 1;
+    left: -0.5px;
+  }
+}
+.umfi-countryRow input {
+  margin-left: 6px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #233042;
+  background: transparent;
+  outline: none;
+  text-align: center;
+  color: #233042;
+  font-size: 17px;
+}
+.umfi-countryRow input::-webkit-outer-spin-button,
+.umfi-countryRow input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.umfi-countryRow input[type="number"] { -moz-appearance: textfield; }
+.umfi-countryRow input:disabled { opacity: 0.8; }
+.umfi-goalsLeft, .umfi-goalsRight { padding: 6px; }
+.umfi-penaltisLeft {
+  font-size: 12px;
+  position: absolute;
+  right: 0;
+  height: 16px;
+  width: 16px;
+  bottom: 0;
+  text-align: center;
+}
+.umfi-penaltisRight {
+  font-size: 12px;
+  position: absolute;
+  right: 0;
+  height: 16px;
+  width: 16px;
+  bottom: 0;
+  text-align: center;
+}
+@media screen and (max-width: 1024px) {
+  .umfi-penaltisLeft, .umfi-penaltisRight {
+    position: relative;
+    font-size: 14px;
+    height: 34px;
+    width: 34px;
+    margin-left: -1px;
+    border-left: none;
+  }
+}
+.umfi-countryRow input.GOALS_MATCH { background: #309e3a; }
+.umfi-countryRow input.WINNER_MATCH { background: #0093dd; }
+.umfi-countryRow input.WRONG { background: #f9aa51; }
+.umfi-date {
+  font-size: 14px;
+  color: #767676;
+  display: flex;
+  align-items: center;
+}
+.umfi-date span { margin-right: 5px; }
+.umfi-countryFlag {}
+
+/* ============================================================
+   DailyMatches (dm-*) — complex timer/pseudo-element layout
+   ============================================================ */
+.dm-dailyMatchInput {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  padding: 16px 16px 6px 16px;
+}
+.dm-dailyMatchInput:has(.dm-dailyMatchTimer[data-show="true"]) { padding-top: 32px; }
+.dm-dailyMatchInput:has(.dm-result) { padding-bottom: 24px; }
+.dm-dailyMatchInput + .dm-dailyMatchInput { border-top: 1px solid #767676; }
+.dm-dailyMatchTimer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 24px;
+  background: #1f274030;
+  display: none;
+  align-items: center;
+  place-content: center;
+}
+.dm-dailyMatchTimer svg { display: none; width: 18px; }
+.dm-dailyMatchTimer[data-timer=""] svg { display: block; }
+.dm-dailyMatchTimer[data-show="true"] { display: flex; }
+.dm-dailyMatchTimer::after {
+  content: attr(data-timer);
+  font-size: 12px;
+  height: 12px;
+  color: #767676;
+  font-weight: bold;
+  position: relative;
+}
+.dm-dailyMatchTimer[data-status="success"] { background: #69b29a30; }
+.dm-dailyMatchTimer[data-status="danger"] { background: #fa375730; }
+.dm-dailyMatchTimer[data-status="warning"] { background: #ffca3030; }
+.dm-dailyMatchInput label {
+  font-size: 19px;
+  white-space: nowrap;
+  overflow-x: hidden;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.dm-dailyMatchInput label:last-child { align-items: flex-end; }
+.dm-dailyMatchInput label img { width: 36px; height: 36px; }
+.dm-dailyMatchInput label img:first-child { margin-right: 4px; }
+.dm-dailyMatchInput label img:last-child { margin-left: 4px; }
+.dm-dailyMatchInput label:last-of-type { margin-left: auto; align-items: flex-end; }
+.dm-centerContainer {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dm-inputsContainer { display: flex; }
+.dm-rightInput { margin-left: 6px; }
+.dm-inputsContainer input {
+  font-size: 20px;
+  background: transparent;
+  width: 40px;
+  height: 40px;
+  outline: none;
+  color: black;
+  text-align: center;
+  border: 1px solid #767676;
+}
+.dm-inputsContainer input::-webkit-outer-spin-button,
+.dm-inputsContainer input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.dm-inputsContainer input[type="number"] { -moz-appearance: textfield; }
+.dm-inputsContainer input:disabled { opacity: 0.8; }
+.dm-inputsContainer input.GOALS_MATCH { background: #309e3a; border-color: #309e3a; }
+.dm-inputsContainer input.WINNER_MATCH { background: #0093dd; border-color: #0093dd; }
+.dm-inputsContainer input.WRONG { background: #f9aa51; border-color: #f9aa51; }
+.dm-date {
+  font-size: 14px;
+  color: #767676;
+  white-space: nowrap;
+  cursor: default;
+  text-align: center;
+  display: block;
+}
+.dm-result { display: flex; align-items: center; }
+.dm-date span { margin-right: 5px; margin-left: 5px; }
+.dm-date img { width: 16px; height: 16px; }
+.dm-dailyMatchFinalsInput {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  padding: 16px 16px 6px 16px;
+}
+.dm-dailyMatchFinalsInput:has(.dm-dailyMatchTimer[data-show="true"]) { padding-top: 32px; }
+.dm-dailyMatchFinalsInput:has(.dm-result) { padding-bottom: 24px; }
+.dm-leftInput, .dm-rightInput { display: flex; position: relative; }
+.dm-penaltisDivider {
+  display: none;
+  position: absolute;
+  left: 50%;
+  height: 60%;
+  margin-top: 10%;
+  border-left: 1px solid #767676;
+}
+@media screen and (max-width: 1024px) {
+  .dm-penaltisDivider { display: block; }
+  .dm-penaltisDivider + input { font-size: 20px; border: none; width: 40px; height: 40px; }
+}
+
+/* ============================================================
+   Collapsable (coll-*) — accordion component
+   ============================================================ */
+.coll-collapsable {}
+.coll-collapsableTitle {
+  cursor: pointer;
+  display: flex;
+  font-size: 18px;
+  font-weight: bold;
+  height: 44px;
+  align-items: center;
+}
+.coll-collapsableTitle > div { display: flex; margin-left: auto; align-items: center; }
+.coll-collapsable:not(:first-child) .coll-collapsableTitle { border-top: 1px solid #1f274050; }
+.coll-collapsableContent { display: none; margin-bottom: 12px; }
+.coll-open .coll-collapsableContent { display: block; }
+.coll-collapsableContainer {}
+
+/* ============================================================
+   Table Pagination (tbl-*)
+   ============================================================ */
+.tbl-pagination { display: flex; font-size: 24px; }
+.tbl-pagination a {
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 40px;
+  line-height: 24px;
+}
+.tbl-pagination a.tbl-disabled { pointer-events: none; opacity: 0; }
+.tbl-paginationNumber { padding: 4px; }
+
+/* ============================================================
+   ShareButton extras (sb-*)
+   ============================================================ */
+.sb-mobile { display: block; }
+@media screen and (min-width: 1024px) { .sb-mobile { display: none; } }
+.sb-marginLeftAuto { margin-left: auto; }
+.sb-marginRightAuto { margin-right: 12px; }
+.sb-instagramButton { padding: 0; margin-left: 12px; }
+.sb-instagramButton svg { width: 100%; }
+.sb-loading circle { animation: spin360 1s ease-in-out infinite; }
+.sb-shareToday {
+  right: 6px;
+  position: absolute;
+  display: flex;
+}
+.sb-shareToday svg { width: 100%; }
+
+/* ============================================================
+   Finals extras (fi-*) — offsets used for bracket positioning
+   ============================================================ */
+.fi-fourthLeftOffset { margin-left: 12.5%; }
+.fi-halfLeftOffset { margin-left: 25%; }
+.fi-fourthRightOffset { margin-right: 12.5%; }
+.fi-bracketOffsetHalf { margin-left: 50%; }
+.fi-bracketOffsetQuarter { margin-left: 25%; }

@@ -9,7 +9,6 @@ import { Table } from '@/components/common/Table'
 import { UserPositionDisplay } from '@/components/common/UserPositionDisplay'
 import { UserRankingDisplay } from '@/components/common/UserRankingDisplay'
 import { Layout, Footer, Container, Card, ContainerHeader, CardFooter, CardContent } from '@/layout'
-import commonStyles from '@/styles/CommonStyles.module.scss'
 import { filterUniquePredicate } from '@/utils/array'
 import axios from 'axios'
 import { CardsContainer, GroupsContainer, GroupsResultsWarning, LeniCard } from '@/components/view/Groups'
@@ -126,7 +125,7 @@ export default function RoomGroupsClient(props: RoomGroupsClientProps) {
       <Container full>
         <GroupsContainer>
           <ContainerHeader sticky title={i18n.groupsTitle} gridArea="matches-header">
-            <Button disabled={!isModified} className={commonStyles.marginLeftAuto} onClick={handleSave}>
+            <Button disabled={!isModified} className={"ml-auto"} onClick={handleSave}>
               {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}
             </Button>
           </ContainerHeader>

@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../utils/classname";
-import bracketStyles from "./Finals.module.scss";
 
 interface FinalsContainerProps {
   className?: string;
@@ -14,10 +13,14 @@ export function FinalsContainer(
   return (
     <section
       className={className(
-        props.className,
-        bracketStyles.finalsContainer,
-        props.full && bracketStyles.full,
-        props.admin && bracketStyles.admin
+        "grid mb-3 w-full gap-x-3",
+        "grid-cols-1 grid-rows-[max-content_max-content_max-content_max-content]",
+        "[grid-template-areas:'matches-header'_'following'_'matches'_'ranking']",
+        "min-[1300px]:mr-3 min-[1300px]:grid-cols-[70%_1fr]",
+        "min-[1300px]:[grid-template-areas:'matches-header_following'_'matches_following'_'matches_ranking'_'matches_-']",
+        props.full && "w-full",
+        props.admin && "w-full !grid-cols-1 ![grid-template-areas:'matches-header'_'matches']",
+        props.className
       )}
     >
       {props.children}
@@ -25,4 +28,5 @@ export function FinalsContainer(
   );
 }
 
-export { bracketStyles };
+// bracketStyles is no longer needed; kept as empty export for backward compat
+export const bracketStyles: Record<string, string> = {};

@@ -7,7 +7,7 @@ import { formatDate, formatHour } from "../../../utils/date";
 import { matchResultStatus } from "../../../utils/points";
 import { CountryFlag } from "../CountryFlag";
 import { LockIcon } from "../Icons";
-import styles from "./DailyMatches.module.scss";
+
 
 export function getResultStatus(userMatch: {
   goalsLeft: number;
@@ -569,14 +569,14 @@ export function DailyMatchFinalInput(
   useInterval(updateMatchStatus, 60000);
 
   return (
-    <div className={className(props.className, styles.dailyMatchFinalsInput)}>
+    <div className={className(props.className, 'dm-dailyMatchFinalsInput')}>
       <label>
         {countryLeft && <CountryFlag code={countryLeft.code} />}
         {countryLeft?.name}
       </label>
-      <div className={styles.centerContainer}>
-        <div className={styles.inputsContainer}>
-          <div className={styles.leftInput}>
+      <div className={'dm-centerContainer'}>
+        <div className={'dm-inputsContainer'}>
+          <div className={'dm-leftInput'}>
             <input
               type="number"
               min={0}
@@ -584,8 +584,8 @@ export function DailyMatchFinalInput(
               inputMode={"decimal"}
               tabIndex={props.order * 4}
               className={className(
-                styles.leftGoals,
-                resultStatus && styles[resultStatus]
+                'dm-leftGoals',
+                resultStatus && resultStatus
               )}
               defaultValue={props.userGoalsLeft ?? ""}
               onChange={handleGoalsLeftChange}
@@ -594,7 +594,7 @@ export function DailyMatchFinalInput(
             />
             {showPenaltis && (
               <>
-                <div className={styles.penaltisDivider} />
+                <div className={'dm-penaltisDivider'} />
                 <input
                   min={0}
                   max={99}
@@ -602,8 +602,8 @@ export function DailyMatchFinalInput(
                   inputMode={"decimal"}
                   tabIndex={props.order * 4 + 2}
                   className={className(
-                    styles.penaltisLeft,
-                    penaltisStatus && styles[penaltisStatus]
+                    'dm-penaltisLeft',
+                    penaltisStatus && penaltisStatus
                   )}
                   defaultValue={props.userPenaltisLeft ?? ""}
                   onChange={handlePenaltisLeftChange}
@@ -613,7 +613,7 @@ export function DailyMatchFinalInput(
               </>
             )}
           </div>
-          <div className={styles.rightInput}>
+          <div className={'dm-rightInput'}>
             <input
               type="number"
               min={0}
@@ -621,8 +621,8 @@ export function DailyMatchFinalInput(
               inputMode={"decimal"}
               tabIndex={props.order * 4 + 1}
               className={className(
-                styles.rightGoals,
-                resultStatus && styles[resultStatus]
+                'dm-rightGoals',
+                resultStatus && resultStatus
               )}
               defaultValue={props.userGoalsRight ?? ""}
               onChange={handleGoalsRightChange}
@@ -631,7 +631,7 @@ export function DailyMatchFinalInput(
             />
             {showPenaltis && (
               <>
-                <div className={styles.penaltisDivider} />
+                <div className={'dm-penaltisDivider'} />
                 <input
                   min={0}
                   max={99}
@@ -639,8 +639,8 @@ export function DailyMatchFinalInput(
                   inputMode={"decimal"}
                   tabIndex={props.order * 4 + 3}
                   className={className(
-                    styles.penaltisRight,
-                    penaltisStatus && styles[penaltisStatus]
+                    'dm-penaltisRight',
+                    penaltisStatus && penaltisStatus
                   )}
                   defaultValue={props.userPenaltisRight ?? ""}
                   onChange={handlePenaltisRightChange}
@@ -651,13 +651,13 @@ export function DailyMatchFinalInput(
             )}
           </div>
         </div>
-        <div className={styles.date}>
+        <div className={'dm-date'}>
           {date}
           {props.filled && (
-            <div className={styles.result}>
+            <div className={'dm-result'}>
               <span>{i18n.matchResultLabel}:</span>
               <CountryFlag
-                className={styles.countryFlag}
+                className={'dm-countryFlag'}
                 code={countryLeft?.code}
                 tiny
                 disabled={(props.goalsLeft || 0) < (props.goalsRight || 0)}
@@ -675,7 +675,7 @@ export function DailyMatchFinalInput(
                 </>
               )}
               <CountryFlag
-                className={styles.countryFlag}
+                className={'dm-countryFlag'}
                 code={countryRight?.code}
                 tiny
                 disabled={(props.goalsLeft || 0) > (props.goalsRight || 0)}
@@ -693,7 +693,7 @@ export function DailyMatchFinalInput(
         data-show="false"
         data-timer=""
         data-status=""
-        className={styles.dailyMatchTimer}
+        className={'dm-dailyMatchTimer'}
       >
         <LockIcon />
       </div>

@@ -9,7 +9,7 @@ import {
   matchResultStatus,
 } from "../../../utils/points";
 import { CountryFlag } from "../CountryFlag";
-import styles from "./MatchInput.module.scss";
+
 
 interface MatchInputProps {
   className?: string;
@@ -110,19 +110,19 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
   }, [props.date, i18n.locale]);
 
   return (
-    <div className={className(props.className, styles.matchInput)}>
+    <div className={className(props.className, 'mi-matchInput')}>
       <CountryFlag code={countryLeft?.code} />
       <label>{countryLeft?.name}</label>
-      <div className={styles.centerContainer}>
-        <div className={styles.inputsContainer}>
+      <div className={'mi-centerContainer'}>
+        <div className={'mi-inputsContainer'}>
           <input
             min={0}
             max={99}
             type="number"
             inputMode={"decimal"}
             className={className(
-              styles.leftGoals,
-              resultStatus && styles[resultStatus]
+              'mi-leftGoals',
+              resultStatus && resultStatus
             )}
             value={props.userGoalsLeft ?? ""}
             onChange={handleLeftGoalsChange}
@@ -135,8 +135,8 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
             type="number"
             inputMode={"decimal"}
             className={className(
-              styles.rightGoals,
-              resultStatus && styles[resultStatus]
+              'mi-rightGoals',
+              resultStatus && resultStatus
             )}
             value={props.userGoalsRight ?? ""}
             onChange={handleRightGoalsChange}
@@ -146,10 +146,10 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
         </div>
         {props.filled ? (
           <>
-            <div className={styles.date}>
+            <div className={'mi-date'}>
               <span>Resultado:</span>
               <CountryFlag
-                className={styles.countryFlag}
+                className={'mi-countryFlag'}
                 code={countryLeft?.code}
                 tiny
                 disabled={(props.goalsLeft || 0) < (props.goalsRight || 0)}
@@ -158,7 +158,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
               {"-"}
               {props.goalsRight}{" "}
               <CountryFlag
-                className={styles.countryFlag}
+                className={'mi-countryFlag'}
                 code={countryRight?.code}
                 tiny
                 disabled={(props.goalsLeft || 0) > (props.goalsRight || 0)}
@@ -166,7 +166,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
             </div>
           </>
         ) : (
-          <div className={styles.date}>{date}</div>
+          <div className={'mi-date'}>{date}</div>
         )}
       </div>
       <label>{countryRight?.name}</label>

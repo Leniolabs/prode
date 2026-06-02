@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../../utils/classname";
-import styles from "./HeaderMessage.module.scss";
 
 interface HeaderMessageProps {
   className?: string;
@@ -15,13 +14,13 @@ export function HeaderMessage(
   props: React.PropsWithChildren<HeaderMessageProps>
 ) {
   return (
-    <div className={className(props.className, styles.headerMessage)}>
-      <div className={styles.headerMessageTitle}>{props.title} </div>
+    <div className={className("text-white mr-auto py-3", props.className)}>
+      <div className="text-2xl font-bold flex select-none">{props.title} </div>
       {props.subtitle && (
-        <div className={styles.headerMessageSubtitle}>{props.subtitle}</div>
+        <div className="text-base select-none">{props.subtitle}</div>
       )}
       {props.prodeTitle && (
-        <div className={styles.headerMessageTitleHighlighted}>
+        <div className="text-2xl flex m-auto items-center select-none [&_span]:text-[#69b29a] [&_span]:flex [&_span]:items-center [&_span]:ml-[5px]">
           {props.prodeTitle}
         </div>
       )}

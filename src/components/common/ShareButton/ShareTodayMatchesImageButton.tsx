@@ -4,7 +4,7 @@ import { useLocalizedText } from "../../../locale";
 import { className } from "../../../utils/classname";
 import { ButtonIcon } from "../ButtonIcon";
 import { InstagramImageIcon } from "../Icons";
-import styles from "./ShareButton.module.scss";
+
 
 interface ShareTodayMatchesButtonProps {
   big?: boolean;
@@ -55,13 +55,13 @@ export function ShareTodayMatchesImageButton(
 
   return (
     <ButtonIcon
-      className={className(styles.mobile, styles.marginLeftAuto)}
+      className={className('sb-mobile', 'sb-marginLeftAuto')}
       big={props.big}
       onClick={sharing ? undefined : handleInstagramShare}
     >
       <InstagramImageIcon
         loading={sharing}
-        className={className(sharing && styles.loading)}
+        className={className(sharing && 'sb-loading')}
       />
     </ButtonIcon>
   );
