@@ -19,12 +19,12 @@ export function getSubqueryFinals(room: ProdeRoom, stages?: Stage[]) {
      --gana right con goles diferentes sin penales
      WHEN pugm."goalsLeft" < pugm."goalsRight" and m."goalsLeft" < m."goalsRight"
      THEN ${room.pointsWinner}
-     --goles exactos y gana left en penales
+     --goles exactos y gana left en penales (goles ok, ganador correcto, pero penales no exactos)
      WHEN pugm."goalsLeft" = m."goalsLeft" and pugm."goalsRight" = m."goalsRight" and pugm."penaltisLeft" > pugm."penaltisRight" and m."penaltisLeft" > m."penaltisRight"
-     THEN ${room.pointsGoals + room.pointsWinner}
-     --goles exactos y gana right en penales
+     THEN ${room.pointsGoals}
+     --goles exactos y gana right en penales (goles ok, ganador correcto, pero penales no exactos)
      WHEN pugm."goalsLeft" = m."goalsLeft" and pugm."goalsRight" = m."goalsRight" and pugm."penaltisLeft" < pugm."penaltisRight" and m."penaltisLeft" < m."penaltisRight"
-     THEN ${room.pointsGoals + room.pointsWinner}
+     THEN ${room.pointsGoals}
      --empate con goles diferentes y gana left en penales
      WHEN pugm."goalsLeft" = pugm."goalsRight" and m."goalsLeft" = m."goalsRight" and pugm."penaltisLeft" > pugm."penaltisRight" and m."penaltisLeft" > m."penaltisRight"
      THEN ${room.pointsWinner}
