@@ -158,9 +158,10 @@ model ProdeRoom {
   prodeId String
   prode   Prode  @relation(fields: [prodeId], references: [id])
 
-  name     String  @unique()
-  password String?
-  public   Boolean
+  name         String  @unique()
+  password     String?  // plaintext — retained for lazy migration, cleared on use
+  passwordHash String?  // bcrypt hash — the target field
+  public       Boolean
 
   emailDomain String?
 

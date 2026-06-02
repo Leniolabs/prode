@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { withAuth } from '@/lib/auth/withAuth'
+import { hashPassword } from '@/lib/auth/passwords'
 import prisma from '@/lib/prisma'
 
 export const PUT = withAuth(async (req, { room }) => {
@@ -13,13 +14,15 @@ export const PUT = withAuth(async (req, { room }) => {
     emailDomain,
   } = await req.json()
 
+  const passwordHash = password !== undefined ? await hashPassword(password) : undefined
+
   const newRoom = await prisma.prodeRoom.update({
     where: {
       id: room!.id,
     },
     data: {
       name,
-      password: password ? password : null,
+      ...(password !== undefined ? { password: null, passwordHash } : {}),
       public: isPublic ? true : false,
       pointsWinner: pointsWinner || 1,
       pointsGoals: pointsGoals || 3,
