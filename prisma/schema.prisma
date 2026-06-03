@@ -176,9 +176,10 @@ model ProdeRoom {
   prodeId String
   prode   Prode  @relation(fields: [prodeId], references: [id])
 
-  name     String  @unique()
-  password String?
-  public   Boolean
+  name         String  @unique()
+  password     String?
+  passwordHash String?
+  public        Boolean
 
   emailDomain String?
 

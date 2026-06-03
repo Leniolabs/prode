@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import { prisma } from "../../../lib";
 import { getProdeRoom, getUserByEmail } from "../../../utils/queries";
+import { hashPassword } from "@/lib/auth/passwords";
 
 export default async function handler(
   req: NextApiRequest,
@@ -33,13 +34,16 @@ export default async function handler(
       emailDomain,
     } = req.body;
 
+    const passwordHash = password ? await hashPassword(password) : undefined;
+
     const newRoom = await prisma.prodeRoom.update({
       where: {
         id: room.id,
       },
       data: {
         name: name,
-        password: password ? password : null,
+        password: null,
+        ...(passwordHash !== undefined ? { passwordHash } : {}),
         public: isPublic ? true : false,
         pointsWinner: pointsWinner || 1,
         pointsGoals: pointsGoals || 3,
