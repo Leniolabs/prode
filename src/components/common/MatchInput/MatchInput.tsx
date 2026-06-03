@@ -126,7 +126,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
               styles.leftGoals,
               resultStatus && styles[resultStatus]
             )}
-            value={props.userGoalsLeft ?? ""}
+            value={props.userGoalsLeft != null && !Number.isNaN(props.userGoalsLeft) ? props.userGoalsLeft : ""}
             onChange={handleLeftGoalsChange}
             disabled={props.disabled}
             onBlur={handleLeftInputBlur}
@@ -140,7 +140,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
               styles.rightGoals,
               resultStatus && styles[resultStatus]
             )}
-            value={props.userGoalsRight ?? ""}
+            value={props.userGoalsRight != null && !Number.isNaN(props.userGoalsRight) ? props.userGoalsRight : ""}
             onChange={handleRightGoalsChange}
             disabled={props.disabled}
             onBlur={handleRightInputBlur}

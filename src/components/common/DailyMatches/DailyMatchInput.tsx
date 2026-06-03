@@ -182,7 +182,7 @@ export function DailyMatchInput(
                 styles.leftGoals,
                 resultStatus && styles[resultStatus]
               )}
-              defaultValue={props.userGoalsLeft ?? ""}
+              defaultValue={props.userGoalsLeft != null && !Number.isNaN(props.userGoalsLeft) ? props.userGoalsLeft : ""}
               onChange={handleLeftGoalsChange}
               disabled={props.disabled}
               onBlur={handleLeftInputBlur}
@@ -198,7 +198,7 @@ export function DailyMatchInput(
                 styles.rightGoals,
                 resultStatus && styles[resultStatus]
               )}
-              defaultValue={props.userGoalsRight ?? ""}
+              defaultValue={props.userGoalsRight != null && !Number.isNaN(props.userGoalsRight) ? props.userGoalsRight : ""}
               onChange={handleRightGoalsChange}
               disabled={props.disabled}
               onBlur={handleRightInputBlur}

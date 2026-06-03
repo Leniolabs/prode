@@ -40,17 +40,17 @@ export function InstagramReelIcon(props: InstagramReelIcon) {
         gradientTransform="translate(0 174)"
         gradientUnits="userSpaceOnUse"
       >
-        <stop offset="0" stop-color="#fd5" />
-        <stop offset=".039" stop-color="#ffcf49" />
-        <stop offset=".113" stop-color="#ffa92b" />
-        <stop offset=".165" stop-color="#ff8a12" />
-        <stop offset=".226" stop-color="#ff7325" />
-        <stop offset=".295" stop-color="#ff543f" />
-        <stop offset=".423" stop-color="#fc5245" />
-        <stop offset=".541" stop-color="#e64771" />
-        <stop offset=".653" stop-color="#d53e91" />
-        <stop offset=".756" stop-color="#cc39a4" />
-        <stop offset=".837" stop-color="#c837ab" />
+        <stop offset="0" stopColor="#fd5" />
+        <stop offset=".039" stopColor="#ffcf49" />
+        <stop offset=".113" stopColor="#ffa92b" />
+        <stop offset=".165" stopColor="#ff8a12" />
+        <stop offset=".226" stopColor="#ff7325" />
+        <stop offset=".295" stopColor="#ff543f" />
+        <stop offset=".423" stopColor="#fc5245" />
+        <stop offset=".541" stopColor="#e64771" />
+        <stop offset=".653" stopColor="#d53e91" />
+        <stop offset=".756" stopColor="#cc39a4" />
+        <stop offset=".837" stopColor="#c837ab" />
       </radialGradient>
       <g transform="translate(18.1, 18.1)">
         <circle
