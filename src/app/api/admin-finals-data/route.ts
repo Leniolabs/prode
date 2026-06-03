@@ -1,10 +1,9 @@
-import { unstable_getServerSession as getServerSession } from "next-auth"
-import { authOptions } from '@/lib/auth/authOptions'
+import { auth } from "@/lib/auth"
 import { prisma } from '@/lib'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions)
+  const session = await auth()
   if (!session?.user?.email) return NextResponse.json({}, { status: 401 })
 
   const user = await prisma.user.findUnique({ where: { email: session.user.email } })

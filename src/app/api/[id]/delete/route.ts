@@ -1,5 +1,4 @@
-import { unstable_getServerSession as getServerSession } from "next-auth"
-import { authOptions } from '@/lib/auth/authOptions'
+import { auth } from "@/lib/auth"
 import { prisma } from '@/lib'
 import { getUserByEmail, getUserProdeById } from '@/utils/queries'
 import { NextRequest, NextResponse } from 'next/server'
@@ -8,7 +7,7 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ id: 
   const { id: userProdeId } = await context.params
   if (!userProdeId) return NextResponse.json({}, { status: 404 })
 
-  const session = await getServerSession(authOptions)
+  const session = await auth()
   if (!session?.user?.email) return NextResponse.json([], { status: 401 })
 
   const user = await getUserByEmail(session.user.email)

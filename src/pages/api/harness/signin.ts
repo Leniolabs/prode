@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { encode } from "next-auth/jwt";
 import { serialize } from "cookie";
 import { prisma } from "../../../lib";
+import { randomBytes } from "crypto";
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,11 +21,6 @@ export default async function handler(
     return res.status(400).json({ error: "email is required" });
   }
 
-  const secret = process.env.NEXTAUTH_SECRET;
-  if (!secret) {
-    return res.status(500).json({ error: "NEXTAUTH_SECRET is not set" });
-  }
-
   const user = await prisma.user.upsert({
     where: { email },
     create: {
@@ -38,27 +33,29 @@ export default async function handler(
     },
   });
 
-  const token = await encode({
-    secret,
-    token: {
-      sub: user.id,
-      name: user.name,
-      email: user.email,
-      picture: user.image ?? undefined,
+  // Auth.js 5 uses database sessions. Create a session directly in the DB.
+  const sessionToken = randomBytes(32).toString("hex");
+  const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+  await prisma.session.upsert({
+    where: { sessionToken },
+    create: {
+      sessionToken,
       userId: user.id,
+      expires,
     },
+    update: { expires },
   });
 
-  const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
   res.setHeader("Set-Cookie", [
-    serialize("next-auth.session-token", token, {
+    serialize("authjs.session-token", sessionToken, {
       httpOnly: true,
       sameSite: "lax",
       path: "/",
       secure: false,
       expires,
     }),
-    serialize("next-auth.callback-url", "/", {
+    serialize("authjs.callback-url", "/", {
       httpOnly: true,
       sameSite: "lax",
       path: "/",
@@ -70,7 +67,7 @@ export default async function handler(
   return res.status(200).json({
     ok: true,
     email: user.email,
-    token,
-    cookieName: "next-auth.session-token",
+    sessionToken,
+    cookieName: "authjs.session-token",
   });
 }

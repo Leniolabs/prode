@@ -23,7 +23,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 import type { ProdeRoom, User } from '@/generated/prisma'
 import prisma from '@/lib/prisma'
-import { auth } from './session'
+import { auth } from '@/lib/auth'
 
 export type AuthContext = {
   session: Session
@@ -48,7 +48,7 @@ export function withAuth(
   options: WithAuthOptions = {}
 ) {
   return async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
-    const session = await auth(req as any, res as any)
+    const session = await auth()
     if (!session?.user?.email) {
       res.status(401).json({})
       return

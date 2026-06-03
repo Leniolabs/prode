@@ -1,5 +1,4 @@
-import { unstable_getServerSession as getServerSession } from "next-auth"
-import { authOptions } from '@/lib/auth/authOptions'
+import { auth } from "@/lib/auth"
 import { prisma } from '@/lib'
 import {
   finalsSubmissionsEnded,
@@ -14,7 +13,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ id: st
   const { id } = await context.params
   if (!id) return NextResponse.json({}, { status: 404 })
 
-  const session = await getServerSession(authOptions)
+  const session = await auth()
   if (!session?.user?.email) return NextResponse.json([], { status: 401 })
 
   const user = await getUserByEmail(session.user.email)

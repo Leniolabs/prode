@@ -1,5 +1,4 @@
-import { unstable_getServerSession as getServerSession } from "next-auth"
-import { authOptions } from '@/lib/auth/authOptions'
+import { auth } from "@/lib/auth"
 import {
   getUserByEmail,
   getUserProdeById,
@@ -13,7 +12,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(req: NextRequest) {
   const userProdeId = req.nextUrl.searchParams.get('id') ?? ''
 
-  const session = await getServerSession(authOptions)
+  const session = await auth()
   const user = session?.user?.email ? await getUserByEmail(session.user.email) : null
 
   const userProde = await getUserProdeById(userProdeId)

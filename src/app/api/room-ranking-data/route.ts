@@ -1,5 +1,4 @@
-import { unstable_getServerSession as getServerSession } from "next-auth"
-import { authOptions } from '@/lib/auth/authOptions'
+import { auth } from "@/lib/auth"
 import {
   countUsersInProdeRoom,
   getFullRanking,
@@ -27,7 +26,7 @@ export async function GET(req: NextRequest) {
   const page = parseInt(searchParams.get('page') ?? '0', 10)
   const pageLength = parseInt(searchParams.get('pageLength') ?? '30', 10)
 
-  const session = await getServerSession(authOptions)
+  const session = await auth()
   if (!session?.user?.email) return NextResponse.json({}, { status: 401 })
 
   const user = await getUserByEmail(session.user.email)
