@@ -588,6 +588,11 @@ interface Rank
   GROUP_F: number;
   GROUP_G: number;
   GROUP_H: number;
+  GROUP_I: number;
+  GROUP_J: number;
+  GROUP_K: number;
+  GROUP_L: number;
+  FINALS_16: number;
   FINALS_8: number;
   FINALS_4: number;
   FINALS_2: number;
@@ -656,7 +661,9 @@ export async function getFullRanking(
         "GROUP_I",
         "GROUP_J",
         "GROUP_K",
-        "GROUP_L",        "FINALS_8",
+        "GROUP_L",
+        "FINALS_16",
+        "FINALS_8",
         "FINALS_4",
         "FINALS_2",
         "FINAL",
@@ -723,7 +730,9 @@ export async function getUserFullRanking(
         "GROUP_I",
         "GROUP_J",
         "GROUP_K",
-        "GROUP_L",        "FINALS_8",
+        "GROUP_L",
+        "FINALS_16",
+        "FINALS_8",
         "FINALS_4",
         "FINALS_2",
         "FINAL",

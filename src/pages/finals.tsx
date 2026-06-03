@@ -49,6 +49,10 @@ import {
   DailyMatches,
   DailyMatchFinalInput,
 } from "../components/common/DailyMatches";
+import {
+  getFinalsStageGroup,
+  getFinalsStageOrder,
+} from "../utils/finals";
 
 type UIMatch = Pick<
   Match,
@@ -91,81 +95,7 @@ interface HomeProps {
 }
 
 export const getMatchOrder = (matchStage: Stage, mobile?: boolean) => {
-  if (mobile) {
-    switch (matchStage) {
-      case "FINALS_8_1":
-        return 1;
-      case "FINALS_8_2":
-        return 2;
-      case "FINALS_8_3":
-        return 3;
-      case "FINALS_8_4":
-        return 4;
-      case "FINALS_8_5":
-        return 5;
-      case "FINALS_8_6":
-        return 6;
-      case "FINALS_8_7":
-        return 7;
-      case "FINALS_8_8":
-        return 8;
-      case "FINALS_4_1":
-        return 9;
-      case "FINALS_4_2":
-        return 10;
-      case "FINALS_4_3":
-        return 11;
-      case "FINALS_4_4":
-        return 12;
-      case "FINALS_2_1":
-        return 13;
-      case "FINALS_2_2":
-        return 14;
-      case "FINALS":
-        return 15;
-      case "THIRD_PLACE":
-        return 16;
-      default:
-        return 0;
-    }
-  }
-
-  switch (matchStage) {
-    case "FINALS_8_1":
-      return 1;
-    case "FINALS_8_3":
-      return 5;
-    case "FINALS_8_5":
-      return 2;
-    case "FINALS_8_7":
-      return 6;
-    case "FINALS_8_2":
-      return 7;
-    case "FINALS_8_4":
-      return 3;
-    case "FINALS_8_6":
-      return 4;
-    case "FINALS_8_8":
-      return 8;
-    case "FINALS_4_1":
-      return 10;
-    case "FINALS_4_3":
-      return 11;
-    case "FINALS_4_2":
-      return 12;
-    case "FINALS_4_4":
-      return 13;
-    case "FINALS_2_1":
-      return 15;
-    case "FINALS_2_2":
-      return 16;
-    case "FINALS":
-      return 18;
-    case "THIRD_PLACE":
-      return 19;
-    default:
-      return 0;
-  }
+  return getFinalsStageOrder(matchStage, mobile);
 };
 
 export default function Home(props: HomeProps) {
@@ -314,8 +244,8 @@ export default function Home(props: HomeProps) {
               {i18n.FINALS_8}
             </BracketTitle>
             {computedMatches
-              .filter((x) => x.stage.includes("FINALS_8_"))
-              .sort((a, b) => (a.stage > b.stage ? 1 : -1))
+              .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_8")
+              .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
               .map((match) => (
                 <UserMatchFinalsInput
                   disabled={match.disabled || submissionsEnded}
@@ -347,8 +277,8 @@ export default function Home(props: HomeProps) {
               {i18n.FINALS_4}
             </BracketTitle>
             {computedMatches
-              .filter((x) => x.stage.includes("FINALS_4_"))
-              .sort((a, b) => (a.stage > b.stage ? 1 : -1))
+              .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_4")
+              .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
               .map((match) => (
                 <UserMatchFinalsInput
                   showCountryStatus
@@ -379,8 +309,8 @@ export default function Home(props: HomeProps) {
               {i18n.FINALS_2}
             </BracketTitle>
             {computedMatches
-              .filter((x) => x.stage.includes("FINALS_2_"))
-              .sort((a, b) => (a.stage > b.stage ? 1 : -1))
+              .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_2")
+              .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
               .map((match, index) => (
                 <UserMatchFinalsInput
                   showCountryStatus
@@ -420,8 +350,8 @@ export default function Home(props: HomeProps) {
             <BracketTitle order={17}>{i18n.THIRD_PLACE}</BracketTitle>
 
             {computedMatches
-              .filter((x) => x.stage === "FINALS" || x.stage === "THIRD_PLACE")
-              .sort((a, b) => (a.stage > b.stage ? 1 : -1))
+              .filter((x) => getFinalsStageGroup(x.stage) === "FINAL")
+              .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
               .map((match, index) => (
                 <UserMatchFinalsInput
                   showCountryStatus
@@ -452,8 +382,8 @@ export default function Home(props: HomeProps) {
             <CollapsableContainer>
               <Collapsable title={i18n.FINALS_8}>
                 {computedMatches
-                  .filter((x) => x.stage.includes("FINALS_8_"))
-                  .sort((a, b) => (a.date > b.date ? 1 : -1))
+                  .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_8")
+                  .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
                   .map((match, index) => (
                     <UserMatchFinalsInput
                       disabled={match.disabled || submissionsEnded}
@@ -480,8 +410,8 @@ export default function Home(props: HomeProps) {
               </Collapsable>
               <Collapsable title={i18n.FINALS_4}>
                 {computedMatches
-                  .filter((x) => x.stage.includes("FINALS_4_"))
-                  .sort((a, b) => (a.date > b.date ? 1 : -1))
+                  .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_4")
+                  .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
                   .map((match, index) => (
                     <UserMatchFinalsInput
                       showCountryStatus
@@ -509,8 +439,8 @@ export default function Home(props: HomeProps) {
               </Collapsable>
               <Collapsable title={i18n.FINALS_2}>
                 {computedMatches
-                  .filter((x) => x.stage.includes("FINALS_2_"))
-                  .sort((a, b) => (a.date > b.date ? 1 : -1))
+                  .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_2")
+                  .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
                   .map((match, index) => (
                     <UserMatchFinalsInput
                       showCountryStatus
@@ -538,10 +468,8 @@ export default function Home(props: HomeProps) {
               </Collapsable>
               <Collapsable title={i18n.FINAL}>
                 {computedMatches
-                  .filter(
-                    (x) => x.stage === "FINALS" || x.stage === "THIRD_PLACE"
-                  )
-                  .sort((a, b) => (a.date > b.date ? 1 : -1))
+                  .filter((x) => getFinalsStageGroup(x.stage) === "FINAL")
+                  .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
                   .map((match, index) => (
                     <UserMatchFinalsInput
                       showCountryStatus

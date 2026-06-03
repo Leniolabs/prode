@@ -1,4 +1,5 @@
 import React from "react";
+import { withPageSession } from "../components/auth/withPageSession";
 import { BrandLogo } from "../components/common/BrandLogo";
 import { Layout, Footer, Container } from "@/layout";
 import { Button } from "../components/common/Button";
@@ -23,7 +24,7 @@ interface HomeProps {
   callbackUrl?: string;
 }
 
-export default function Home(props: HomeProps) {
+function Home(props: HomeProps) {
   const session = useSession();
 
   return (
@@ -103,3 +104,5 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   if (await finalsStarted()) return redirectToFinals(context.locale);
   return redirectToGroups(context.locale);
 }
+
+export default withPageSession(Home);

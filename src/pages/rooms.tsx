@@ -1,6 +1,7 @@
 import React from "react";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
+import { withPageSession } from "../components/auth/withPageSession";
 import { BrandLogo } from "../components/common/BrandLogo";
 import { DesktopHeader, MobileHeader } from "../components/common/Header";
 import {
@@ -44,7 +45,7 @@ interface HomeProps {
   registeredProdes: number;
 }
 
-export default function Home(props: HomeProps) {
+function Home(props: HomeProps) {
   const session = useRequireSession();
   const router = useRouter();
   const i18n = useLocalizedText();
@@ -244,3 +245,5 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     },
   };
 }
+
+export default withPageSession(Home);

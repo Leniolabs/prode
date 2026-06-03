@@ -8,13 +8,16 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
+    "api-sports:fifa2026": "tsx experiments/api-sports/fifa-2026.ts",
     "build-prod": "./setup.sh && next build",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:db:up": "docker compose up -d prode-test-db && TEST_DATABASE_URL=\"postgresql://leniolabs:leniolabs@localhost:5433/prode_test\" DATABASE_URL=\"postgresql://leniolabs:leniolabs@localhost:5433/prode_test\" npx prisma db push --skip-generate",
     "test:db:reset": "docker compose rm -sfv prode-test-db && npm run test:db:up",
-    "screenshot": "tsx harness/screenshot.ts"
+    "screenshot": "tsx harness/screenshot.ts",
+    "harness:baseline": "tsx harness/screenshots.ts --mode baseline",
+    "harness:check": "tsx harness/screenshots.ts --mode check"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -40,6 +43,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@types/node": "^22.19.19",
     "@types/react": "^18",
     "@types/react-dom": "^18",

@@ -76,6 +76,7 @@ export interface LocaleData {
   groupsIncorrectPrediction: string;
 
   finalsTitle: string;
+  FINALS_16: string;
   FINALS_8: string;
   FINALS_4: string;
   FINALS_2: string;

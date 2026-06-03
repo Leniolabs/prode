@@ -12,10 +12,10 @@ const prisma = new PrismaClient();
  * Kick-off times mirror the source fixture and are treated as UTC — they are
  * approximate and may need adjustment to each venue's local time.
  *
- * NOTE: only the group stage is seeded. The 2026 knockout phase is a Round of
- * 32 → R16 → QF → SF → Final bracket whose participants are not yet known and
- * which the current `Stage` enum / finals logic (built for the 32-team 2022
- * bracket) does not model. Knockout matches are intentionally omitted.
+ * NOTE: the knockout bracket is seeded as an empty scaffold because the
+ * qualified teams are unknown at seed time. Admins can fill countries and
+ * scores later; the seed guarantees that the full 2026 knockout shape exists,
+ * including the Round of 32.
  */
 
 // name (display) -> flag code. Codes reuse existing /public/flags/*.png where a
@@ -174,11 +174,50 @@ const MATCHES: Fixture[] = [
   ["GROUP_L", "Croacia", "Ghana", "2026-06-27T17:00:00.000Z"],
 ];
 
+const BRACKET_MATCHES: Array<{
+  stage: Stage;
+  date: string;
+}> = [
+  { stage: "FINALS_16_1", date: "2026-06-28T16:00:00.000Z" },
+  { stage: "FINALS_16_2", date: "2026-06-29T16:00:00.000Z" },
+  { stage: "FINALS_16_3", date: "2026-06-29T19:00:00.000Z" },
+  { stage: "FINALS_16_4", date: "2026-06-29T22:00:00.000Z" },
+  { stage: "FINALS_16_5", date: "2026-06-30T16:00:00.000Z" },
+  { stage: "FINALS_16_6", date: "2026-06-30T19:00:00.000Z" },
+  { stage: "FINALS_16_7", date: "2026-06-30T22:00:00.000Z" },
+  { stage: "FINALS_16_8", date: "2026-07-01T16:00:00.000Z" },
+  { stage: "FINALS_16_9", date: "2026-07-01T19:00:00.000Z" },
+  { stage: "FINALS_16_10", date: "2026-07-01T22:00:00.000Z" },
+  { stage: "FINALS_16_11", date: "2026-07-02T16:00:00.000Z" },
+  { stage: "FINALS_16_12", date: "2026-07-02T19:00:00.000Z" },
+  { stage: "FINALS_16_13", date: "2026-07-02T22:00:00.000Z" },
+  { stage: "FINALS_16_14", date: "2026-07-03T16:00:00.000Z" },
+  { stage: "FINALS_16_15", date: "2026-07-03T19:00:00.000Z" },
+  { stage: "FINALS_16_16", date: "2026-07-03T22:00:00.000Z" },
+  { stage: "FINALS_8_1", date: "2026-07-04T16:00:00.000Z" },
+  { stage: "FINALS_8_2", date: "2026-07-04T19:00:00.000Z" },
+  { stage: "FINALS_8_3", date: "2026-07-05T16:00:00.000Z" },
+  { stage: "FINALS_8_4", date: "2026-07-05T19:00:00.000Z" },
+  { stage: "FINALS_8_5", date: "2026-07-06T16:00:00.000Z" },
+  { stage: "FINALS_8_6", date: "2026-07-06T19:00:00.000Z" },
+  { stage: "FINALS_8_7", date: "2026-07-07T16:00:00.000Z" },
+  { stage: "FINALS_8_8", date: "2026-07-07T19:00:00.000Z" },
+  { stage: "FINALS_4_1", date: "2026-07-09T19:00:00.000Z" },
+  { stage: "FINALS_4_2", date: "2026-07-10T19:00:00.000Z" },
+  { stage: "FINALS_4_3", date: "2026-07-11T16:00:00.000Z" },
+  { stage: "FINALS_4_4", date: "2026-07-11T19:00:00.000Z" },
+  { stage: "FINALS_2_1", date: "2026-07-14T19:00:00.000Z" },
+  { stage: "FINALS_2_2", date: "2026-07-15T19:00:00.000Z" },
+  { stage: "THIRD_PLACE", date: "2026-07-18T16:00:00.000Z" },
+  { stage: "FINALS", date: "2026-07-19T19:00:00.000Z" },
+];
+
 async function main() {
   await prisma.prodeUserFinalsMatch.deleteMany();
   await prisma.prodeUserGroupMatch.deleteMany();
   await prisma.userProde.deleteMany();
   await prisma.match.deleteMany();
+  await prisma.prodeRoom.deleteMany();
   await prisma.country.deleteMany();
   await prisma.prode.deleteMany();
 
@@ -187,7 +226,7 @@ async function main() {
       created: new Date(),
       stage: "GROUPS",
       groupSubmissionsEnd: new Date("2026-06-11T13:00:00.000Z"),
-      finalsSubmissionsEnd: new Date("2026-06-28T00:00:00.000Z"),
+      finalsSubmissionsEnd: new Date("2026-06-28T16:00:00.000Z"),
       prodeEnd: new Date("2026-07-19T19:00:00.000Z"),
     },
   });
@@ -213,10 +252,22 @@ async function main() {
     };
   });
 
-  await prisma.match.createMany({ data: matchData });
+  const bracketData = BRACKET_MATCHES.map(({ stage, date }) => ({
+    prodeId: prode.id,
+    stage,
+    goalsLeft: null,
+    goalsRight: null,
+    penaltisLeft: null,
+    penaltisRight: null,
+    countryLeftId: null,
+    countryRightId: null,
+    date: new Date(date),
+  }));
+
+  await prisma.match.createMany({ data: [...matchData, ...bracketData] });
 
   console.log(
-    `Seeded ${COUNTRIES.length} countries and ${matchData.length} group-stage matches for the 2026 World Cup.`
+    `Seeded ${COUNTRIES.length} countries, ${matchData.length} group-stage matches, and ${bracketData.length} bracket matches for the 2026 World Cup.`
   );
 }
 main()

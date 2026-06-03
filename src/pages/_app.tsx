@@ -5,12 +5,21 @@ import { QueryClient, QueryClientProvider } from "react-query";
 
 const queryClient = new QueryClient();
 
-export default function App({ Component, pageProps }: AppProps) {
+type AppPageProps = AppProps["pageProps"] & {
+  session?: AppProps["pageProps"] extends { session?: infer Session }
+    ? Session
+    : unknown;
+};
+
+export default function App({
+  Component,
+  pageProps,
+}: AppProps<AppPageProps>) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <SessionProvider>
+    <SessionProvider session={pageProps.session}>
+      <QueryClientProvider client={queryClient}>
         <Component {...pageProps} />
-      </SessionProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </SessionProvider>
   );
 }

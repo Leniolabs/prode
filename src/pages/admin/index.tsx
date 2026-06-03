@@ -2,6 +2,7 @@ import React from "react";
 import { Match, ProdeRoom, User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
+import { withPageSession } from "../../components/auth/withPageSession";
 import { BrandLogo } from "../../components/common/BrandLogo";
 import { Button } from "../../components/common/Button";
 import {
@@ -49,7 +50,7 @@ interface HomeProps {
   prodeCount: number;
 }
 
-export default function Home(props: HomeProps) {
+function Home(props: HomeProps) {
   const session = useRequireSession();
 
   const handleResetMatches = React.useCallback(() => {
@@ -254,3 +255,5 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     },
   };
 }
+
+export default withPageSession(Home);

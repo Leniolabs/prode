@@ -38,6 +38,11 @@ import { getUserByEmail } from "../../utils/queries";
 import { className } from "../../utils/classname";
 import { LocaleSelect } from "../../components/common/LocaleSelect";
 import { useLocalizedText } from "../../locale";
+import {
+  getFinalsStageGroup,
+  getFinalsStageOrder,
+  resolveFinalsMatches,
+} from "../../utils/finals";
 
 type UIMatch = Pick<
   Match,
@@ -59,42 +64,7 @@ interface HomeProps {
 }
 
 const getMatchOrder = (matchStage: Stage) => {
-  switch (matchStage) {
-    case "FINALS_8_1":
-      return 1;
-    case "FINALS_8_2":
-      return 7;
-    case "FINALS_8_3":
-      return 5;
-    case "FINALS_8_4":
-      return 3;
-    case "FINALS_8_5":
-      return 2;
-    case "FINALS_8_6":
-      return 4;
-    case "FINALS_8_7":
-      return 6;
-    case "FINALS_8_8":
-      return 8;
-    case "FINALS_4_1":
-      return 10;
-    case "FINALS_4_3":
-      return 11;
-    case "FINALS_4_2":
-      return 12;
-    case "FINALS_4_4":
-      return 13;
-    case "FINALS_2_1":
-      return 15;
-    case "FINALS_2_2":
-      return 16;
-    case "FINALS":
-      return 18;
-    case "THIRD_PLACE":
-      return 19;
-    default:
-      return 0;
-  }
+  return getFinalsStageOrder(matchStage);
 };
 
 export default function Home(props: HomeProps) {
@@ -109,126 +79,11 @@ export default function Home(props: HomeProps) {
   const [matches, setMatches] = React.useState<UIMatch[]>(props.matches);
 
   const computedMatches = React.useMemo(() => {
-    return matches.reduce((result, match) => {
-      if (match.stage === "FINALS_4_1") {
-        return [
-          ...result,
-          {
-            ...match,
-            countryLeftId: getAdminFinalsMatchWinner(
-              result.find((row) => row.stage === "FINALS_8_1") as UIMatch
-            ),
-            countryRightId: getAdminFinalsMatchWinner(
-              result.find((row) => row.stage === "FINALS_8_3") as UIMatch
-            ),
-          },
-        ];
-      }
-      if (match.stage === "FINALS_4_2") {
-        return [
-          ...result,
-          {
-            ...match,
-            countryLeftId: getAdminFinalsMatchWinner(
-              result.find((row) => row.stage === "FINALS_8_2") as UIMatch
-            ),
-            countryRightId: getAdminFinalsMatchWinner(
-              result.find((row) => row.stage === "FINALS_8_4") as UIMatch
-            ),
-          },
-        ];
-      }
-      if (match.stage === "FINALS_4_3") {
-        return [
-          ...result,
-          {
-            ...match,
-            countryLeftId: getAdminFinalsMatchWinner(
-              result.find((row) => row.stage === "FINALS_8_5") as UIMatch
-            ),
-            countryRightId: getAdminFinalsMatchWinner(
-              result.find((row) => row.stage === "FINALS_8_7") as UIMatch
-            ),
-          },
-        ];
-      }
-      if (match.stage === "FINALS_4_4") {
-        return [
-          ...result,
-          {
-            ...match,
-            countryLeftId: getAdminFinalsMatchWinner(
-              result.find((row) => row.stage === "FINALS_8_6") as UIMatch
-            ),
-            countryRightId: getAdminFinalsMatchWinner(
-              result.find((row) => row.stage === "FINALS_8_8") as UIMatch
-            ),
-          },
-        ];
-      }
-
-      if (match.stage === "FINALS_2_1") {
-        return [
-          ...result,
-          {
-            ...match,
-            countryLeftId: getAdminFinalsMatchWinner(
-              result.find((row) => row.stage === "FINALS_4_1") as UIMatch
-            ),
-            countryRightId: getAdminFinalsMatchWinner(
-              result.find((row) => row.stage === "FINALS_4_3") as UIMatch
-            ),
-          },
-        ];
-      }
-
-      if (match.stage === "FINALS_2_2") {
-        return [
-          ...result,
-          {
-            ...match,
-            countryLeftId: getAdminFinalsMatchWinner(
-              result.find((row) => row.stage === "FINALS_4_2") as UIMatch
-            ),
-            countryRightId: getAdminFinalsMatchWinner(
-              result.find((row) => row.stage === "FINALS_4_4") as UIMatch
-            ),
-          },
-        ];
-      }
-
-      if (match.stage === "FINALS") {
-        return [
-          ...result,
-          {
-            ...match,
-            countryLeftId: getAdminFinalsMatchWinner(
-              result.find((row) => row.stage === "FINALS_2_1") as UIMatch
-            ),
-            countryRightId: getAdminFinalsMatchWinner(
-              result.find((row) => row.stage === "FINALS_2_2") as UIMatch
-            ),
-          },
-        ];
-      }
-
-      if (match.stage === "THIRD_PLACE") {
-        return [
-          ...result,
-          {
-            ...match,
-            countryLeftId: getAdminFinalsMatchLooser(
-              result.find((row) => row.stage === "FINALS_2_1") as UIMatch
-            ),
-            countryRightId: getAdminFinalsMatchLooser(
-              result.find((row) => row.stage === "FINALS_2_2") as UIMatch
-            ),
-          },
-        ];
-      }
-
-      return [...result, match];
-    }, [] as UIMatch[]);
+    return resolveFinalsMatches(
+      matches,
+      getAdminFinalsMatchWinner,
+      getAdminFinalsMatchLooser
+    );
   }, [matches]);
 
   const handleMatchChange = React.useCallback(
@@ -346,8 +201,8 @@ export default function Home(props: HomeProps) {
               {i18n.FINALS_8}
             </BracketTitle>
             {computedMatches
-              .filter((x) => x.stage.includes("FINALS_8_"))
-              .sort((a, b) => (a.stage > b.stage ? 1 : -1))
+              .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_8")
+              .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
               .map((match) => (
                 <MatchFinalsInput
                   key={match.id}
@@ -371,8 +226,8 @@ export default function Home(props: HomeProps) {
               {i18n.FINALS_4}
             </BracketTitle>
             {computedMatches
-              .filter((x) => x.stage.includes("FINALS_4_"))
-              .sort((a, b) => (a.stage > b.stage ? 1 : -1))
+              .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_4")
+              .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
               .map((match) => (
                 <MatchFinalsInput
                   key={match.id}
@@ -394,8 +249,8 @@ export default function Home(props: HomeProps) {
               {i18n.FINALS_2}
             </BracketTitle>
             {computedMatches
-              .filter((x) => x.stage.includes("FINALS_2_"))
-              .sort((a, b) => (a.stage > b.stage ? 1 : -1))
+              .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_2")
+              .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
               .map((match, index) => (
                 <MatchFinalsInput
                   key={match.id}
@@ -425,8 +280,8 @@ export default function Home(props: HomeProps) {
             </BracketTitle>
             <BracketTitle order={17}>{i18n.THIRD_PLACE}</BracketTitle>
             {computedMatches
-              .filter((x) => x.stage === "FINALS" || x.stage === "THIRD_PLACE")
-              .sort((a, b) => (a.stage > b.stage ? 1 : -1))
+              .filter((x) => getFinalsStageGroup(x.stage) === "FINAL")
+              .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
               .map((match, index) => (
                 <MatchFinalsInput
                   className={className(index === 0 && bracketOffsetQuarter)}
