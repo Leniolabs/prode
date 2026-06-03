@@ -3,12 +3,12 @@
     "headerTitle": "Bienvenidos al Lenio Prode",
     "headerWelcomeLine": "Pronostica los resultados de los partidos de la WorldCup, sumá puntos y ganá!",
     "headerWelcomeLine1": "Podés completar los resultados hasta",
-    "headerWelcomeLine2": "10 minutos antes de que empiece cada partido",
+    "headerWelcomeLine2": "antes del cierre de la fase",
     "headerRoom": "Sala:",
 
     "metaCanonical": "https://prode.leniolabs.com",
     "metaTitle": "Lenio Prode",
-    "metaDescription": "Pronostica los resultados de los partidos de la WorldCup, sumá puntos y ganá! Podes completar los resultados hasta 10 minutos antes de que empiece cada partido.",
+    "metaDescription": "Pronostica los resultados de los partidos de la WorldCup, sumá puntos y ganá! Podés completar los resultados hasta el cierre de la fase.",
 
     "headerMobileRoomSettings": "Editar Prode",
 
@@ -121,12 +121,12 @@
     "headerTitle": "Welcome to the Lenio Prode",
     "headerWelcomeLine": "Predict the results of the WorldCup 2022 matches, accumulate points and win!",
     "headerWelcomeLine1": "You can complete the results",
-    "headerWelcomeLine2": "up to 10 minutes before any match starts",
+    "headerWelcomeLine2": "before the phase closes",
     "headerRoom": "Room:",
 
     "metaCanonical": "https://prode.leniolabs.com/en",
     "metaTitle": "Lenio Prode",
-    "metaDescription": "Predict the results of the WorldCup 2022 matches, accumulate points and win! You can complete the results up to 10 minutes before any match starts",
+    "metaDescription": "Predict the results of the WorldCup 2022 matches, accumulate points and win! You can complete the results before the phase closes.",
 
     "headerMobileRoomSettings": "Room Settings",
 

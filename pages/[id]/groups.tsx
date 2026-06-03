@@ -19,6 +19,7 @@ import {
   CardContent,
 } from "../../components/layout";
 import { useRequireSession } from "../../hooks";
+import { useInterval } from "../../hooks/useInterval";
 import commonStyles from "../../styles/CommonStyles.module.scss";
 import { filterUniquePredicate } from "../../utils/array";
 import axios from "axios";
@@ -94,6 +95,7 @@ interface HomeProps {
     | "public"
   >;
   finalsStarted: boolean;
+  submissionEndsAt: string;
   userRanking?: Pick<
     User,
     "id" | "name" | "image" | "email" | "prodePublic" | "background" | "dark"
@@ -112,6 +114,11 @@ export default function Home(props: HomeProps) {
   const router = useRouter();
 
   const i18n = useLocalizedText();
+  const [now, setNow] = React.useState(() => Date.now());
+  useInterval(() => setNow(Date.now()), 60000);
+  const submissionsEnded = React.useMemo(() => {
+    return new Date(props.submissionEndsAt).getTime() <= now;
+  }, [now, props.submissionEndsAt]);
 
   const { todayMatches: _todayMatches, nextMatches: _nextMatches } = props;
 
@@ -248,7 +255,7 @@ export default function Home(props: HomeProps) {
             gridArea="matches-header"
           >
             <Button
-              disabled={!isModified}
+              disabled={!isModified || submissionsEnded}
               className={commonStyles.marginLeftAuto}
               onClick={handleSave}
             >
@@ -274,7 +281,7 @@ export default function Home(props: HomeProps) {
                     .map((match) => (
                       <MatchInput
                         key={match.id}
-                        disabled={match.disabled}
+                        disabled={match.disabled || submissionsEnded}
                         date={new Date(match.date)}
                         countryLeftId={match.countryLeftId}
                         goalsLeft={match.goalsLeft}
@@ -310,7 +317,8 @@ export default function Home(props: HomeProps) {
                   {(todayMatches || nextMatches)?.map((match) => (
                     <DailyMatchInput
                       key={match.id}
-                      disabled={match.disabled}
+                      disabled={match.disabled || submissionsEnded}
+                      submissionEndsAt={props.submissionEndsAt}
                       date={new Date(match.date)}
                       today={!!todayMatches}
                       countryLeftId={match.countryLeftId}
@@ -439,6 +447,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           : {}),
       },
       finalsStarted: room.prode.stage === "FINALS",
+      submissionEndsAt: room.prode.groupSubmissionsEnd.toISOString(),
       userRanking: {
         id: user.id,
         name: user.name,

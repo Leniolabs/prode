@@ -1,6 +1,5 @@
 import { Match, ProdeRoom, User, UserProde } from "@prisma/client";
 import { prisma } from "../lib";
-import { getNextTenMinutesDate } from "./date";
 import { matchCountriesMatchStatus, matchFinalResultStatus } from "./points";
 import {
   getFullRankingQuery,
@@ -30,6 +29,33 @@ export async function finalsStarted() {
     },
   });
   return prode?.stage === "FINALS";
+}
+
+function isDeadlineReached(deadline: Date) {
+  return deadline.getTime() <= Date.now();
+}
+
+type ProdeRoomWithDeadlines = ProdeRoom & {
+  prode: {
+    groupSubmissionsEnd: Date;
+    finalsSubmissionsEnd: Date;
+  };
+};
+
+export function groupSubmissionsEnded(room: {
+  prode: {
+    groupSubmissionsEnd: Date;
+  };
+}) {
+  return isDeadlineReached(room.prode.groupSubmissionsEnd);
+}
+
+export function finalsSubmissionsEnded(room: {
+  prode: {
+    finalsSubmissionsEnd: Date;
+  };
+}) {
+  return isDeadlineReached(room.prode.finalsSubmissionsEnd);
 }
 
 export async function getUserByEmail(email: string) {
@@ -216,7 +242,10 @@ export async function registerUserToRoom(room: ProdeRoom, user: User) {
   return userProde;
 }
 
-export async function getUserFinalMatches(room: ProdeRoom, user: User) {
+export async function getUserFinalMatches(
+  room: ProdeRoomWithDeadlines,
+  user: User
+) {
   return (
     await prisma.match.findMany({
       where: {
@@ -262,7 +291,11 @@ export async function getUserFinalMatches(room: ProdeRoom, user: User) {
           ? matchFinalResultStatus(match, match.userFinalResults[0])
           : null,
 
-      disabled: match.date < getNextTenMinutesDate(),
+      disabled: finalsSubmissionsEnded({
+        prode: {
+          finalsSubmissionsEnd: room.prode.finalsSubmissionsEnd,
+        },
+      }),
 
       goalsLeft: match.goalsLeft,
       penaltisLeft: match.penaltisLeft,
@@ -323,7 +356,11 @@ export async function getUserTemplateFinalMatches(user: User) {
       stage: match.stage,
       filled: match.filled,
 
-      disabled: match.date < getNextTenMinutesDate(),
+      disabled: finalsSubmissionsEnded({
+        prode: {
+          finalsSubmissionsEnd: prode.finalsSubmissionsEnd,
+        },
+      }),
 
       countryStatus: match.userFinalResults[0]
         ? matchCountriesMatchStatus(match, match.userFinalResults[0])
@@ -352,7 +389,10 @@ export async function getUserTemplateFinalMatches(user: User) {
     }));
 }
 
-export async function getUserGroupMatches(room: ProdeRoom, user: User) {
+export async function getUserGroupMatches(
+  room: ProdeRoomWithDeadlines,
+  user: User
+) {
   return (
     await prisma.match.findMany({
       where: {
@@ -389,7 +429,11 @@ export async function getUserGroupMatches(room: ProdeRoom, user: User) {
       stage: match.stage,
       filled: match.filled,
 
-      disabled: match.date < getNextTenMinutesDate(),
+      disabled: groupSubmissionsEnded({
+        prode: {
+          groupSubmissionsEnd: room.prode.groupSubmissionsEnd,
+        },
+      }),
 
       goalsLeft: match.goalsLeft,
       userGoalsLeft: match.userResults[0]?.goalsLeft ?? null,
@@ -442,7 +486,11 @@ export async function getUserTemplateGroupMatches(user: User) {
       stage: match.stage,
       filled: match.filled,
 
-      disabled: match.date < getNextTenMinutesDate(),
+      disabled: groupSubmissionsEnded({
+        prode: {
+          groupSubmissionsEnd: prode.groupSubmissionsEnd,
+        },
+      }),
 
       goalsLeft: match.goalsLeft,
       userGoalsLeft: match.userResults[0]?.goalsLeft ?? null,
@@ -978,13 +1026,15 @@ export async function getCountries() {
   return prisma.country.findMany({});
 }
 
-export async function getAllowedMatchesToModify(ids: string[]) {
+export async function getAllowedMatchesToModify(
+  ids: string[],
+  submissionsEnd: Date
+) {
+  if (isDeadlineReached(submissionsEnd)) return [];
+
   return (
     await prisma.match.findMany({
       where: {
-        date: {
-          gte: getNextTenMinutesDate(),
-        },
         id: {
           in: ids,
         },

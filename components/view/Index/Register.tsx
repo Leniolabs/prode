@@ -29,6 +29,7 @@ export function Register(props: RegisterProps) {
         <RegisterButton icon="Google" onClick={() => signIn("google")} />
         {/* <RegisterButton icon="Facebook" onClick={() => signIn("facebook")} /> */}
         <RegisterButton icon="Github" onClick={() => signIn("github")} />
+        <RegisterButton icon="Microsoft" onClick={() => signIn("azure-ad")} />
         {/* <RegisterButton icon="Twitter" onClick={() => signIn("twitter")} /> */}
       </div>
     </div>

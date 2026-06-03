@@ -174,6 +174,7 @@ interface DailyMatchFinalInputProps {
   className?: string;
 
   disabled?: boolean;
+  submissionEndsAt?: Date | string | null;
 
   userCountryLeftId?: string;
   userGoalsLeft?: number | null;
@@ -260,6 +261,10 @@ export function DailyMatchFinalInput(
   const userCountryRight = React.useMemo(() => {
     return countries?.find((row) => row.id === props.userCountryRightId);
   }, [props.userCountryRightId, countries]);
+
+  const submissionEndsAt = React.useMemo(() => {
+    return props.submissionEndsAt ? new Date(props.submissionEndsAt) : null;
+  }, [props.submissionEndsAt]);
 
   const resultStatus = React.useMemo(() => {
     return getResultStatus({
@@ -528,10 +533,14 @@ export function DailyMatchFinalInput(
   }, [props.today, props.date, i18n.locale]);
 
   const updateMatchStatus = React.useCallback(() => {
-    const timeLeft = (props.date.getTime() - new Date().getTime()) / 1000;
+    const deadline = submissionEndsAt
+      ? submissionEndsAt.getTime()
+      : props.date.getTime() - 10 * 60 * 1000;
+    const timeLeft = (deadline - new Date().getTime()) / 1000;
+    const offset = submissionEndsAt ? 0 : 10 * 60;
 
-    const hours = Math.floor((timeLeft - 10 * 60) / (60 * 60));
-    const minutes = Math.floor((timeLeft - 10 * 60) / 60);
+    const hours = Math.floor((timeLeft - offset) / (60 * 60));
+    const minutes = Math.floor((timeLeft - offset) / 60);
 
     counterRef.current?.setAttribute("data-show", "true");
 
@@ -564,7 +573,7 @@ export function DailyMatchFinalInput(
       counterRef.current?.setAttribute("data-status", "");
       counterRef.current?.setAttribute("data-timer", "");
     }
-  }, [props.date, i18n]);
+  }, [props.date, i18n, submissionEndsAt]);
 
   useInterval(updateMatchStatus, 60000);
 

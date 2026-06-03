@@ -172,6 +172,7 @@ interface UserMatchFinalsInputProps {
   className?: string;
 
   disabled?: boolean;
+  submissionEndsAt?: Date | string | null;
 
   userCountryLeftId?: string;
   userGoalsLeft?: number | null;

@@ -14,6 +14,7 @@ import {
   CardContent,
 } from "../components/layout";
 import { useRequireSession } from "../hooks";
+import { useInterval } from "../hooks/useInterval";
 import axios from "axios";
 import { UserMatchFinalsInput } from "../components/common/UserMatchFinalsInput";
 import {
@@ -43,6 +44,7 @@ import Link from "next/link";
 import { LocaleSelect } from "../components/common/LocaleSelect";
 import { useLocalizedText } from "../locale";
 import { getNextMatches, getTodayMatches } from "../utils/date";
+import { prisma } from "../lib";
 import {
   DailyMatches,
   DailyMatchFinalInput,
@@ -76,7 +78,7 @@ type UIMatch = Pick<
 };
 
 interface HomeProps {
-  submissionsEnded: boolean;
+  submissionEndsAt: string;
   finalsStarted: boolean;
   matches: UIMatch[];
   todayMatches?: UIMatch[];
@@ -169,6 +171,11 @@ export const getMatchOrder = (matchStage: Stage, mobile?: boolean) => {
 export default function Home(props: HomeProps) {
   const session = useRequireSession();
   const i18n = useLocalizedText();
+  const [now, setNow] = React.useState(() => Date.now());
+  useInterval(() => setNow(Date.now()), 60000);
+  const submissionsEnded = React.useMemo(() => {
+    return new Date(props.submissionEndsAt).getTime() <= now;
+  }, [now, props.submissionEndsAt]);
 
   const { todayMatches: _todayMatches, nextMatches: _nextMatches } = props;
 
@@ -298,11 +305,9 @@ export default function Home(props: HomeProps) {
       <Container full>
         <FinalsContainer full>
           <ContainerHeader sticky title="FINALES">
-            {!props.submissionsEnded && (
-              <Button disabled={!isModified} onClick={handleSave}>
-                {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}
-              </Button>
-            )}
+            <Button disabled={!isModified || submissionsEnded} onClick={handleSave}>
+              {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}
+            </Button>
           </ContainerHeader>
           <BracketsContainer gridArea="matches">
             <BracketTitle full order={0}>
@@ -313,7 +318,8 @@ export default function Home(props: HomeProps) {
               .sort((a, b) => (a.stage > b.stage ? 1 : -1))
               .map((match) => (
                 <UserMatchFinalsInput
-                  disabled={match.disabled || props.submissionsEnded}
+                  disabled={match.disabled || submissionsEnded}
+                  submissionEndsAt={props.submissionEndsAt}
                   key={match.id}
                   date={new Date(match.date)}
                   userCountryLeftId={match.countryLeftId}
@@ -346,7 +352,8 @@ export default function Home(props: HomeProps) {
               .map((match) => (
                 <UserMatchFinalsInput
                   showCountryStatus
-                  disabled={match.disabled || props.submissionsEnded}
+                  disabled={match.disabled || submissionsEnded}
+                  submissionEndsAt={props.submissionEndsAt}
                   key={match.id}
                   date={new Date(match.date)}
                   userCountryLeftId={match.userCountryLeftId}
@@ -378,7 +385,8 @@ export default function Home(props: HomeProps) {
                 <UserMatchFinalsInput
                   showCountryStatus
                   key={match.id}
-                  disabled={match.disabled || props.submissionsEnded}
+                  disabled={match.disabled || submissionsEnded}
+                  submissionEndsAt={props.submissionEndsAt}
                   className={className(index === 0 && bracketOffsetQuarter)}
                   date={new Date(match.date)}
                   userCountryLeftId={match.userCountryLeftId}
@@ -418,7 +426,8 @@ export default function Home(props: HomeProps) {
                 <UserMatchFinalsInput
                   showCountryStatus
                   className={className(index === 0 && bracketOffsetQuarter)}
-                  disabled={match.disabled || props.submissionsEnded}
+                  disabled={match.disabled || submissionsEnded}
+                  submissionEndsAt={props.submissionEndsAt}
                   key={match.id}
                   date={new Date(match.date)}
                   userCountryLeftId={match.userCountryLeftId}
@@ -447,7 +456,8 @@ export default function Home(props: HomeProps) {
                   .sort((a, b) => (a.date > b.date ? 1 : -1))
                   .map((match, index) => (
                     <UserMatchFinalsInput
-                      disabled={match.disabled || props.submissionsEnded}
+                      disabled={match.disabled || submissionsEnded}
+                      submissionEndsAt={props.submissionEndsAt}
                       key={match.id}
                       date={new Date(match.date)}
                       userCountryLeftId={match.countryLeftId}
@@ -475,7 +485,8 @@ export default function Home(props: HomeProps) {
                   .map((match, index) => (
                     <UserMatchFinalsInput
                       showCountryStatus
-                      disabled={match.disabled || props.submissionsEnded}
+                      disabled={match.disabled || submissionsEnded}
+                      submissionEndsAt={props.submissionEndsAt}
                       key={match.id}
                       date={new Date(match.date)}
                       userCountryLeftId={match.userCountryLeftId}
@@ -504,7 +515,8 @@ export default function Home(props: HomeProps) {
                     <UserMatchFinalsInput
                       showCountryStatus
                       key={match.id}
-                      disabled={match.disabled || props.submissionsEnded}
+                      disabled={match.disabled || submissionsEnded}
+                      submissionEndsAt={props.submissionEndsAt}
                       date={new Date(match.date)}
                       userCountryLeftId={match.userCountryLeftId}
                       userGoalsLeft={match.userGoalsLeft}
@@ -533,7 +545,8 @@ export default function Home(props: HomeProps) {
                   .map((match, index) => (
                     <UserMatchFinalsInput
                       showCountryStatus
-                      disabled={match.disabled || props.submissionsEnded}
+                      disabled={match.disabled || submissionsEnded}
+                      submissionEndsAt={props.submissionEndsAt}
                       key={match.id}
                       date={new Date(match.date)}
                       userCountryLeftId={match.userCountryLeftId}
@@ -568,7 +581,8 @@ export default function Home(props: HomeProps) {
                 <DailyMatches>
                   {(todayMatches || nextMatches)?.map((match) => (
                     <DailyMatchFinalInput
-                      disabled={match.disabled || props.submissionsEnded}
+                      disabled={match.disabled || submissionsEnded}
+                      submissionEndsAt={props.submissionEndsAt}
                       key={match.id}
                       today={!!props.todayMatches}
                       date={new Date(match.date)}
@@ -625,13 +639,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const matches = await getUserTemplateFinalMatches(user);
+  const prode = await prisma.prode.findFirst();
   const nextMatches = getNextMatches(matches);
   const todayMatches = getTodayMatches(matches);
 
   return {
     props: {
       userProdeId,
-      submissionsEnded: false,
+      submissionEndsAt: prode?.finalsSubmissionsEnd.toISOString() ?? new Date().toISOString(),
       userRanking: {
         id: user.id,
         name: user.name,

@@ -3,7 +3,11 @@ import { ProdeUserGroupMatch } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import { prisma } from "../../lib";
-import { getAllowedMatchesToModify, getUserByEmail } from "../../utils/queries";
+import {
+  getAllowedMatchesToModify,
+  getUserByEmail,
+  groupSubmissionsEnded,
+} from "../../utils/queries";
 
 export default async function handler(
   req: Omit<NextApiRequest, "body"> & {
@@ -38,6 +42,7 @@ export default async function handler(
       },
     });
     if (!userProde) return res.status(404).json({});
+    if (groupSubmissionsEnded(userProde)) return res.status(403).send({});
 
     const updateMatches = matches.filter((match) =>
       userProde.matches.find((x) => x.matchId === match.matchId)
@@ -47,7 +52,8 @@ export default async function handler(
     );
 
     const allowedMatchesToModify = await getAllowedMatchesToModify(
-      matches.map((match) => match.matchId)
+      matches.map((match) => match.matchId),
+      userProde.prode.groupSubmissionsEnd
     );
 
     await prisma.$transaction([

@@ -15,6 +15,7 @@ import {
   CardContent,
 } from "../components/layout";
 import { useRequireSession } from "../hooks";
+import { useInterval } from "../hooks/useInterval";
 import commonStyles from "../styles/CommonStyles.module.scss";
 import axios from "axios";
 import {
@@ -35,6 +36,7 @@ import Link from "next/link";
 import { LocaleSelect } from "../components/common/LocaleSelect";
 import { useLocalizedText } from "../locale";
 import { getNextMatches, getTodayMatches } from "../utils/date";
+import { prisma } from "../lib";
 import {
   DailyMatches,
   DailyMatchInput,
@@ -57,7 +59,7 @@ type UIMatch = Pick<
 };
 
 interface HomeProps {
-  submissionsEnded: boolean;
+  submissionEndsAt: string;
   groupsStarted: boolean;
   finalsStarted: boolean;
   matches?: UIMatch[];
@@ -74,6 +76,11 @@ export default function Home(props: HomeProps) {
   const session = useRequireSession();
 
   const i18n = useLocalizedText();
+  const [now, setNow] = React.useState(() => Date.now());
+  useInterval(() => setNow(Date.now()), 60000);
+  const submissionsEnded = React.useMemo(() => {
+    return new Date(props.submissionEndsAt).getTime() <= now;
+  }, [now, props.submissionEndsAt]);
 
   const { todayMatches: _todayMatches, nextMatches: _nextMatches } = props;
 
@@ -185,7 +192,7 @@ export default function Home(props: HomeProps) {
             gridArea="matches-header"
           >
             <Button
-              disabled={!isModified}
+              disabled={!isModified || submissionsEnded}
               className={commonStyles.marginLeftAuto}
               onClick={handleSave}
             >
@@ -210,7 +217,7 @@ export default function Home(props: HomeProps) {
                     .map((match) => (
                       <MatchInput
                         key={match.id}
-                        disabled={match.disabled || props.submissionsEnded}
+                        disabled={match.disabled || submissionsEnded}
                         date={new Date(match.date)}
                         countryLeftId={match.countryLeftId}
                         goalsLeft={match.goalsLeft}
@@ -247,7 +254,8 @@ export default function Home(props: HomeProps) {
                   {(todayMatches || nextMatches)?.map((match) => (
                     <DailyMatchInput
                       key={match.id}
-                      disabled={match.disabled || props.submissionsEnded}
+                      disabled={match.disabled || submissionsEnded}
+                      submissionEndsAt={props.submissionEndsAt}
                       date={new Date(match.date)}
                       countryLeftId={match.countryLeftId}
                       today={!!todayMatches}
@@ -294,6 +302,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   const matches = await getUserTemplateGroupMatches(user);
+  const prode = await prisma.prode.findFirst();
 
   const nextMatches = getNextMatches(matches);
   const todayMatches = getTodayMatches(matches);
@@ -301,7 +310,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     props: {
       userProdeId,
-      submissionsEnded: false,
+      submissionEndsAt: prode?.groupSubmissionsEnd.toISOString() ?? new Date().toISOString(),
       finalsStarted: await finalsStarted(),
       userRanking: {
         id: user.id,

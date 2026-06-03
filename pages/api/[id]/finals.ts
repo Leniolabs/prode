@@ -4,6 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import { prisma } from "../../../lib";
 import {
+  finalsSubmissionsEnded,
   getAllowedMatchesToModify,
   getProdeRoom,
   getUserByEmail,
@@ -40,6 +41,7 @@ export default async function handler(
 
     const room = await getProdeRoom(id);
     if (!room) return res.status(404).send({});
+    if (finalsSubmissionsEnded(room)) return res.status(403).send({});
 
     const { matches } = req.body;
     if (!matches) return res.status(400).json({});
@@ -64,7 +66,8 @@ export default async function handler(
     );
 
     const allowedMatchesToModify = await getAllowedMatchesToModify(
-      matches.map((match) => match.matchId)
+      matches.map((match) => match.matchId),
+      room.prode.finalsSubmissionsEnd
     );
 
     await prisma.$transaction([

@@ -4,6 +4,7 @@ export { FacebookIcon } from "./FacebookIcon";
 export { TwitterIcon } from "./TwitterIcon";
 export { GitHubIcon } from "./GitHubIcon";
 export { GoogleIcon } from "./GoogleIcon";
+export { MicrosoftIcon } from "./MicrosoftIcon";
 export { EditIcon } from "./EditIcon";
 export { PencilIcon } from "./PencilIcon";
 export { CloseIcon } from "./CloseIcon";
