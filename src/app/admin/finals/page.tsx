@@ -199,7 +199,34 @@ export default function AdminFinalsPage() {
             </Button>
           </ContainerHeader>
           <BracketsContainer gridArea="matches">
-            <BracketTitle full order={0}>{i18n.FINALS_8}</BracketTitle>
+            <BracketTitle full order={0}>{i18n.FINALS_16}</BracketTitle>
+            {computedMatches
+              .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_16")
+              .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
+              .map((match) => (
+                <MatchFinalsInput
+                  key={match.id}
+                  date={new Date(match.date)}
+                  countryLeftId={match.countryLeftId}
+                  goalsLeft={match.goalsLeft ?? undefined}
+                  countryRightId={match.countryRightId}
+                  goalsRight={match.goalsRight ?? undefined}
+                  penaltisLeft={match.penaltisLeft ?? null}
+                  penaltisRight={match.penaltisRight ?? null}
+                  onChange={handleMatchChange(match.id)}
+                  countryInput
+                  order={getMatchOrder(match.stage)}
+                />
+              ))}
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketTitle full order={17}>{i18n.FINALS_8}</BracketTitle>
             {computedMatches
               .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_8")
               .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
@@ -218,11 +245,11 @@ export default function AdminFinalsPage() {
                   order={getMatchOrder(match.stage)}
                 />
               ))}
-            <BracketIcon order={9} />
-            <BracketIcon order={9} />
-            <BracketIcon order={9} />
-            <BracketIcon order={9} />
-            <BracketTitle order={9} full>{i18n.FINALS_4}</BracketTitle>
+            <BracketIcon order={26} />
+            <BracketIcon order={26} />
+            <BracketIcon order={26} />
+            <BracketIcon order={26} />
+            <BracketTitle order={26} full>{i18n.FINALS_4}</BracketTitle>
             {computedMatches
               .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_4")
               .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
@@ -241,9 +268,9 @@ export default function AdminFinalsPage() {
                   order={getMatchOrder(match.stage)}
                 />
               ))}
-            <BracketIcon order={14} big />
-            <BracketIcon order={14} big />
-            <BracketTitle className={bracketOffsetQuarter} order={14} full>{i18n.FINALS_2}</BracketTitle>
+            <BracketIcon order={31} big />
+            <BracketIcon order={31} big />
+            <BracketTitle className={bracketOffsetQuarter} order={31} full>{i18n.FINALS_2}</BracketTitle>
             {computedMatches
               .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_2")
               .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
@@ -263,9 +290,9 @@ export default function AdminFinalsPage() {
                   order={getMatchOrder(match.stage)}
                 />
               ))}
-            <BracketIcon className={className(bracketOffsetQuarter)} order={17} big />
-            <BracketTitle className={className(bracketOffsetQuarter)} order={17}>{i18n.FINAL}</BracketTitle>
-            <BracketTitle order={17}>{i18n.THIRD_PLACE}</BracketTitle>
+            <BracketIcon className={className(bracketOffsetQuarter)} order={34} big />
+            <BracketTitle className={className(bracketOffsetQuarter)} order={34}>{i18n.FINAL}</BracketTitle>
+            <BracketTitle order={34}>{i18n.THIRD_PLACE}</BracketTitle>
             {computedMatches
               .filter((x) => getFinalsStageGroup(x.stage) === "FINAL")
               .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))

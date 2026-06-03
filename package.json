@@ -20,7 +20,7 @@
     "harness:check": "tsx harness/screenshots.ts --mode check"
   },
   "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed/index.ts"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",

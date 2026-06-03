@@ -1,5 +1,5 @@
--- WC 2026 expands the knockout bracket with a Round of 32 ahead of the
--- existing Round of 16 / quarter-final / semi-final stages.
+-- WC 2026 uses a 48-team format with a Round of 32 knockout phase.
+-- This migration adds FINALS_16_1 through FINALS_16_16 to the Stage enum.
 
 ALTER TYPE "Stage" ADD VALUE 'FINALS_16_1' AFTER 'GROUP_L';
 ALTER TYPE "Stage" ADD VALUE 'FINALS_16_2' AFTER 'FINALS_16_1';

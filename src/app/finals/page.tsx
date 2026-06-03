@@ -79,6 +79,7 @@ interface FinalsData {
   userProdeId: string;
 }
 
+
 export default function FinalsPage() {
   const session = useRequireSession();
   const i18n = useLocalizedText();
@@ -222,10 +223,12 @@ export default function FinalsPage() {
             </Button>
           </ContainerHeader>
           <BracketsContainer gridArea="matches">
-            <BracketTitle full order={0}>{i18n.FINALS_8}</BracketTitle>
+            <BracketTitle full order={0}>
+              {i18n.FINALS_16}
+            </BracketTitle>
             {matches
-              .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_8")
-              .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
+              .filter((x) => x.stage.includes("FINALS_16_"))
+              .sort((a, b) => (a.stage > b.stage ? 1 : -1))
               .map((match) => (
                 <UserMatchFinalsInput
                   disabled={match.disabled || submissionsEnded}
@@ -249,14 +252,53 @@ export default function FinalsPage() {
                   filled={match.filled}
                 />
               ))}
-            <BracketIcon order={9} />
-            <BracketIcon order={9} />
-            <BracketIcon order={9} />
-            <BracketIcon order={9} />
-            <BracketTitle order={9} full>{i18n.FINALS_4}</BracketTitle>
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketTitle full order={17}>
+              {i18n.FINALS_8}
+            </BracketTitle>
             {matches
-              .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_4")
-              .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
+              .filter((x) => x.stage.includes("FINALS_8_"))
+              .sort((a, b) => (a.stage > b.stage ? 1 : -1))
+              .map((match) => (
+                <UserMatchFinalsInput
+                  disabled={match.disabled || submissionsEnded}
+                  submissionEndsAt={props?.submissionEndsAt ?? ""}
+                  key={match.id}
+                  date={new Date(match.date)}
+                  userCountryLeftId={match.countryLeftId}
+                  userGoalsLeft={match.userGoalsLeft}
+                  userCountryRightId={match.countryRightId}
+                  userGoalsRight={match.userGoalsRight}
+                  userPenaltisLeft={match.userPenaltisLeft}
+                  userPenaltisRight={match.userPenaltisRight}
+                  penaltisLeft={match.penaltisLeft}
+                  penaltisRight={match.penaltisRight}
+                  goalsLeft={match.goalsLeft}
+                  goalsRight={match.goalsRight}
+                  countryLeftId={match.countryLeftId}
+                  countryRightId={match.countryRightId}
+                  onChange={handleMatchChange(match.id)}
+                  order={getMatchOrder(match.stage)}
+                  filled={match.filled}
+                />
+              ))}
+            <BracketIcon order={26} />
+            <BracketIcon order={26} />
+            <BracketIcon order={26} />
+            <BracketIcon order={26} />
+            <BracketTitle order={26} full>
+              {i18n.FINALS_4}
+            </BracketTitle>
+            {matches
+              .filter((x) => x.stage.includes("FINALS_4_"))
+              .sort((a, b) => (a.stage > b.stage ? 1 : -1))
               .map((match) => (
                 <UserMatchFinalsInput
                   showCountryStatus
@@ -281,12 +323,14 @@ export default function FinalsPage() {
                   filled={match.filled}
                 />
               ))}
-            <BracketIcon order={14} big />
-            <BracketIcon order={14} big />
-            <BracketTitle className={bracketOffsetQuarter} order={14} full>{i18n.FINALS_2}</BracketTitle>
+            <BracketIcon order={31} big />
+            <BracketIcon order={31} big />
+            <BracketTitle className={bracketOffsetQuarter} order={31} full>
+              {i18n.FINALS_2}
+            </BracketTitle>
             {matches
-              .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_2")
-              .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
+              .filter((x) => x.stage.includes("FINALS_2_"))
+              .sort((a, b) => (a.stage > b.stage ? 1 : -1))
               .map((match, index) => (
                 <UserMatchFinalsInput
                   showCountryStatus
@@ -312,12 +356,22 @@ export default function FinalsPage() {
                   filled={match.filled}
                 />
               ))}
-            <BracketIcon className={className(bracketOffsetQuarter)} order={17} big />
-            <BracketTitle className={className(bracketOffsetQuarter)} order={17}>{i18n.FINAL}</BracketTitle>
-            <BracketTitle order={17}>{i18n.THIRD_PLACE}</BracketTitle>
+            <BracketIcon
+              className={className(bracketOffsetQuarter)}
+              order={34}
+              big
+            />
+            <BracketTitle
+              className={className(bracketOffsetQuarter)}
+              order={34}
+            >
+              {i18n.FINAL}
+            </BracketTitle>
+            <BracketTitle order={34}>{i18n.THIRD_PLACE}</BracketTitle>
+
             {matches
-              .filter((x) => getFinalsStageGroup(x.stage) === "FINAL")
-              .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
+              .filter((x) => x.stage === "FINALS" || x.stage === "THIRD_PLACE")
+              .sort((a, b) => (a.stage > b.stage ? 1 : -1))
               .map((match, index) => (
                 <UserMatchFinalsInput
                   showCountryStatus
@@ -347,6 +401,34 @@ export default function FinalsPage() {
           </BracketsContainer>
           <BracketsMobileContainer gridArea="matches">
             <CollapsableContainer>
+              <Collapsable title={i18n.FINALS_16}>
+                {matches
+                  .filter((x) => x.stage.includes("FINALS_16_"))
+                  .sort((a, b) => (a.date > b.date ? 1 : -1))
+                  .map((match, index) => (
+                    <UserMatchFinalsInput
+                      disabled={match.disabled || submissionsEnded}
+                      submissionEndsAt={props?.submissionEndsAt ?? ""}
+                      key={match.id}
+                      date={new Date(match.date)}
+                      userCountryLeftId={match.countryLeftId}
+                      userGoalsLeft={match.userGoalsLeft}
+                      userCountryRightId={match.countryRightId}
+                      userGoalsRight={match.userGoalsRight}
+                      userPenaltisLeft={match.userPenaltisLeft}
+                      userPenaltisRight={match.userPenaltisRight}
+                      penaltisLeft={match.penaltisLeft}
+                      penaltisRight={match.penaltisRight}
+                      goalsLeft={match.goalsLeft}
+                      goalsRight={match.goalsRight}
+                      countryLeftId={match.countryLeftId}
+                      countryRightId={match.countryRightId}
+                      onChange={handleMatchChange(match.id)}
+                      order={index + 1}
+                      filled={match.filled}
+                    />
+                  ))}
+              </Collapsable>
               <Collapsable title={i18n.FINALS_8}>
                 {matches
                   .filter((x) => getFinalsStageGroup(x.stage) === "FINALS_8")
@@ -370,7 +452,7 @@ export default function FinalsPage() {
                       countryLeftId={match.countryLeftId}
                       countryRightId={match.countryRightId}
                       onChange={handleMatchChange(match.id)}
-                      order={index + 1}
+                      order={index + 1 + 16}
                       filled={match.filled}
                     />
                   ))}
@@ -399,7 +481,7 @@ export default function FinalsPage() {
                       countryLeftId={match.countryLeftId}
                       countryRightId={match.countryRightId}
                       onChange={handleMatchChange(match.id)}
-                      order={index + 1 + 8}
+                      order={index + 1 + 16 + 8}
                       filled={match.filled}
                     />
                   ))}
@@ -428,7 +510,7 @@ export default function FinalsPage() {
                       countryLeftId={match.countryLeftId}
                       countryRightId={match.countryRightId}
                       onChange={handleMatchChange(match.id)}
-                      order={index + 1 + 8 + 4}
+                      order={index + 1 + 16 + 8 + 4}
                       filled={match.filled}
                     />
                   ))}
@@ -457,7 +539,7 @@ export default function FinalsPage() {
                       countryLeftId={match.countryLeftId}
                       countryRightId={match.countryRightId}
                       onChange={handleMatchChange(match.id)}
-                      order={index + 1 + 8 + 4 + 2}
+                      order={index + 1 + 16 + 8 + 4 + 2}
                       filled={match.filled}
                       highlight={match.stage === "FINALS"}
                     />

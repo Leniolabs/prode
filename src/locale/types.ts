@@ -71,6 +71,10 @@ export interface LocaleData {
   GROUP_F: string;
   GROUP_G: string;
   GROUP_H: string;
+  GROUP_I: string;
+  GROUP_J: string;
+  GROUP_K: string;
+  GROUP_L: string;
   groupsExactGoals: string;
   groupsCorrectResult: string;
   groupsIncorrectPrediction: string;
