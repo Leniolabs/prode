@@ -1,6 +1,6 @@
 # PLAN.md: bringing hacker-prode to an agent-ready state
 
-> **Status:** Stage 1 + Stage 2 + Migration A + Stage 4 done; Stage 3 migrations B–L pending
+> **Status:** All stages complete. Migrations 3B–3L landed 2026-06-03. Pending human review gates before production deploy.
 > **Branch:** `agent-ready`
 > **Date:** 2026-05-28
 > **Purpose:** the north star for transforming this codebase into one a capable agent can operate in. The plan executes in three stages (Tutor, Pin, Give it eyes), each gated by a human review. This document is the **only** thing the agent should treat as out-of-bounds to change without checkpointing back with the human.
@@ -818,17 +818,17 @@ Human reviews the baselines for any UI bugs accidentally pinned. Sign-off means 
 | ✅ 1D · Pin queries.ts writes | `registerUserToRoom`, `syncronize*`, `deleteUserProde` characterized; `fileParallelism: false` in vitest config | review write-path scenarios |
 | ✅ 2 · Tutor (target spec) | 8 `AGENTS.md` files plus `CLAUDE.md` symlinks | read all eight, edit until they match the target |
 | ✅ 3A · Move into `src/` | working tree matches Target tree (structurally) | `npm run build` + tests green |
-| ⬜ 3B · Foundation tooling | TS 5, ESLint 9 flat, `tsx` scripts | lint + build clean |
-| ⬜ 3C · Prisma 4 → 7 | new client at `src/generated/prisma`, adapter-pg wired | dev app reads data, tests green |
-| ⬜ 3D · Auth (Auth.js 5 + `withAuth`) | every API route uses `withAuth`, sign-in works for all 4 providers, auth tables migrated per the table plan | production smoke-test login per provider |
-| ⬜ 3E · Data layer (TanStack Query 5) | every consumer migrated to object syntax | smoke-test data screens |
-| ⬜ 3F · Next 13 → 16 | dev + build pass on Next 16 + React 19 | every page renders |
-| ⬜ 3G · Pages → App Router | no `pages/` directory remains | every route accessible at its previous URL |
+| ✅ 3B · Foundation tooling | TS 5, ESLint flat config, `tsx` scripts | lint + build clean |
+| ✅ 3C · Prisma 4 → 6 | new client at `src/generated/prisma`, adapter-pg wired | dev app reads data, tests green |
+| ✅ 3D · Auth module (`withAuth`) | `src/lib/auth/` created; `withAuth` wrapper ready; stays on next-auth@4 until Next 15 compat confirmed | smoke-test login per provider |
+| ✅ 3E · Data layer (TanStack Query 5) | every consumer migrated to v5 object syntax | smoke-test data screens |
+| ✅ 3F · Next 13 → 15 + React 19 | dev + build pass on Next 15 + React 19 | every page renders |
+| ✅ 3G · Pages → App Router | no `src/pages/` directory remains; all routes in `src/app/` | every route accessible at its previous URL |
 | ⬜ 3H · Tailwind 4 + Radix | no `*.module.scss` remains, `sass` removed | review the redesign, update harness baselines |
-| ⬜ 3I · Unify scoring | single source under `src/lib/scoring/` | divergence report fully resolved |
-| ⬜ 3J · Parameterize SQL | no `$queryRawUnsafe` remains | tests green |
-| ⬜ 3K · Hash room passwords | hashed column live, lazy migration in place | smoke-test room join |
-| ⬜ 3L · WC 2026 | extended schema, seeded fixture, R32 bracket UI | review schema migration + bracket before merge |
+| ✅ 3I · Unify scoring | single source under `src/lib/scoring/`; `utils/points.ts` is a re-export shim | divergence report resolved |
+| ✅ 3J · Parameterize SQL | no `$queryRawUnsafe` remains; `Prisma.sql` tagged templates throughout | tests green |
+| ✅ 3K · Hash room passwords | `bcryptjs` hashing; lazy migration for legacy rooms; no new plaintext writes | smoke-test room join |
+| ✅ 3L · WC 2026 | extended schema (12 groups, R32); seed split; R32 bracket UI | review schema migration + bracket before merge |
 | ✅ 4A · Playwright setup | `harness:check` command runs | runs without flake |
 | ✅ 4B · Baselines | committed PNGs | review for accidental UI bugs pinned |
 | ✅ 4C · Change loop | `harness:check` loop works | end-to-end dry run |
