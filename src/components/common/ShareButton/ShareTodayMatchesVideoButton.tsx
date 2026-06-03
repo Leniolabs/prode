@@ -21,8 +21,8 @@ export function ShareTodayMatchesVideoButton(
 ) {
   const [sharing, setSharing] = React.useState(false);
   const i18n = useLocalizedText();
-  const [file, setFile] = React.useState<File>();
-  const videoFetchRef = React.useRef<Promise<void | AxiosResponse<any, any>>>();
+  const [file, setFile] = React.useState<File | undefined>(undefined);
+  const videoFetchRef = React.useRef<Promise<void | AxiosResponse<any, any>> | undefined>(undefined);
 
   const handleInstagramShare = React.useCallback(() => {
     if ("share" in window.navigator) {
