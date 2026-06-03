@@ -6,18 +6,18 @@ type Fixture = [Stage, string, string, string];
 const MATCHES: Fixture[] = [
   // GROUP A
   ["GROUP_A", "México", "Sudáfrica", "2026-06-11T19:00:00.000Z"],         // 13:00 UTC-6
-  ["GROUP_A", "Corea del Sur", "Chequia", "2026-06-12T02:00:00.000Z"],    // 20:00 UTC-6
-  ["GROUP_A", "Chequia", "Sudáfrica", "2026-06-18T16:00:00.000Z"],        // 12:00 UTC-4
-  ["GROUP_A", "México", "Corea del Sur", "2026-06-19T01:00:00.000Z"],     // 19:00 UTC-6
-  ["GROUP_A", "Chequia", "México", "2026-06-25T01:00:00.000Z"],           // 19:00 UTC-6
-  ["GROUP_A", "Sudáfrica", "Corea del Sur", "2026-06-25T01:00:00.000Z"],  // 19:00 UTC-6
+  ["GROUP_A", "Rep. Corea", "Rep. Checa", "2026-06-12T02:00:00.000Z"],    // 20:00 UTC-6
+  ["GROUP_A", "Rep. Checa", "Sudáfrica", "2026-06-18T16:00:00.000Z"],      // 12:00 UTC-4
+  ["GROUP_A", "México", "Rep. Corea", "2026-06-19T01:00:00.000Z"],        // 19:00 UTC-6
+  ["GROUP_A", "Rep. Checa", "México", "2026-06-25T01:00:00.000Z"],         // 19:00 UTC-6
+  ["GROUP_A", "Sudáfrica", "Rep. Corea", "2026-06-25T01:00:00.000Z"],      // 19:00 UTC-6
   // GROUP B
-  ["GROUP_B", "Canadá", "Bosnia y Herzegovina", "2026-06-12T19:00:00.000Z"], // 15:00 UTC-4
-  ["GROUP_B", "Catar", "Suiza", "2026-06-13T19:00:00.000Z"],                 // 12:00 UTC-7
-  ["GROUP_B", "Suiza", "Bosnia y Herzegovina", "2026-06-18T19:00:00.000Z"],  // 12:00 UTC-7
-  ["GROUP_B", "Canadá", "Catar", "2026-06-18T22:00:00.000Z"],                // 15:00 UTC-7
+  ["GROUP_B", "Canadá", "Bosnia", "2026-06-12T19:00:00.000Z"],                // 15:00 UTC-4
+  ["GROUP_B", "Qatar", "Suiza", "2026-06-13T19:00:00.000Z"],                  // 12:00 UTC-7
+  ["GROUP_B", "Suiza", "Bosnia", "2026-06-18T19:00:00.000Z"],                 // 12:00 UTC-7
+  ["GROUP_B", "Canadá", "Qatar", "2026-06-18T22:00:00.000Z"],                 // 15:00 UTC-7
   ["GROUP_B", "Suiza", "Canadá", "2026-06-24T19:00:00.000Z"],                // 12:00 UTC-7
-  ["GROUP_B", "Bosnia y Herzegovina", "Catar", "2026-06-24T19:00:00.000Z"],  // 12:00 UTC-7
+  ["GROUP_B", "Bosnia", "Qatar", "2026-06-24T19:00:00.000Z"],                 // 12:00 UTC-7
   // GROUP C
   ["GROUP_C", "Brasil", "Marruecos", "2026-06-13T22:00:00.000Z"],    // 18:00 UTC-4
   ["GROUP_C", "Haití", "Escocia", "2026-06-14T01:00:00.000Z"],       // 21:00 UTC-4
@@ -34,10 +34,10 @@ const MATCHES: Fixture[] = [
   ["GROUP_D", "Paraguay", "Australia", "2026-06-26T02:00:00.000Z"],       // 19:00 UTC-7
   // GROUP E
   ["GROUP_E", "Alemania", "Curazao", "2026-06-14T17:00:00.000Z"],         // 12:00 UTC-5
-  ["GROUP_E", "Costa de Marfil", "Ecuador", "2026-06-14T23:00:00.000Z"],  // 19:00 UTC-4
-  ["GROUP_E", "Alemania", "Costa de Marfil", "2026-06-20T20:00:00.000Z"], // 16:00 UTC-4
+  ["GROUP_E", "C. de Marfil", "Ecuador", "2026-06-14T23:00:00.000Z"],     // 19:00 UTC-4
+  ["GROUP_E", "Alemania", "C. de Marfil", "2026-06-20T20:00:00.000Z"],    // 16:00 UTC-4
   ["GROUP_E", "Ecuador", "Curazao", "2026-06-21T00:00:00.000Z"],          // 19:00 UTC-5
-  ["GROUP_E", "Curazao", "Costa de Marfil", "2026-06-25T20:00:00.000Z"],  // 16:00 UTC-4
+  ["GROUP_E", "Curazao", "C. de Marfil", "2026-06-25T20:00:00.000Z"],     // 16:00 UTC-4
   ["GROUP_E", "Ecuador", "Alemania", "2026-06-25T20:00:00.000Z"],         // 16:00 UTC-4
   // GROUP F
   ["GROUP_F", "Países Bajos", "Japón", "2026-06-14T20:00:00.000Z"],  // 15:00 UTC-5
@@ -62,11 +62,11 @@ const MATCHES: Fixture[] = [
   ["GROUP_H", "Uruguay", "España", "2026-06-27T00:00:00.000Z"],           // 18:00 UTC-6
   // GROUP I
   ["GROUP_I", "Francia", "Senegal", "2026-06-16T19:00:00.000Z"],   // 15:00 UTC-4
-  ["GROUP_I", "Irak", "Noruega", "2026-06-16T22:00:00.000Z"],      // 18:00 UTC-4
-  ["GROUP_I", "Francia", "Irak", "2026-06-22T21:00:00.000Z"],      // 17:00 UTC-4
+  ["GROUP_I", "Iraq", "Noruega", "2026-06-16T22:00:00.000Z"],      // 18:00 UTC-4
+  ["GROUP_I", "Francia", "Iraq", "2026-06-22T21:00:00.000Z"],      // 17:00 UTC-4
   ["GROUP_I", "Noruega", "Senegal", "2026-06-23T00:00:00.000Z"],   // 20:00 UTC-4
   ["GROUP_I", "Noruega", "Francia", "2026-06-26T19:00:00.000Z"],   // 15:00 UTC-4
-  ["GROUP_I", "Senegal", "Irak", "2026-06-26T19:00:00.000Z"],      // 15:00 UTC-4
+  ["GROUP_I", "Senegal", "Iraq", "2026-06-26T19:00:00.000Z"],      // 15:00 UTC-4
   // GROUP J
   ["GROUP_J", "Argentina", "Argelia", "2026-06-17T01:00:00.000Z"],  // 20:00 UTC-5
   ["GROUP_J", "Austria", "Jordania", "2026-06-17T04:00:00.000Z"],   // 21:00 UTC-7
@@ -75,12 +75,12 @@ const MATCHES: Fixture[] = [
   ["GROUP_J", "Argelia", "Austria", "2026-06-28T02:00:00.000Z"],    // 21:00 UTC-5
   ["GROUP_J", "Jordania", "Argentina", "2026-06-28T02:00:00.000Z"], // 21:00 UTC-5
   // GROUP K
-  ["GROUP_K", "Portugal", "RD del Congo", "2026-06-17T17:00:00.000Z"],  // 12:00 UTC-5
+  ["GROUP_K", "Portugal", "RD Congo", "2026-06-17T17:00:00.000Z"],      // 12:00 UTC-5
   ["GROUP_K", "Uzbekistán", "Colombia", "2026-06-18T02:00:00.000Z"],    // 20:00 UTC-6
   ["GROUP_K", "Portugal", "Uzbekistán", "2026-06-23T17:00:00.000Z"],    // 12:00 UTC-5
-  ["GROUP_K", "Colombia", "RD del Congo", "2026-06-24T02:00:00.000Z"],  // 20:00 UTC-6
+  ["GROUP_K", "Colombia", "RD Congo", "2026-06-24T02:00:00.000Z"],      // 20:00 UTC-6
   ["GROUP_K", "Colombia", "Portugal", "2026-06-27T23:30:00.000Z"],      // 19:30 UTC-4
-  ["GROUP_K", "RD del Congo", "Uzbekistán", "2026-06-27T23:30:00.000Z"],// 19:30 UTC-4
+  ["GROUP_K", "RD Congo", "Uzbekistán", "2026-06-27T23:30:00.000Z"],    // 19:30 UTC-4
   // GROUP L
   ["GROUP_L", "Inglaterra", "Croacia", "2026-06-17T20:00:00.000Z"],  // 15:00 UTC-5
   ["GROUP_L", "Ghana", "Panamá", "2026-06-17T23:00:00.000Z"],        // 19:00 UTC-4

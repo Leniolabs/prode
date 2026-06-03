@@ -1,34 +1,141 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Prode
 
-## Getting Started
+Prode is a Next.js App Router project for World Cup prediction rooms. It uses Prisma + Postgres, Auth.js OAuth, and a seeded WC 2026 dataset.
 
-First, run the development server:
+## Requirements
+
+- Node.js 20+
+- Docker (recommended for local Postgres)
+- npm
+
+## Local Setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Create `.env` from `.env.example` and fill at least:
+
+```bash
+GOOGLE_ID=
+GOOGLE_SECRET=
+AUTH_SECRET=
+DATABASE_URL=postgresql://leniolabs:leniolabs@localhost:5434/prode
+```
+
+Generate `AUTH_SECRET` with:
+
+```bash
+openssl rand -hex 32
+```
+
+3. Start a local Postgres instance.
+
+Option A (recommended when port 5432 is already used):
+
+```bash
+docker run -d --name prode-db-local \
+	-e POSTGRES_DB=prode \
+	-e POSTGRES_USER=leniolabs \
+	-e POSTGRES_PASSWORD=leniolabs \
+	-p 5434:5432 postgres:15.1
+```
+
+Option B (project compose service on 5432):
+
+```bash
+docker compose up -d prode-db
+```
+
+If you use option B, set `DATABASE_URL` to port `5432`.
+
+4. Apply migrations:
+
+```bash
+npx prisma migrate deploy
+```
+
+If this is a local dev DB and you need a clean start:
+
+```bash
+npx prisma migrate reset --force --skip-seed
+```
+
+5. Seed core WC 2026 data (countries + fixture + bracket):
+
+```bash
+npx prisma db seed
+```
+
+6. Run the app:
 
 ```bash
 npm run dev
-# or
-yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Auth Notes
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+- `AUTH_SECRET` is required by Auth.js. Missing it causes a server configuration error.
+- OAuth providers are conditionally registered from env vars.
+- For Google sign-in, `GOOGLE_ID` and `GOOGLE_SECRET` are enough.
+- Google callback URI for local development:
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+```text
+http://localhost:3000/api/auth/callback/google
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+If the app runs on another port (for example `3001`), add that callback URI too.
 
-## Learn More
+## Database Notes
 
-To learn more about Next.js, take a look at the following resources:
+- Main schema lives in `prisma/schema.prisma`.
+- "Teams" are represented by the `Country` model.
+- Matches are represented by the `Match` model.
+- Migration SQL history is in `prisma/migrations/`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Useful checks:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```bash
+PGPASSWORD=leniolabs psql "postgresql://leniolabs:leniolabs@localhost:5434/prode" -c "\dt"
+PGPASSWORD=leniolabs psql "postgresql://leniolabs:leniolabs@localhost:5434/prode" -c "show search_path;"
+```
 
-## Deploy on Vercel
+If a DB client (for example DBeaver) shows empty tables but `psql` does not:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- confirm host/port/database/user match your `DATABASE_URL`
+- set active schema to `public`
+- refresh schemas and clear object filters
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Common Commands
+
+```bash
+npm run dev
+npm run build
+npm test
+npm run test:coverage
+npm run test:db:up
+npm run test:db:reset
+npm run harness:check
+```
+
+## Seeding Countries and Matches (Best Approach)
+
+Use idempotent seed scripts, not ad-hoc SQL inserts.
+
+- Countries seed: `prisma/seed/countries.ts`
+- Group matches seed: `prisma/seed/fixture.ts`
+- Entry point: `prisma/seed/index.ts`
+
+Run:
+
+```bash
+npx prisma db seed
+```
+
+Why this is best:
+
+- repeatable across all dev machines
+- safe to run more than once (`upsert` for countries)
+- keeps fixture dates/stages consistent with application logic

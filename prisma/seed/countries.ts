@@ -3,14 +3,14 @@ import { PrismaClient } from "@/generated/prisma";
 const COUNTRIES: { name: string; code: string }[] = [
   // Group A
   { name: "México", code: "MEX" },
-  { name: "Corea del Sur", code: "KOR" },
-  { name: "Chequia", code: "CZE" },
+  { name: "Rep. Corea", code: "KOR" },
+  { name: "Rep. Checa", code: "CZE" },
   { name: "Sudáfrica", code: "RSA" },
   // Group B
   { name: "Suiza", code: "CHE" },
   { name: "Canadá", code: "CAN" },
-  { name: "Bosnia y Herzegovina", code: "BIH" },
-  { name: "Catar", code: "QAT" },
+  { name: "Bosnia", code: "BIH" },
+  { name: "Qatar", code: "QAT" },
   // Group C
   { name: "Brasil", code: "BRA" },
   { name: "Escocia", code: "SCO" },
@@ -23,7 +23,7 @@ const COUNTRIES: { name: string; code: string }[] = [
   { name: "Turquía", code: "TUR" },
   // Group E
   { name: "Alemania", code: "DEU" },
-  { name: "Costa de Marfil", code: "CIV" },
+  { name: "C. de Marfil", code: "CIV" },
   { name: "Ecuador", code: "ECU" },
   { name: "Curazao", code: "CUW" },
   // Group F
@@ -45,7 +45,7 @@ const COUNTRIES: { name: string; code: string }[] = [
   { name: "Francia", code: "FRA" },
   { name: "Senegal", code: "SEN" },
   { name: "Noruega", code: "NOR" },
-  { name: "Irak", code: "IRQ" },
+  { name: "Iraq", code: "IRQ" },
   // Group J
   { name: "Argentina", code: "ARG" },
   { name: "Argelia", code: "ALG" },
@@ -55,7 +55,7 @@ const COUNTRIES: { name: string; code: string }[] = [
   { name: "Portugal", code: "PRT" },
   { name: "Colombia", code: "COL" },
   { name: "Uzbekistán", code: "UZB" },
-  { name: "RD del Congo", code: "COD" },
+  { name: "RD Congo", code: "COD" },
   // Group L
   { name: "Inglaterra", code: "ENG" },
   { name: "Croacia", code: "HRV" },

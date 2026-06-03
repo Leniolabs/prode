@@ -6,6 +6,7 @@ namespace NodeJS {
 
     readonly GOOGLE_ID: string;
     readonly GOOGLE_SECRET: string;
+    readonly AUTH_SECRET: string;
 
     readonly GITHUB_ID: string;
     readonly GITHUB_SECRET: string;
