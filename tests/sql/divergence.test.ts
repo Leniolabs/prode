@@ -9,7 +9,7 @@
  */
 
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { PrismaClient, Stage } from "@prisma/client";
+import { PrismaClient, Stage } from '@/generated/prisma';
 import { writeFileSync, mkdirSync } from "fs";
 import { dirname } from "path";
 

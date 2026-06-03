@@ -27,7 +27,7 @@ import { redirectToLogin } from "../utils/redirect";
 import { getUserByEmail } from "../utils/queries";
 import { FormError } from "../components/common/Form/FormError";
 import { formError } from "../utils/errors";
-import { User } from "@prisma/client";
+import { User } from '@/generated/prisma';
 import { Meta } from "../components/common/Meta";
 import { LocaleSelect } from "../components/common/LocaleSelect";
 import { useLocalizedText } from "../locale";

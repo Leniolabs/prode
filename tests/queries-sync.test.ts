@@ -12,7 +12,7 @@
  */
 
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@/generated/prisma';
 
 import { syncronizeTemplate, syncronizeFinalsTemplate } from "@/utils/queries";
 import {

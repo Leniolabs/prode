@@ -1,5 +1,5 @@
 import React from "react";
-import { Match } from "@prisma/client";
+import { Match } from '@/generated/prisma';
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import { BrandLogo } from "../../components/common/BrandLogo";

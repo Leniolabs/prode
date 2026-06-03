@@ -1,4 +1,4 @@
-import { ProdeRoom, Stage } from "@prisma/client";
+import { ProdeRoom, Stage } from '@/generated/prisma';
 
 export function getSubqueryFinals(room: ProdeRoom, stages?: Stage[]) {
   return `select

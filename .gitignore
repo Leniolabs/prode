@@ -29,6 +29,9 @@ coverage/
 prisma/migrations/.dev.sqlite
 prisma/.env
 
+# generated prisma client
+src/generated/
+
 # logs
 *.log
 npm-debug.log*

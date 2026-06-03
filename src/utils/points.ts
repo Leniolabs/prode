@@ -2,7 +2,7 @@ import {
   Match,
   ProdeUserFinalsMatch,
   ProdeUserGroupMatch,
-} from "@prisma/client";
+} from '@/generated/prisma';
 
 export const matchCountriesMatchStatus = (
   match: Pick<Match, "id" | "countryLeftId" | "countryRightId">,

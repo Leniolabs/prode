@@ -1,4 +1,4 @@
-import { Match, ProdeRoom, User, UserProde } from "@prisma/client";
+import { Match, ProdeRoom, User, UserProde } from '@/generated/prisma';
 import { prisma } from "../lib";
 import { matchCountriesMatchStatus, matchFinalResultStatus } from "./points";
 import {

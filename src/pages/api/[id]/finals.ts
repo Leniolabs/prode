@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { ProdeUserFinalsMatch } from "@prisma/client";
+import { ProdeUserFinalsMatch } from '@/generated/prisma';
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import { prisma } from "../../../lib";

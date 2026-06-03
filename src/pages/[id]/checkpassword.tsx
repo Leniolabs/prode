@@ -18,7 +18,7 @@ import {
   isUserRegisteredToRoom,
 } from "../../utils/queries";
 import { useLocalizedText } from "../../locale";
-import { User } from "@prisma/client";
+import { User } from '@/generated/prisma';
 
 interface HomeProps {
   id: string;

@@ -5,7 +5,7 @@
  * Inputs use only the fields each function actually reads.
  */
 
-import { Match, ProdeRoom, ProdeUserFinalsMatch } from "@prisma/client";
+import { Match, ProdeRoom, ProdeUserFinalsMatch } from '@/generated/prisma';
 
 // ---------------------------------------------------------------------------
 // Shared helpers / minimal stubs
