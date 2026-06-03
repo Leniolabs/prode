@@ -102,6 +102,10 @@ enum Stage {
   GROUP_F
   GROUP_G
   GROUP_H
+  GROUP_I
+  GROUP_J
+  GROUP_K
+  GROUP_L
   FINALS_8_1
   FINALS_8_2
   FINALS_8_3
