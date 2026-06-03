@@ -18,7 +18,7 @@ interface ShareProdeStoryButtonProps {
 export function ShareProdeStoryButton(props: ShareProdeStoryButtonProps) {
   const [sharing, setSharing] = React.useState(false);
   const i18n = useLocalizedText();
-  const [file, setFile] = React.useState<File | undefined>(undefined);
+  const [file, setFile] = React.useState<File | undefined>();
   const videoFetchRef = React.useRef<Promise<void | AxiosResponse<any, any>> | undefined>(undefined);
 
   const handleInstagramShare = React.useCallback(() => {

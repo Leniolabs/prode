@@ -199,6 +199,8 @@ export function getFinalsStageOrder(stage: string, mobile?: boolean) {
   return (mobile ? FINAL_ORDER_MAP_MOBILE : FINAL_ORDER_MAP)[stage] ?? 0;
 }
 
+export const getMatchOrder = getFinalsStageOrder;
+
 export function resolveFinalsMatches<T extends FinalsMatchLike>(
   matches: T[],
   getWinner: (match: T) => string | undefined,

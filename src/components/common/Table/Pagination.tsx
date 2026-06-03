@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
 import { className } from "../../../utils/classname";
 import styles from "./Table.module.scss";
