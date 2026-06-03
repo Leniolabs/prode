@@ -1,7 +1,5 @@
 import React from "react";
-import { useQuery } from "react-query";
 import { useCountries } from "../../../hooks";
-import { getCountries } from "../../../utils/api";
 import { className } from "../../../utils/classname";
 import { CountryFlag } from "../CountryFlag";
 import styles from "./CountrySelect.module.scss";
