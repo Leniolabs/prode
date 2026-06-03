@@ -67,7 +67,7 @@ export default async function handler(
   return res.status(200).json({
     ok: true,
     email: user.email,
-    sessionToken,
+    token: sessionToken,
     cookieName: "authjs.session-token",
   });
 }
