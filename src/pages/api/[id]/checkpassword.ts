@@ -7,6 +7,8 @@ import {
   isUserRegisteredToRoom,
   registerUserToRoom,
 } from "../../../utils/queries";
+import { hashPassword, verifyPassword } from "@/lib/auth/passwords";
+import { prisma } from "../../../lib";
 
 export default async function handler(
   req: NextApiRequest,
@@ -34,8 +36,23 @@ export default async function handler(
       return res.status(200).json({ allowed: false, code: "EMAIL_DOMAIN" });
     }
 
-    if (room.password && room.password !== password) {
-      return res.status(200).json({ allowed: false, code: "WRONG_PASSWORD" });
+    if (room.passwordHash) {
+      // New hashed path
+      const valid = await verifyPassword(password, room.passwordHash);
+      if (!valid) {
+        return res.status(200).json({ allowed: false, code: "WRONG_PASSWORD" });
+      }
+    } else if (room.password) {
+      // Legacy plaintext path — verify and migrate on the fly
+      if (room.password !== password) {
+        return res.status(200).json({ allowed: false, code: "WRONG_PASSWORD" });
+      }
+      // Migrate: hash and clear plaintext
+      const hash = await hashPassword(password);
+      await prisma.prodeRoom.update({
+        where: { id: room.id },
+        data: { passwordHash: hash, password: null },
+      });
     }
 
     const userIsRegistered = await isUserRegisteredToRoom(room, user);
