@@ -579,10 +579,10 @@ export function DailyMatchFinalInput(
 
   return (
     <div className={className(props.className, styles.dailyMatchFinalsInput)}>
-      <label>
+      <div className={styles.leftTeam}>
         {countryLeft && <CountryFlag code={countryLeft.code} />}
-        {countryLeft?.name}
-      </label>
+        <label data-tooltip={countryLeft?.name}>{countryLeft?.code}</label>
+      </div>
       <div className={styles.centerContainer}>
         <div className={styles.inputsContainer}>
           <div className={styles.leftInput}>
@@ -693,10 +693,10 @@ export function DailyMatchFinalInput(
           )}
         </div>
       </div>
-      <label>
+      <div className={styles.rightTeam}>
+        <label data-tooltip={countryRight?.name}>{countryRight?.code}</label>
         {countryRight && <CountryFlag code={countryRight?.code} />}
-        {countryRight?.name}
-      </label>
+      </div>
       <div
         ref={counterRef}
         data-show="false"
