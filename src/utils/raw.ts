@@ -1,4 +1,4 @@
-import { ProdeRoom, Stage } from "@prisma/client";
+import { ProdeRoom, Stage, Prisma } from "@prisma/client";
 
 export function getSubqueryFinals(room: ProdeRoom, stages?: Stage[]) {
   return `select
@@ -74,8 +74,8 @@ export function getSubqueryGroups(room: ProdeRoom, stage?: Stage) {
     from "ProdeUserGroupMatch" pugm
     inner join "Match" m on m."id" = pugm."matchId" ${
       stage
-        ? ` where 
-      m."stage" in 
+        ? ` where
+      m."stage" in
       (
         '${stage}'
       ) `
@@ -90,31 +90,36 @@ export function getRankingQuery(
     offset?: number;
     limit?: number;
   }
-) {
-  return `select *,
-  RANK () OVER ( 
+): Prisma.Sql {
+  const subGroups = Prisma.raw(getSubqueryGroups(room));
+  const subFinals = Prisma.raw(getSubqueryFinals(room));
+  const offsetClause = options?.offset
+    ? Prisma.sql` offset ${options.offset}`
+    : Prisma.empty;
+  const limitClause = options?.limit
+    ? Prisma.sql` limit ${options.limit}`
+    : Prisma.empty;
+  return Prisma.sql`select *,
+  RANK () OVER (
     ORDER BY rq."points" DESC, rq."email" ASC
-) ranking 
-  FROM (select 
+) ranking
+  FROM (select
 up."id",
 u."id" userId,
 u."name",
 u."email",
 u."image",
 u."prodePublic",
-case 
-when fp."points" is not null and gp."points" is not null then gp."points" + fp."points" 
+case
+when fp."points" is not null and gp."points" is not null then gp."points" + fp."points"
 when gp."points" is not null then gp."points"
 when fp."points" is not null then fp."points"
 else 0 end points
 from "UserProde" up inner join "User" u on u."id" = up."userId"
-left outer join (${getSubqueryGroups(room)}) gp on gp."userProdeId" = up."id"
-left outer join (${getSubqueryFinals(room)}) fp on fp."userProdeId" = up."id"
-where up."prodeRoomId" = '${room.id}') rq 
-order by rq."points" DESC, rq."email" ASC
-${options?.offset ? ` offset ${options?.offset}` : ""} ${
-    options?.limit ? ` limit ${options?.limit}` : ""
-  }`;
+left outer join (${subGroups}) gp on gp."userProdeId" = up."id"
+left outer join (${subFinals}) fp on fp."userProdeId" = up."id"
+where up."prodeRoomId" = ${room.id}) rq
+order by rq."points" DESC, rq."email" ASC${offsetClause}${limitClause}`;
 }
 
 export function getFullRankingQuery(
@@ -123,12 +128,54 @@ export function getFullRankingQuery(
     offset?: number;
     limit?: number;
   }
-) {
-  return `select *,
-  RANK () OVER ( 
+): Prisma.Sql {
+  const subGroups = Prisma.raw(getSubqueryGroups(room));
+  const subFinals = Prisma.raw(getSubqueryFinals(room));
+  const subFinals8 = Prisma.raw(
+    getSubqueryFinals(room, [
+      "FINALS_8_1",
+      "FINALS_8_2",
+      "FINALS_8_3",
+      "FINALS_8_4",
+      "FINALS_8_5",
+      "FINALS_8_6",
+      "FINALS_8_7",
+      "FINALS_8_8",
+    ])
+  );
+  const subFinals4 = Prisma.raw(
+    getSubqueryFinals(room, [
+      "FINALS_4_1",
+      "FINALS_4_2",
+      "FINALS_4_3",
+      "FINALS_4_4",
+    ])
+  );
+  const subFinals2 = Prisma.raw(
+    getSubqueryFinals(room, ["FINALS_2_1", "FINALS_2_2"])
+  );
+  const subFinals1 = Prisma.raw(
+    getSubqueryFinals(room, ["FINALS", "THIRD_PLACE"])
+  );
+  const subGroupA = Prisma.raw(getSubqueryGroups(room, "GROUP_A"));
+  const subGroupB = Prisma.raw(getSubqueryGroups(room, "GROUP_B"));
+  const subGroupC = Prisma.raw(getSubqueryGroups(room, "GROUP_C"));
+  const subGroupD = Prisma.raw(getSubqueryGroups(room, "GROUP_D"));
+  const subGroupE = Prisma.raw(getSubqueryGroups(room, "GROUP_E"));
+  const subGroupF = Prisma.raw(getSubqueryGroups(room, "GROUP_F"));
+  const subGroupG = Prisma.raw(getSubqueryGroups(room, "GROUP_G"));
+  const subGroupH = Prisma.raw(getSubqueryGroups(room, "GROUP_H"));
+  const offsetClause = options?.offset
+    ? Prisma.sql` offset ${options.offset}`
+    : Prisma.empty;
+  const limitClause = options?.limit
+    ? Prisma.sql` limit ${options.limit}`
+    : Prisma.empty;
+  return Prisma.sql`select *,
+  RANK () OVER (
     ORDER BY rq."points" DESC, rq."email" ASC
-) ranking 
-  FROM (select 
+) ranking
+  FROM (select
 up."id",
 u."id" userId,
 u."name",
@@ -147,85 +194,42 @@ u."prodePublic",
     case when fp4."points" is not null then fp4."points" else 0 end FINALS_4,
     case when fp2."points" is not null then fp2."points" else 0 end FINALS_2,
     case when fp1."points" is not null then fp1."points" else 0 end FINAL,
-case 
-when fp."points" is not null and gp."points" is not null then gp."points" + fp."points" 
+case
+when fp."points" is not null and gp."points" is not null then gp."points" + fp."points"
 when gp."points" is not null then gp."points"
 when fp."points" is not null then fp."points"
 else 0 end points
 from "UserProde" up inner join "User" u on u."id" = up."userId"
-left outer join (${getSubqueryGroups(room)}) gp on gp."userProdeId" = up."id"
-left outer join (${getSubqueryFinals(room)}) fp on fp."userProdeId" = up."id"
-left outer join (${getSubqueryFinals(room, [
-    "FINALS_8_1",
-    "FINALS_8_2",
-    "FINALS_8_3",
-    "FINALS_8_4",
-    "FINALS_8_5",
-    "FINALS_8_6",
-    "FINALS_8_7",
-    "FINALS_8_8",
-  ])}) fp8 on fp8."userProdeId" = up."id"
-left outer join (${getSubqueryFinals(room, [
-    "FINALS_4_1",
-    "FINALS_4_2",
-    "FINALS_4_3",
-    "FINALS_4_4",
-  ])}) fp4 on fp4."userProdeId" = up."id"
-left outer join (${getSubqueryFinals(room, [
-    "FINALS_2_1",
-    "FINALS_2_2",
-  ])}) fp2 on fp2."userProdeId" = up."id"
-left outer join (${getSubqueryFinals(room, [
-    "FINALS",
-    "THIRD_PLACE",
-  ])}) fp1 on fp1."userProdeId" = up."id"
-left outer join (${getSubqueryGroups(
-    room,
-    "GROUP_A"
-  )}) gpA on gpA."userProdeId" = up."id"
-left outer join (${getSubqueryGroups(
-    room,
-    "GROUP_B"
-  )}) gpB on gpB."userProdeId" = up."id"
-left outer join (${getSubqueryGroups(
-    room,
-    "GROUP_C"
-  )}) gpC on gpC."userProdeId" = up."id"
-left outer join (${getSubqueryGroups(
-    room,
-    "GROUP_D"
-  )}) gpD on gpD."userProdeId" = up."id"
-left outer join (${getSubqueryGroups(
-    room,
-    "GROUP_E"
-  )}) gpE on gpE."userProdeId" = up."id"
-left outer join (${getSubqueryGroups(
-    room,
-    "GROUP_F"
-  )}) gpF on gpF."userProdeId" = up."id"
-left outer join (${getSubqueryGroups(
-    room,
-    "GROUP_G"
-  )}) gpG on gpG."userProdeId" = up."id"
-left outer join (${getSubqueryGroups(
-    room,
-    "GROUP_H"
-  )}) gpH on gpH."userProdeId" = up."id"
-where up."prodeRoomId" = '${room.id}') rq 
-order by rq."points" DESC, rq."email" ASC
-${options?.offset ? ` offset ${options?.offset}` : ""} ${
-    options?.limit ? ` limit ${options?.limit}` : ""
-  }`;
+left outer join (${subGroups}) gp on gp."userProdeId" = up."id"
+left outer join (${subFinals}) fp on fp."userProdeId" = up."id"
+left outer join (${subFinals8}) fp8 on fp8."userProdeId" = up."id"
+left outer join (${subFinals4}) fp4 on fp4."userProdeId" = up."id"
+left outer join (${subFinals2}) fp2 on fp2."userProdeId" = up."id"
+left outer join (${subFinals1}) fp1 on fp1."userProdeId" = up."id"
+left outer join (${subGroupA}) gpA on gpA."userProdeId" = up."id"
+left outer join (${subGroupB}) gpB on gpB."userProdeId" = up."id"
+left outer join (${subGroupC}) gpC on gpC."userProdeId" = up."id"
+left outer join (${subGroupD}) gpD on gpD."userProdeId" = up."id"
+left outer join (${subGroupE}) gpE on gpE."userProdeId" = up."id"
+left outer join (${subGroupF}) gpF on gpF."userProdeId" = up."id"
+left outer join (${subGroupG}) gpG on gpG."userProdeId" = up."id"
+left outer join (${subGroupH}) gpH on gpH."userProdeId" = up."id"
+where up."prodeRoomId" = ${room.id}) rq
+order by rq."points" DESC, rq."email" ASC${offsetClause}${limitClause}`;
 }
 
-export function getUserFullRankingQuery(room: ProdeRoom, userProdeId: string) {
-  return `select * from (${getFullRankingQuery(
-    room
-  )}) rankq WHERE rankq."id" = '${userProdeId}'`;
+export function getUserFullRankingQuery(
+  room: ProdeRoom,
+  userProdeId: string
+): Prisma.Sql {
+  const inner = getFullRankingQuery(room);
+  return Prisma.sql`select * from (${inner}) rankq WHERE rankq."id" = ${userProdeId}`;
 }
 
-export function getUserRankingQuery(room: ProdeRoom, userProdeId: string) {
-  return `select * from (${getRankingQuery(
-    room
-  )}) rankq WHERE rankq."id" = '${userProdeId}'`;
+export function getUserRankingQuery(
+  room: ProdeRoom,
+  userProdeId: string
+): Prisma.Sql {
+  const inner = getRankingQuery(room);
+  return Prisma.sql`select * from (${inner}) rankq WHERE rankq."id" = ${userProdeId}`;
 }
