@@ -20,7 +20,7 @@ export function CountryFlag(props: React.PropsWithChildren<CountryFlagProps>) {
       )}
     >
       <img
-        src={`/flags/${props.code}.png`}
+        src={`/flags/${props.code}.svg`}
         onError={(e) => {
           (e.currentTarget as HTMLImageElement).src = "/flags/_placeholder.svg";
         }}
