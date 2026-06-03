@@ -4,8 +4,7 @@ import styles from "./PageLogo.module.scss";
 
 export function PageLogo() {
   return (
-    <Link href="/rooms" legacyBehavior>
-      <a className={styles.pageLogo}>
+    <Link href="/rooms" className={styles.pageLogo}>
         <svg
           width="21"
           height="54"
@@ -329,7 +328,6 @@ export function PageLogo() {
             </clipPath>
           </defs>
         </svg>
-      </a>
     </Link>
   );
 }

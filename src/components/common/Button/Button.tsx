@@ -30,18 +30,17 @@ export function Button(props: React.PropsWithChildren<ButtonProps>) {
       );
 
     return (
-      <Link href={props.href} legacyBehavior>
-        <a
-          className={className(
-            styles.button,
-            props.className,
-            props.disabled && styles.disabled,
-            props.variant && styles[props.variant],
-            props.invert && styles.invert
-          )}
-        >
-          {props.children}
-        </a>
+      <Link
+        href={props.href}
+        className={className(
+          styles.button,
+          props.className,
+          props.disabled && styles.disabled,
+          props.variant && styles[props.variant],
+          props.invert && styles.invert
+        )}
+      >
+        {props.children}
       </Link>
     );
   }

@@ -51,15 +51,11 @@ export function Pagination(props: PaginationProps) {
 
   return (
     <div className={styles.pagination}>
-      <Link legacyBehavior href={prevPageLink || window.location.href}>
-        <a className={className(!prevPageLink && styles.disabled)}>{"‹"}</a>
-      </Link>
+      <Link href={prevPageLink || window.location.href} className={className(!prevPageLink && styles.disabled)}>{"‹"}</Link>
       <div className={styles.paginationNumber}>
         {props.page + 1} / {props.totalPages}
       </div>
-      <Link legacyBehavior href={nextPageLink || window.location.href}>
-        <a className={className(!nextPageLink && styles.disabled)}>{"›"}</a>
-      </Link>
+      <Link href={nextPageLink || window.location.href} className={className(!nextPageLink && styles.disabled)}>{"›"}</Link>
     </div>
   );
 }

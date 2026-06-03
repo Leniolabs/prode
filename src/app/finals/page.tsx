@@ -207,9 +207,7 @@ export default function FinalsPage() {
       />
       <Warning offset>
         {i18n.groupsWarning}{" "}
-        <Link href="/rooms" legacyBehavior>
-          <a>{i18n.groupsWarningLink}</a>
-        </Link>
+        <Link href="/rooms">{i18n.groupsWarningLink}</Link>
       </Warning>
       <Container full>
         <FinalsContainer full>

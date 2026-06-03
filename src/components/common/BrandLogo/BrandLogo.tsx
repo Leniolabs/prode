@@ -20,8 +20,7 @@ export function BrandLogo() {
   }, []);
 
   return (
-    <Link href="https://www.leniolabs.com/" legacyBehavior>
-      <a className={styles.brandLogo} title="Leniolabs">
+    <Link href="https://www.leniolabs.com/" className={styles.brandLogo} title="Leniolabs">
         <svg viewBox="0 0 400 162">
           <g className={styles.lenioText}>
             <text
@@ -51,7 +50,6 @@ export function BrandLogo() {
           />
           <circle className={styles.online} cx="31.7" cy="30.7" r="9.6" />
         </svg>
-      </a>
     </Link>
   );
 }
