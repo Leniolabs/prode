@@ -549,7 +549,7 @@ export async function getRanking(
     offset: page * pageLength,
     limit: pageLength,
   });
-  const data: Rank[] = await prisma.$queryRawUnsafe(query);
+  const data: Rank[] = await prisma.$queryRaw(query);
 
   return data.map((row) => {
     return {
@@ -579,7 +579,7 @@ export async function getFullRanking(
     offset: page * pageLength,
     limit: pageLength,
   });
-  const data: Rank[] = await prisma.$queryRawUnsafe(query);
+  const data: Rank[] = await prisma.$queryRaw(query);
 
   return data.map((row) => {
     return {
@@ -622,7 +622,7 @@ export async function getFullRanking(
 
 export async function getUserRanking(room: ProdeRoom, userProde: UserProde) {
   const query = getUserRankingQuery(room, userProde.id);
-  const data: Rank[] = await prisma.$queryRawUnsafe(query);
+  const data: Rank[] = await prisma.$queryRaw(query);
 
   return data.map((row) => {
     return {
@@ -648,7 +648,7 @@ export async function getUserFullRanking(
   userProde: UserProde
 ) {
   const query = getUserFullRankingQuery(room, userProde.id);
-  const data: Rank[] = await prisma.$queryRawUnsafe(query);
+  const data: Rank[] = await prisma.$queryRaw(query);
 
   return data.map((row) => {
     return {
