@@ -60,38 +60,70 @@ interface HomeProps {
 
 const getMatchOrder = (matchStage: Stage) => {
   switch (matchStage) {
-    case "FINALS_8_1":
+    case "FINALS_16_1":
       return 1;
-    case "FINALS_8_2":
-      return 7;
-    case "FINALS_8_3":
-      return 5;
-    case "FINALS_8_4":
-      return 3;
-    case "FINALS_8_5":
+    case "FINALS_16_2":
       return 2;
-    case "FINALS_8_6":
+    case "FINALS_16_3":
+      return 3;
+    case "FINALS_16_4":
       return 4;
-    case "FINALS_8_7":
+    case "FINALS_16_5":
+      return 5;
+    case "FINALS_16_6":
       return 6;
-    case "FINALS_8_8":
+    case "FINALS_16_7":
+      return 7;
+    case "FINALS_16_8":
       return 8;
-    case "FINALS_4_1":
+    case "FINALS_16_9":
+      return 9;
+    case "FINALS_16_10":
       return 10;
-    case "FINALS_4_3":
+    case "FINALS_16_11":
       return 11;
-    case "FINALS_4_2":
+    case "FINALS_16_12":
       return 12;
-    case "FINALS_4_4":
+    case "FINALS_16_13":
       return 13;
-    case "FINALS_2_1":
+    case "FINALS_16_14":
+      return 14;
+    case "FINALS_16_15":
       return 15;
-    case "FINALS_2_2":
+    case "FINALS_16_16":
       return 16;
-    case "FINALS":
+    case "FINALS_8_1":
       return 18;
-    case "THIRD_PLACE":
+    case "FINALS_8_2":
+      return 24;
+    case "FINALS_8_3":
+      return 22;
+    case "FINALS_8_4":
+      return 20;
+    case "FINALS_8_5":
       return 19;
+    case "FINALS_8_6":
+      return 21;
+    case "FINALS_8_7":
+      return 23;
+    case "FINALS_8_8":
+      return 25;
+    case "FINALS_4_1":
+      return 27;
+    case "FINALS_4_3":
+      return 28;
+    case "FINALS_4_2":
+      return 29;
+    case "FINALS_4_4":
+      return 30;
+    case "FINALS_2_1":
+      return 32;
+    case "FINALS_2_2":
+      return 33;
+    case "FINALS":
+      return 35;
+    case "THIRD_PLACE":
+      return 36;
     default:
       return 0;
   }
@@ -343,6 +375,35 @@ export default function Home(props: HomeProps) {
           </ContainerHeader>
           <BracketsContainer gridArea="matches">
             <BracketTitle full order={0}>
+              {i18n.FINALS_16}
+            </BracketTitle>
+            {computedMatches
+              .filter((x) => x.stage.includes("FINALS_16_"))
+              .sort((a, b) => (a.stage > b.stage ? 1 : -1))
+              .map((match) => (
+                <MatchFinalsInput
+                  key={match.id}
+                  date={new Date(match.date)}
+                  countryLeftId={match.countryLeftId}
+                  goalsLeft={match.goalsLeft ?? undefined}
+                  countryRightId={match.countryRightId}
+                  goalsRight={match.goalsRight ?? undefined}
+                  penaltisLeft={match.penaltisLeft ?? null}
+                  penaltisRight={match.penaltisRight ?? null}
+                  onChange={handleMatchChange(match.id)}
+                  countryInput
+                  order={getMatchOrder(match.stage)}
+                />
+              ))}
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketIcon order={17} />
+            <BracketTitle full order={17}>
               {i18n.FINALS_8}
             </BracketTitle>
             {computedMatches
@@ -363,11 +424,11 @@ export default function Home(props: HomeProps) {
                   order={getMatchOrder(match.stage)}
                 />
               ))}
-            <BracketIcon order={9} />
-            <BracketIcon order={9} />
-            <BracketIcon order={9} />
-            <BracketIcon order={9} />
-            <BracketTitle order={9} full>
+            <BracketIcon order={26} />
+            <BracketIcon order={26} />
+            <BracketIcon order={26} />
+            <BracketIcon order={26} />
+            <BracketTitle order={26} full>
               {i18n.FINALS_4}
             </BracketTitle>
             {computedMatches
@@ -388,9 +449,9 @@ export default function Home(props: HomeProps) {
                   order={getMatchOrder(match.stage)}
                 />
               ))}
-            <BracketIcon order={14} big />
-            <BracketIcon order={14} big />
-            <BracketTitle className={bracketOffsetQuarter} order={14} full>
+            <BracketIcon order={31} big />
+            <BracketIcon order={31} big />
+            <BracketTitle className={bracketOffsetQuarter} order={31} full>
               {i18n.FINALS_2}
             </BracketTitle>
             {computedMatches
@@ -414,16 +475,16 @@ export default function Home(props: HomeProps) {
               ))}
             <BracketIcon
               className={className(bracketOffsetQuarter)}
-              order={17}
+              order={34}
               big
             />
             <BracketTitle
               className={className(bracketOffsetQuarter)}
-              order={17}
+              order={34}
             >
               {i18n.FINAL}
             </BracketTitle>
-            <BracketTitle order={17}>{i18n.THIRD_PLACE}</BracketTitle>
+            <BracketTitle order={34}>{i18n.THIRD_PLACE}</BracketTitle>
             {computedMatches
               .filter((x) => x.stage === "FINALS" || x.stage === "THIRD_PLACE")
               .sort((a, b) => (a.stage > b.stage ? 1 : -1))

@@ -81,6 +81,7 @@
     "groupsIncorrectPrediction": "Predicción incorrecta",
 
     "finalsTitle": "FINALES",
+    "FINALS_16": "TREINTAIDOSAVOS DE FINAL",
     "FINALS_8": "OCTAVOS DE FINAL",
     "FINALS_4": "CUARTOS DE FINAL",
     "FINALS_2": "SEMIFINALES",
@@ -203,6 +204,7 @@
     "groupsIncorrectPrediction": "Incorrect prediction",
 
     "finalsTitle": "BRACKETS",
+    "FINALS_16": "ROUND OF 32",
     "FINALS_8": "ROUND OF 16",
     "FINALS_4": "QUARTER-FINALS",
     "FINALS_2": "SEMI-FINALS",
