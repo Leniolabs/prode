@@ -1,4 +1,4 @@
-import { Country, Match } from "@prisma/client";
+import { Country, Match } from '@/generated/prisma';
 
 export function getCountries(): Promise<
   Pick<Country, "id" | "code" | "name">[]

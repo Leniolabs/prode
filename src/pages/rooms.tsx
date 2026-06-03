@@ -16,7 +16,7 @@ import { useRequireSession } from "../hooks";
 import { prisma } from "../lib";
 import { Button } from "../components/common/Button";
 import { Table } from "../components/common/Table";
-import { ProdeRoom, User } from "@prisma/client";
+import { ProdeRoom, User } from '@/generated/prisma';
 import { LockIcon } from "../components/common/Icons";
 import { useRouter } from "next/router";
 import axios from "axios";

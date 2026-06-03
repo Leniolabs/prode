@@ -1,4 +1,4 @@
-import { ProdeRoom, Stage } from "@prisma/client";
+import { ProdeRoom, Stage } from '@/generated/prisma';
 
 const GROUP_STAGES: Stage[] = [
   "GROUP_A",

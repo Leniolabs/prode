@@ -1,4 +1,4 @@
-import { ProdeRoom, User } from "@prisma/client";
+import { ProdeRoom, User } from '@/generated/prisma';
 import React from "react";
 import { useLocalizedText } from "../../../../locale";
 import { Header } from "@/layout";
