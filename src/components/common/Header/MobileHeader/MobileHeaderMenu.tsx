@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { User } from "@/generated/prisma";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useLocalizedText } from "../../../../locale";

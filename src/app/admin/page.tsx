@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { ProdeRoom, User } from "@prisma/client";
+import { ProdeRoom, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
 import {
@@ -22,7 +22,7 @@ import { Table } from "@/components/common/Table";
 import { CloseIcon } from "@/components/common/Icons";
 import { ButtonIcon } from "@/components/common/ButtonIcon";
 import { LocaleSelect } from "@/components/common/LocaleSelect";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 interface AdminData {
   rooms: (Pick<ProdeRoom, "id" | "name" | "public" | "password" | "emailDomain"> & { playerCount: number })[];
@@ -35,11 +35,7 @@ interface AdminData {
 export default function AdminPage() {
   const session = useRequireSession();
 
-  const { data: props } = useQuery<AdminData>(
-    ["admin-page-data"],
-    () => fetch("/api/admin-page-data").then((r) => r.json()),
-    { enabled: session.status === "authenticated" }
-  );
+  const { data: props } = useQuery<AdminData>({ queryKey: ["admin-page-data"], queryFn: () => fetch("/api/admin-page-data").then((r) => r.json()), enabled: session.status === "authenticated" });
 
   const handleResetMatches = React.useCallback(() => {
     if (confirm("Are you sure")) {

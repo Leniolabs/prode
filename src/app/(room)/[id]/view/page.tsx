@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { Match, ProdeRoom, User } from "@prisma/client";
+import { Match, ProdeRoom, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { DesktopHeader, MobileHeader } from "@/components/common/Header";
 import { MatchInput } from "@/components/common/MatchInput";
@@ -44,7 +44,7 @@ import { LocaleSelect } from "@/components/common/LocaleSelect";
 import { useLocalizedText } from "@/locale";
 import { ShareToday } from "@/components/common/ShareButton/ShareToday";
 import { getMatchOrder } from "@/utils/finals";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
 type UIMatch = Pick<
@@ -95,11 +95,7 @@ export default function ViewPage() {
   const id = params?.id as string;
   const i18n = useLocalizedText();
 
-  const { data: props } = useQuery<ViewData>(
-    ["view-page-data", id],
-    () => fetch(`/api/view-page-data?id=${id}`).then((r) => r.json()),
-    { enabled: !!id }
-  );
+  const { data: props } = useQuery<ViewData>({ queryKey: ["view-page-data", id], queryFn: () => fetch(`/api/view-page-data?id=${id}`).then((r) => r.json()), enabled: !!id });
 
   const { matches, finalsMatches } = props ?? {};
 

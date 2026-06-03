@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { Match, ProdeRoom, Stage, User } from "@prisma/client";
+import { Match, ProdeRoom, Stage, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
 import { DesktopHeader, MobileHeader } from "@/components/common/Header";
@@ -45,7 +45,7 @@ import {
 import { ShareToday } from "@/components/common/ShareButton/ShareToday";
 import { GapIcon } from "@/components/common/Icons";
 import { useRouter, useParams } from "next/navigation";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getMatchOrder } from "@/utils/finals";
 
 type UIMatch = Pick<
@@ -95,11 +95,7 @@ export default function RoomFinalsPage() {
   const params = useParams();
   const id = params?.id as string;
 
-  const { data: props } = useQuery<RoomFinalsData>(
-    ["room-finals-data", id],
-    () => fetch(`/api/room-finals-data?id=${id}`).then((r) => r.json()),
-    { enabled: session.status === "authenticated" && !!id }
-  );
+  const { data: props } = useQuery<RoomFinalsData>({ queryKey: ["room-finals-data", id], queryFn: () => fetch(`/api/room-finals-data?id=${id}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);

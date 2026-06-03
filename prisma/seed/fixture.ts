@@ -1,4 +1,4 @@
-import { PrismaClient, Stage } from "@prisma/client";
+import { PrismaClient, Stage } from "@/generated/prisma";
 
 type Fixture = [Stage, string, string, string];
 

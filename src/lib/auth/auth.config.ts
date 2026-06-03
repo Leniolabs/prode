@@ -10,4 +10,4 @@
  * For now it re-exports the authOptions from the v4 handler so that any code
  * that imports from @/lib/auth/auth.config gets a stable interface.
  */
-export { authOptions as authConfig } from '../../pages/api/auth/[...nextauth]'
+export { authOptions as authConfig } from '@/lib/auth/authOptions'

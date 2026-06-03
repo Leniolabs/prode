@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { ProdeRoom, User } from "@prisma/client";
+import { ProdeRoom, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
 import { DesktopHeader, MobileHeader } from "@/components/common/Header";
@@ -10,7 +10,7 @@ import { Winners } from "@/components/view/Winners";
 import { Meta } from "@/components/common/Meta";
 import { LocaleSelect } from "@/components/common/LocaleSelect";
 import { useLocalizedText } from "@/locale";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
 interface ResultsData {
@@ -35,11 +35,7 @@ export default function ResultsPage() {
   const id = params?.id as string;
   const i18n = useLocalizedText();
 
-  const { data: props } = useQuery<ResultsData>(
-    ["results-page-data", id],
-    () => fetch(`/api/room-results-data?id=${id}`).then((r) => r.json()),
-    { enabled: session.status === "authenticated" && !!id }
-  );
+  const { data: props } = useQuery<ResultsData>({ queryKey: ["results-page-data", id], queryFn: () => fetch(`/api/room-results-data?id=${id}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
 
   if (session.status === "loading" || session.status === "unauthenticated")
     return null;

@@ -1,4 +1,4 @@
-import { Match, ProdeRoom } from "@prisma/client";
+import { Match, ProdeRoom } from "@/generated/prisma";
 
 // ---------------------------------------------------------------------------
 // Status helpers (group stage)

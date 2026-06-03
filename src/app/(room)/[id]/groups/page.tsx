@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { Match, ProdeRoom, User } from "@prisma/client";
+import { Match, ProdeRoom, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
 import { DesktopHeader, MobileHeader } from "@/components/common/Header";
@@ -39,7 +39,7 @@ import { useRouter, useParams } from "next/navigation";
 import { ShareToday } from "@/components/common/ShareButton/ShareToday";
 import { GapIcon } from "@/components/common/Icons";
 import { Warning } from "@/components/common/Warning";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 type UIMatch = Pick<
   Match,
@@ -83,11 +83,7 @@ export default function RoomGroupsPage() {
   const id = params?.id as string;
   const i18n = useLocalizedText();
 
-  const { data: props } = useQuery<RoomGroupsData>(
-    ["room-groups-data", id],
-    () => fetch(`/api/room-groups-data?id=${id}`).then((r) => r.json()),
-    { enabled: session.status === "authenticated" && !!id }
-  );
+  const { data: props } = useQuery<RoomGroupsData>({ queryKey: ["room-groups-data", id], queryFn: () => fetch(`/api/room-groups-data?id=${id}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);

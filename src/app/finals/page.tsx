@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { Match, Stage, User } from "@prisma/client";
+import { Match, Stage, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
 import { DesktopHeader, MobileHeader } from "@/components/common/Header";
@@ -38,7 +38,7 @@ import {
   DailyMatches,
   DailyMatchFinalInput,
 } from "@/components/common/DailyMatches";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   getFinalsStageGroup,
   getFinalsStageOrder,
@@ -84,11 +84,7 @@ export default function FinalsPage() {
   const session = useRequireSession();
   const i18n = useLocalizedText();
 
-  const { data: props } = useQuery<FinalsData>(
-    ["finals-page-data"],
-    () => fetch("/api/finals-page-data").then((r) => r.json()),
-    { enabled: session.status === "authenticated" }
-  );
+  const { data: props } = useQuery<FinalsData>({ queryKey: ["finals-page-data"], queryFn: () => fetch("/api/finals-page-data").then((r) => r.json()), enabled: session.status === "authenticated" });
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);

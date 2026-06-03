@@ -1,4 +1,4 @@
-import { Match, ProdeRoom, ProdeUserFinalsMatch } from "@prisma/client";
+import { Match, ProdeRoom, ProdeUserFinalsMatch } from "@/generated/prisma";
 
 // ---------------------------------------------------------------------------
 // Status helpers (knockout stage)

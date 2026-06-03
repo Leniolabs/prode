@@ -21,7 +21,7 @@
  */
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
-import type { ProdeRoom, User } from '@prisma/client'
+import type { ProdeRoom, User } from '@/generated/prisma'
 import prisma from '@/lib/prisma'
 import { auth } from './session'
 

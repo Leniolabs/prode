@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { Match, Stage } from "@prisma/client";
+import { Match, Stage } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
 import {
@@ -38,7 +38,7 @@ import {
   getFinalsStageOrder,
   resolveFinalsMatches,
 } from "@/utils/finals";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 type UIMatch = Pick<
   Match,
@@ -67,11 +67,7 @@ export default function AdminFinalsPage() {
   const session = useRequireSession();
   const i18n = useLocalizedText();
 
-  const { data } = useQuery<AdminFinalsData>(
-    ["admin-finals-data"],
-    () => fetch("/api/admin-finals-data").then((r) => r.json()),
-    { enabled: session.status === "authenticated" }
-  );
+  const { data } = useQuery<AdminFinalsData>({ queryKey: ["admin-finals-data"], queryFn: () => fetch("/api/admin-finals-data").then((r) => r.json()), enabled: session.status === "authenticated" });
 
   const [updating, setUpdating] = React.useState(false);
   const [originalMatches, setOriginalMatches] = React.useState<UIMatch[]>([]);

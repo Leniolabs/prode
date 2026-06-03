@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/generated/prisma";
 
 const COUNTRIES: { name: string; code: string }[] = [
   // Group A

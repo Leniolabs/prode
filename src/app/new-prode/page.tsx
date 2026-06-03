@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { User } from "@prisma/client";
+import { User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { DesktopHeader, MobileHeader } from "@/components/common/Header";
 import {
@@ -27,7 +27,7 @@ import { formError } from "@/utils/errors";
 import { Meta } from "@/components/common/Meta";
 import { LocaleSelect } from "@/components/common/LocaleSelect";
 import { useLocalizedText } from "@/locale";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 interface NewProdeData {
   userRanking?: Pick<User, "id" | "name" | "image" | "email" | "prodePublic" | "background" | "dark">;
@@ -49,11 +49,7 @@ export default function NewProdePage() {
   const router = useRouter();
   const i18n = useLocalizedText();
 
-  const { data: props } = useQuery<NewProdeData>(
-    ["new-prode-page-data"],
-    () => fetch("/api/new-prode-page-data").then((r) => r.json()),
-    { enabled: session.status === "authenticated" }
-  );
+  const { data: props } = useQuery<NewProdeData>({ queryKey: ["new-prode-page-data"], queryFn: () => fetch("/api/new-prode-page-data").then((r) => r.json()), enabled: session.status === "authenticated" });
 
   const [error, setError] = React.useState<string>("");
   const [roomNameError, setRoomNameError] = React.useState<boolean | undefined>(undefined);

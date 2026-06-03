@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { Match, User } from "@prisma/client";
+import { Match, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
 import { DesktopHeader, MobileHeader } from "@/components/common/Header";
@@ -32,7 +32,7 @@ import {
   DailyMatchInput,
 } from "@/components/common/DailyMatches";
 import { ShareToday } from "@/components/common/ShareButton/ShareToday";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 type UIMatch = Pick<
   Match,
@@ -61,11 +61,7 @@ export default function GroupsPage() {
   const session = useRequireSession();
   const i18n = useLocalizedText();
 
-  const { data: props } = useQuery<GroupsData>(
-    ["groups-page-data"],
-    () => fetch("/api/groups-page-data").then((r) => r.json()),
-    { enabled: session.status === "authenticated" }
-  );
+  const { data: props } = useQuery<GroupsData>({ queryKey: ["groups-page-data"], queryFn: () => fetch("/api/groups-page-data").then((r) => r.json()), enabled: session.status === "authenticated" });
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);

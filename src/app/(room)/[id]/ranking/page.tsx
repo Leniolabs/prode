@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { ProdeRoom, User } from "@prisma/client";
+import { ProdeRoom, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
 import { DesktopHeader, MobileHeader } from "@/components/common/Header";
@@ -22,7 +22,7 @@ import { ButtonIcon } from "@/components/common/ButtonIcon";
 import { CloseIcon, CrownIcon, ExitIcon } from "@/components/common/Icons";
 import axios from "axios";
 import { useLocalizedText } from "@/locale";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 interface RankingData {
   id: string;
@@ -60,11 +60,7 @@ export default function RankingPage() {
   const page = parseInt(searchParams?.get("page") || "0", 10);
   const i18n = useLocalizedText();
 
-  const { data: props } = useQuery<RankingData>(
-    ["ranking-page-data", id, page],
-    () => fetch(`/api/room-ranking-data?id=${id}&page=${page}`).then((r) => r.json()),
-    { enabled: session.status === "authenticated" && !!id }
-  );
+  const { data: props } = useQuery<RankingData>({ queryKey: ["ranking-page-data", id, page], queryFn: () => fetch(`/api/room-ranking-data?id=${id}&page=${page}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
 
   const handleUserClick = React.useCallback(
     (row: { id: string }) => {

@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { ProdeRoom, User } from "@prisma/client";
+import { ProdeRoom, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { DesktopHeader, MobileHeader } from "@/components/common/Header";
 import {
@@ -22,7 +22,7 @@ import { Meta } from "@/components/common/Meta";
 import { Warning } from "@/components/common/Warning";
 import { LocaleSelect } from "@/components/common/LocaleSelect";
 import { useLocalizedText } from "@/locale";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 interface RoomsData {
   finalsStarted: boolean;
@@ -44,11 +44,7 @@ export default function RoomsPage() {
   const router = useRouter();
   const i18n = useLocalizedText();
 
-  const { data: props } = useQuery<RoomsData>(
-    ["rooms-page-data"],
-    () => fetch("/api/rooms-page-data").then((r) => r.json()),
-    { enabled: session.status === "authenticated" }
-  );
+  const { data: props } = useQuery<RoomsData>({ queryKey: ["rooms-page-data"], queryFn: () => fetch("/api/rooms-page-data").then((r) => r.json()), enabled: session.status === "authenticated" });
 
   const [passwordModalId, setPasswordModalId] = React.useState<string>();
 

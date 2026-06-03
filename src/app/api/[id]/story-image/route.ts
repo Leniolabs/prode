@@ -142,5 +142,5 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
   printMatches.map((match, index) => drawMatch(match, index * countryRowHeight + headerHeight))
 
   const buffer = canvas.toBuffer('image/png')
-  return new NextResponse(buffer, { headers: { 'content-type': 'image/png' } })
+  return new NextResponse(buffer as unknown as BodyInit, { headers: { 'content-type': 'image/png' } })
 }

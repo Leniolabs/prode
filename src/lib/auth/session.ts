@@ -14,9 +14,8 @@
 import { unstable_getServerSession } from 'next-auth'
 import type { IncomingMessage, ServerResponse } from 'http'
 import type { Session } from 'next-auth'
-// Importing relative to avoid path-alias cycle (lib/ -> pages/).
 // After next-auth@5 upgrade, replace with: import { authConfig } from './auth.config'
-import { authOptions } from '../../pages/api/auth/[...nextauth]'
+import { authOptions } from '@/lib/auth/authOptions'
 
 export async function auth(
   req: IncomingMessage,

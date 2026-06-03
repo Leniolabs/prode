@@ -6,7 +6,7 @@ import { useRequireSession } from '@/hooks'
 import { PasswordModal } from '@/components/common/PasswordModal'
 import axios from 'axios'
 import { useRouter, useParams } from 'next/navigation'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useLocalizedText } from '@/locale'
 
 export default function CheckPasswordPage() {
@@ -16,9 +16,10 @@ export default function CheckPasswordPage() {
   const id = params?.id as string
   const i18n = useLocalizedText()
 
-  const { data } = useQuery(['checkpassword-page-data', id], () =>
-    fetch(`/api/view-page-data?id=${id}`).then((r) => r.json())
-  )
+  const { data } = useQuery<{ userRanking?: { background?: string } }>({
+    queryKey: ['checkpassword-page-data', id],
+    queryFn: () => fetch(`/api/view-page-data?id=${id}`).then((r) => r.json()),
+  })
 
   const handlePassword = React.useCallback(
     (password: string) => {

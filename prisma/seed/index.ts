@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/generated/prisma";
 import { seedCountries } from "./countries";
 import { seedFixture } from "./fixture";
 import { seedBracket } from "./bracket";
