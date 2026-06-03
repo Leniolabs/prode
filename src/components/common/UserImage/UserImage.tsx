@@ -61,7 +61,7 @@ export function UserImage(props: UserImageProps) {
     >
       <img
         ref={imageRef}
-        src={props.image || ""}
+        src={props.image || undefined}
         width={48}
         height={48}
         alt={props.alt}
