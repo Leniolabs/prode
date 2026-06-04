@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { syncMatchResults } from "@/lib/api-sports/sync";
+import { syncMatchResults } from "@/lib/espn";
 
 export async function POST(req: NextRequest) {
   const secret = process.env.CRON_SECRET;
@@ -12,7 +12,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Optional: caller can pass ?date=YYYY-MM-DD to limit to one day (saves API quota)
+  // Optional: caller can pass ?date=YYYY-MM-DD to limit to one day.
+  // Without it, the sync scans the full tournament date range (one fetch per day).
   const date = req.nextUrl.searchParams.get("date") ?? undefined;
 
   const result = await syncMatchResults(date);
