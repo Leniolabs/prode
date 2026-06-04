@@ -166,10 +166,10 @@ export function DailyMatchInput(
 
   return (
     <div className={className(props.className, styles.dailyMatchInput)}>
-      <label>
+      <div className={styles.leftTeam}>
         <CountryFlag code={countryLeft?.code} />
-        {countryLeft?.name}
-      </label>
+        <label data-tooltip={countryLeft?.name}>{countryLeft?.code}</label>
+      </div>
       <div className={styles.centerContainer}>
         <div className={styles.inputsContainer}>
           <div className={styles.leftInput}>
@@ -182,7 +182,7 @@ export function DailyMatchInput(
                 styles.leftGoals,
                 resultStatus && styles[resultStatus]
               )}
-              defaultValue={props.userGoalsLeft ?? ""}
+              defaultValue={props.userGoalsLeft != null && !Number.isNaN(props.userGoalsLeft) ? props.userGoalsLeft : ""}
               onChange={handleLeftGoalsChange}
               disabled={props.disabled}
               onBlur={handleLeftInputBlur}
@@ -198,7 +198,7 @@ export function DailyMatchInput(
                 styles.rightGoals,
                 resultStatus && styles[resultStatus]
               )}
-              defaultValue={props.userGoalsRight ?? ""}
+              defaultValue={props.userGoalsRight != null && !Number.isNaN(props.userGoalsRight) ? props.userGoalsRight : ""}
               onChange={handleRightGoalsChange}
               disabled={props.disabled}
               onBlur={handleRightInputBlur}
@@ -229,10 +229,10 @@ export function DailyMatchInput(
           )}
         </div>
       </div>
-      <label>
+      <div className={styles.rightTeam}>
+        <label data-tooltip={countryRight?.name}>{countryRight?.code}</label>
         <CountryFlag code={countryRight?.code} />
-        {countryRight?.name}
-      </label>
+      </div>
       <div
         ref={counterRef}
         data-show="false"

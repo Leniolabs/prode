@@ -3,11 +3,12 @@ import Google from 'next-auth/providers/google'
 import Facebook from 'next-auth/providers/facebook'
 import GitHub from 'next-auth/providers/github'
 import Twitter from 'next-auth/providers/twitter'
+import AzureAD from 'next-auth/providers/azure-ad'
 
 const hasCredentials = (id?: string, secret?: string): id is string =>
   Boolean(id && secret)
 
-const oauthProviders = []
+const oauthProviders: NextAuthConfig['providers'] = []
 
 if (hasCredentials(process.env.GOOGLE_ID, process.env.GOOGLE_SECRET)) {
   oauthProviders.push(
@@ -41,6 +42,19 @@ if (hasCredentials(process.env.TWITTER_ID, process.env.TWITTER_SECRET)) {
     Twitter({
       clientId: process.env.TWITTER_ID,
       clientSecret: process.env.TWITTER_SECRET,
+    }),
+  )
+}
+
+if (
+  hasCredentials(process.env.AZURE_AD_CLIENT_ID, process.env.AZURE_AD_CLIENT_SECRET) &&
+  process.env.AZURE_AD_TENANT_ID
+) {
+  oauthProviders.push(
+    AzureAD({
+      clientId: process.env.AZURE_AD_CLIENT_ID,
+      clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
+      tenantId: process.env.AZURE_AD_TENANT_ID,
     }),
   )
 }

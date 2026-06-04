@@ -113,7 +113,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
     <div className={className(props.className, styles.matchInput)}>
       <div className={styles.leftTeam}>
         <CountryFlag code={countryLeft?.code} />
-        <label>{countryLeft?.name}</label>
+        <label data-tooltip={countryLeft?.name}>{countryLeft?.code}</label>
       </div>
       <div className={styles.centerContainer}>
         <div className={styles.inputsContainer}>
@@ -126,7 +126,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
               styles.leftGoals,
               resultStatus && styles[resultStatus]
             )}
-            value={props.userGoalsLeft ?? ""}
+            value={props.userGoalsLeft != null && !Number.isNaN(props.userGoalsLeft) ? props.userGoalsLeft : ""}
             onChange={handleLeftGoalsChange}
             disabled={props.disabled}
             onBlur={handleLeftInputBlur}
@@ -140,7 +140,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
               styles.rightGoals,
               resultStatus && styles[resultStatus]
             )}
-            value={props.userGoalsRight ?? ""}
+            value={props.userGoalsRight != null && !Number.isNaN(props.userGoalsRight) ? props.userGoalsRight : ""}
             onChange={handleRightGoalsChange}
             disabled={props.disabled}
             onBlur={handleRightInputBlur}
@@ -172,7 +172,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
         )}
       </div>
       <div className={styles.rightTeam}>
-        <label>{countryRight?.name}</label>
+        <label data-tooltip={countryRight?.name}>{countryRight?.code}</label>
         <CountryFlag code={countryRight?.code} />
       </div>
     </div>
