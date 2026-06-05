@@ -5,10 +5,11 @@ import { Layout, Footer, Container } from "@/layout";
 import { Button } from "@/components/common/Button";
 import { HomeTitle } from "@/components/common/HomeTitle";
 import Image from "next/image";
-import { LeniCamel, Register } from "@/components/view/Index";
+import { Register } from "@/components/view/Index";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { LocaleSelect } from "@/components/common/LocaleSelect";
+import styles from "./page.module.scss";
 
 export default function LoginPage() {
   const session = useSession();
@@ -26,15 +27,15 @@ export default function LoginPage() {
   return (
     <Layout>
       <Container direction="COL">
-        <Image src="/qatar.png" alt="Qatar Logo" width={200} height={200} />
-        <HomeTitle>Lenio Prode</HomeTitle>
+        <Image src="/wc2026-trophy.png" alt="FIFA World Cup 2026" width={200} height={280} />
+        <HomeTitle>Prode</HomeTitle>
+        <p className={styles.subtitle}>(SPORTS LOTTERY)</p>
         {session.status === "unauthenticated" && (
           <Register authError={error ?? undefined} />
         )}
         {session.status === "authenticated" && (
           <Button href="/rooms">Entrar</Button>
         )}
-        <LeniCamel />
       </Container>
       <Footer>
         <BrandLogo />
