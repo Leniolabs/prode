@@ -81,7 +81,7 @@ export default function RoomsPage() {
     return null;
 
   return (
-    <Layout backgroundImage={`/${props?.userRanking?.background}.png`}>
+    <Layout>
       <Meta />
       <DesktopHeader userRanking={props?.userRanking}>
         {props && props.registeredProdes <= 1 && (

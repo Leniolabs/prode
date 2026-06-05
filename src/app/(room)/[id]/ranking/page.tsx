@@ -97,7 +97,7 @@ export default function RankingPage() {
     return null;
 
   return (
-    <Layout backgroundImage={`/${props?.userRanking?.background}.png`}>
+    <Layout>
       <Meta />
       <DesktopHeader
         id={props?.id}

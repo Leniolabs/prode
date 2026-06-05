@@ -1,25 +1,25 @@
+@use 'styles/tokens' as t;
+
 .button {
   padding: 5px 16px;
   text-align: center;
-  color: #354156;
-  background: #ffca30;
+  color: t.$color-dark-navy;
+  background: t.$color-accent-yellow;
   font-weight: bold;
   font-size: 20px;
   cursor: pointer;
   user-select: none;
   width: max-content;
+  border-radius: t.$radius-button;
 
   &:hover:not(:disabled) {
     filter: contrast(1.1);
   }
 
   display: flex;
-
   align-items: center;
-
   height: 100%;
-
-  border: 1px solid #354156;
+  border: 1px solid t.$color-dark-navy;
 
   &.disabled {
     opacity: 0.7;
@@ -27,11 +27,11 @@
   }
 
   &.primary {
-    background: #ffca30;
+    background: t.$color-accent-yellow;
   }
 
   &.secondary {
-    background: #3b4871;
+    background: t.$color-brand-blue;
     color: white;
   }
 
@@ -50,22 +50,22 @@
 
   &.invert {
     background: transparent;
-    border-color: #ffca30;
-    color: #ffca30;
+    border-color: t.$color-accent-yellow;
+    color: t.$color-accent-yellow;
 
     &.primary {
-      border-color: #ffca30;
-      color: #ffca30;
+      border-color: t.$color-accent-yellow;
+      color: t.$color-accent-yellow;
     }
 
     &.secondary {
-      border-color: #3b4871;
-      color: #3b4871;
+      border-color: t.$color-brand-blue;
+      color: t.$color-brand-blue;
     }
 
     &.danger {
       border-color: #e02045;
-      color: #3b4871;
+      color: t.$color-dark-navy;
     }
   }
 }

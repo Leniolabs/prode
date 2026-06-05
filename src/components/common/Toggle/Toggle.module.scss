@@ -1,9 +1,11 @@
+@use 'styles/tokens' as t;
+
 .toggle {
   display: flex;
   width: 44px;
   height: 24px;
   padding: 2px;
-  background: #cd5367;
+  background: t.$color-toggle-off;
   border-radius: 15px;
   cursor: pointer;
 
@@ -17,7 +19,7 @@
   }
 
   &.toggled {
-    background: #69b29a;
+    background: t.$color-toggle-on;
     .innerToggle {
       transform: translate(100%, 0);
     }

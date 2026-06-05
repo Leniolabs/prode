@@ -191,7 +191,7 @@ export default function FinalsPage() {
     return null;
 
   return (
-    <Layout backgroundImage={`/${props?.userRanking?.background}.png`}>
+    <Layout>
       <Meta />
       <DesktopHeader userRanking={props?.userRanking}>
         <Button invert href={`/rooms`}>

@@ -1,6 +1,8 @@
+@use 'styles/tokens' as t;
+
 .warning {
-  background: #f6f5f5;
-  color: #1f2740;
+  background: t.$color-warning-bg;
+  color: t.$color-warning-text;
   margin: 24px auto 12px auto;
   display: flex;
   padding: 12px;
@@ -20,7 +22,7 @@
 
 .warningContent {
   a {
-    color: #1f2740;
+    color: t.$color-warning-text;
     text-decoration: underline;
   }
 }

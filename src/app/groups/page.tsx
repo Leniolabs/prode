@@ -143,7 +143,7 @@ export default function GroupsPage() {
     return null;
 
   return (
-    <Layout backgroundImage={`/${props?.userRanking?.background}.png`}>
+    <Layout>
       <DesktopHeader userRanking={props?.userRanking}>
         <Button invert href={`/rooms`}>
           {i18n.buttonLabelProdeList}

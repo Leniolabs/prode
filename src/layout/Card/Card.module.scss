@@ -1,15 +1,19 @@
+@use 'styles/tokens' as t;
+
 .card {
   display: flex;
   flex-direction: column;
   width: 100%;
   margin-bottom: 12px;
-  background: #f6f5f5cc;
+  background: t.$color-card-body;
+  border-radius: t.$radius-card;
+  box-shadow: t.$shadow-card;
 
   .cardTitle {
     padding: 6px 0;
     text-align: center;
-    color: white;
-    background: #1f2740;
+    color: t.$color-card-header-text;
+    background: t.$color-card-header;
     position: relative;
 
     font-size: 20px;
@@ -24,6 +28,8 @@
     align-content: center;
     place-content: center;
     align-items: center;
+
+    border-radius: t.$radius-card t.$radius-card 0 0;
   }
 
   .cardFooter {

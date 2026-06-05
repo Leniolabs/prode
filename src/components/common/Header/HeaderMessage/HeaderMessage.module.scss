@@ -1,3 +1,5 @@
+@use 'styles/tokens' as t;
+
 .headerMessage {
   color: white;
   margin-right: auto;
@@ -20,7 +22,7 @@
   .headerMessageTitleHighlighted {
     font-size: 24px;
     span {
-      color: #69b29a;
+      color: t.$color-brand-green;
       display: flex;
       align-items: center;
       margin-left: 5px;

@@ -44,6 +44,12 @@ export const harnessRoutes: HarnessRouteSpec[] = [
     buildPath: (fixtures) => `/${fixtures.roomId}/ranking`,
   },
   {
+    name: "finals",
+    fileName: "finals.png",
+    auth: "user",
+    buildPath: (fixtures) => `/${fixtures.roomId}/finals`,
+  },
+  {
     name: "admin",
     fileName: "admin.png",
     auth: "admin",
