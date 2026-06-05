@@ -31,7 +31,7 @@ export default function LoginPage() {
             alt="FIFA World Cup 2026"
             width={279}
             height={430}
-            style={{ height: '200px', width: 'auto', borderRadius: '16px' }}
+            style={{ height: '320px', width: 'auto', borderRadius: '20px' }}
           />
         </div>
         <h1 className={styles.title}>Prode</h1>

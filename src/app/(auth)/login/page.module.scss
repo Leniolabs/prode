@@ -12,10 +12,12 @@
 .title {
   color: white;
   font-weight: 800;
-  font-size: 52px;
+  font-size: 75px;
   text-align: center;
   line-height: 1;
   margin: 0 0 0.25em 0;
+  word-break: break-word;
+  max-width: 90vw;
 }
 
 .subtitle {
