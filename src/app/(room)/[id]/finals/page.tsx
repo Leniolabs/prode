@@ -94,8 +94,9 @@ export default function RoomFinalsPage() {
   const router = useRouter();
   const params = useParams();
   const id = params?.id as string;
+  const timezone = React.useMemo(() => new Date().getTimezoneOffset().toString(), []);
 
-  const { data: props } = useQuery<RoomFinalsData>({ queryKey: ["room-finals-data", id], queryFn: () => fetch(`/api/room-finals-data?id=${id}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
+  const { data: props } = useQuery<RoomFinalsData>({ queryKey: ["room-finals-data", id, timezone], queryFn: () => fetch(`/api/room-finals-data?id=${id}&timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);

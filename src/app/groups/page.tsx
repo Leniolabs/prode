@@ -60,8 +60,9 @@ interface GroupsData {
 export default function GroupsPage() {
   const session = useRequireSession();
   const i18n = useLocalizedText();
+  const timezone = React.useMemo(() => new Date().getTimezoneOffset().toString(), []);
 
-  const { data: props } = useQuery<GroupsData>({ queryKey: ["groups-page-data"], queryFn: () => fetch("/api/groups-page-data").then((r) => r.json()), enabled: session.status === "authenticated" });
+  const { data: props } = useQuery<GroupsData>({ queryKey: ["groups-page-data", timezone], queryFn: () => fetch(`/api/groups-page-data?timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" });
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);

@@ -72,8 +72,8 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
   const matches = (await finalsStarted())
     ? await getUserFinalMatches(room, viewUser)
     : await getUserGroupMatches(room, viewUser)
-  const upcomingMatches = await getNextMatches(matches)
-  const todayMatches = await getTodayMatches(matches)
+  const upcomingMatches = await getNextMatches(matches, timezone)
+  const todayMatches = await getTodayMatches(matches, timezone)
 
   const printMatchesLabel = todayMatches.length ? i18n.todayMatchesLabel : i18n.upcomingMatchesLabel
   const printMatches = todayMatches.length ? todayMatches : upcomingMatches

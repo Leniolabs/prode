@@ -11,6 +11,8 @@ import { getNextMatches, getTodayMatches } from '@/utils/date'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
+  const timezone = req.nextUrl.searchParams.get('timezone') ?? undefined
+
   const session = await auth()
   if (!session?.user?.email) return NextResponse.json({}, { status: 401 })
 
@@ -22,8 +24,8 @@ export async function GET(req: NextRequest) {
 
   const matches = await getUserTemplateGroupMatches(user)
   const prode = await prisma.prode.findFirst()
-  const nextMatches = getNextMatches(matches)
-  const todayMatches = getTodayMatches(matches)
+  const nextMatches = getNextMatches(matches, timezone)
+  const todayMatches = getTodayMatches(matches, timezone)
 
   return NextResponse.json({
     userProdeId,

@@ -83,8 +83,9 @@ interface FinalsData {
 export default function FinalsPage() {
   const session = useRequireSession();
   const i18n = useLocalizedText();
+  const timezone = React.useMemo(() => new Date().getTimezoneOffset().toString(), []);
 
-  const { data: props } = useQuery<FinalsData>({ queryKey: ["finals-page-data"], queryFn: () => fetch("/api/finals-page-data").then((r) => r.json()), enabled: session.status === "authenticated" });
+  const { data: props } = useQuery<FinalsData>({ queryKey: ["finals-page-data", timezone], queryFn: () => fetch(`/api/finals-page-data?timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" });
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);

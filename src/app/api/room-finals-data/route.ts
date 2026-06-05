@@ -22,6 +22,7 @@ function roomEmailCheck(room: { emailDomain: string | null }, user: { email: str
 
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get('id') ?? ''
+  const timezone = req.nextUrl.searchParams.get('timezone') ?? undefined
 
   const session = await auth()
   if (!session?.user?.email) return NextResponse.json({}, { status: 401 })
@@ -47,8 +48,8 @@ export async function GET(req: NextRequest) {
   const matches = await getUserFinalMatches(room, user)
   const ranking = await getRanking(room, 0, 10)
   const userRanking = await getUserRanking(room, userProde)
-  const nextMatches = getNextMatches(matches)
-  const todayMatches = getTodayMatches(matches)
+  const nextMatches = getNextMatches(matches, timezone)
+  const todayMatches = getTodayMatches(matches, timezone)
 
   const filterUnique = <T>(arr: T[], eq: (a: T, b: T) => boolean) =>
     arr.filter((item, index) => arr.findIndex((x) => eq(x, item)) === index)

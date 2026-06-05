@@ -82,8 +82,9 @@ export default function RoomGroupsPage() {
   const params = useParams();
   const id = params?.id as string;
   const i18n = useLocalizedText();
+  const timezone = React.useMemo(() => new Date().getTimezoneOffset().toString(), []);
 
-  const { data: props } = useQuery<RoomGroupsData>({ queryKey: ["room-groups-data", id], queryFn: () => fetch(`/api/room-groups-data?id=${id}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
+  const { data: props } = useQuery<RoomGroupsData>({ queryKey: ["room-groups-data", id, timezone], queryFn: () => fetch(`/api/room-groups-data?id=${id}&timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);

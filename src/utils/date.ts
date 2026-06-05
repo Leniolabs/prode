@@ -1,5 +1,23 @@
 import { Match } from '@/generated/prisma';
 
+function parseTimezoneOffset(timezone?: string) {
+  if (!timezone) return null;
+  const parsed = parseInt(timezone, 10);
+  return Number.isNaN(parsed) ? null : parsed;
+}
+
+function applyTimezoneOffset(date: Date, timezone?: string) {
+  const newDate = new Date(date);
+  const timezoneOffset = parseTimezoneOffset(timezone);
+  if (timezoneOffset === null) return newDate;
+
+  newDate.setMinutes(
+    newDate.getMinutes() + newDate.getTimezoneOffset() - timezoneOffset
+  );
+
+  return newDate;
+}
+
 export function getNextTenMinutesDate() {
   const now = new Date();
   now.setMinutes(now.getMinutes() + 10);
@@ -8,13 +26,7 @@ export function getNextTenMinutesDate() {
 
 export function formatDate(date: Date, locale: string, timezone?: string) {
   const dateLocale = !locale || locale === "es" ? "es-AR" : "en-US";
-
-  const newDate = new Date(date);
-  const timezoneOffset = newDate.getTimezoneOffset();
-  if (timezone)
-    newDate.setMinutes(
-      newDate.getMinutes() + timezoneOffset - parseInt(timezone, 10)
-    );
+  const newDate = applyTimezoneOffset(date, timezone);
 
   const dayShort = newDate
     .toLocaleString(dateLocale, {
@@ -40,13 +52,7 @@ export function formatDate(date: Date, locale: string, timezone?: string) {
 
 export function formatHour(date: Date, locale: string, timezone?: string) {
   const dateLocale = locale === "es" ? "es-AR" : "en-US";
-
-  const newDate = new Date(date);
-  const timezoneOffset = newDate.getTimezoneOffset();
-  if (timezone)
-    newDate.setMinutes(
-      newDate.getMinutes() + timezoneOffset - parseInt(timezone, 10)
-    );
+  const newDate = applyTimezoneOffset(date, timezone);
 
   const hour = newDate.toLocaleString(dateLocale, {
     hour: "numeric",
@@ -57,50 +63,71 @@ export function formatHour(date: Date, locale: string, timezone?: string) {
 }
 
 export function getTodayMatches<T extends { id: string; date: string }>(
-  matches: T[]
+  matches: T[],
+  timezone?: string
 ) {
-  const date = new Date(); //2022, 10, 22);
+  const date = applyTimezoneOffset(new Date(), timezone); //2022, 10, 22);
 
   if (date.getHours() >= 21) return [];
 
   const init = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   const end = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
   const todayMatches = matches
-    .sort((a, b) => (new Date(a.date) >= new Date(b.date) ? 1 : -1))
+    .sort((a, b) =>
+      applyTimezoneOffset(new Date(a.date), timezone) >=
+      applyTimezoneOffset(new Date(b.date), timezone)
+        ? 1
+        : -1
+    )
     .filter(
-      (match) => new Date(match.date) >= init && new Date(match.date) <= end
+      (match) => {
+        const matchDate = applyTimezoneOffset(new Date(match.date), timezone);
+        return matchDate >= init && matchDate <= end;
+      }
     );
 
   if (!todayMatches.length) return [];
 
   const lastDateToday = new Date(
     todayMatches.sort((a, b) =>
-      new Date(a.date) <= new Date(b.date) ? 1 : -1
+      applyTimezoneOffset(new Date(a.date), timezone) <=
+      applyTimezoneOffset(new Date(b.date), timezone)
+        ? 1
+        : -1
     )[0].date
   );
 
-  const checkDate = new Date(lastDateToday);
+  const checkDate = applyTimezoneOffset(lastDateToday, timezone);
   checkDate.setHours(checkDate.getHours() + 3);
 
-  if (new Date() > checkDate) return [];
+  if (applyTimezoneOffset(new Date(), timezone) > checkDate) return [];
 
   return todayMatches.sort((a, b) =>
-    new Date(a.date) >= new Date(b.date) ? 1 : -1
+    applyTimezoneOffset(new Date(a.date), timezone) >=
+    applyTimezoneOffset(new Date(b.date), timezone)
+      ? 1
+      : -1
   );
 }
 
 export function getNextMatches<T extends { id: string; date: string }>(
-  matches: T[]
+  matches: T[],
+  timezone?: string
 ) {
-  const date = new Date();
+  const date = applyTimezoneOffset(new Date(), timezone);
 
   const sortedMatches = matches
-    .filter((row) => new Date(row.date) >= date)
-    .sort((a, b) => (new Date(a.date) >= new Date(b.date) ? 1 : -1));
+    .filter((row) => applyTimezoneOffset(new Date(row.date), timezone) >= date)
+    .sort((a, b) =>
+      applyTimezoneOffset(new Date(a.date), timezone) >=
+      applyTimezoneOffset(new Date(b.date), timezone)
+        ? 1
+        : -1
+    );
 
   if (!sortedMatches.length) return [];
 
-  const firstDate = new Date(sortedMatches[0]?.date);
+  const firstDate = applyTimezoneOffset(new Date(sortedMatches[0]?.date), timezone);
 
   const init = new Date(
     firstDate.getFullYear(),
@@ -115,6 +142,9 @@ export function getNextMatches<T extends { id: string; date: string }>(
   );
 
   return sortedMatches.filter(
-    (match) => new Date(match.date) >= init && new Date(match.date) <= end
+    (match) => {
+      const matchDate = applyTimezoneOffset(new Date(match.date), timezone);
+      return matchDate >= init && matchDate <= end;
+    }
   );
 }
