@@ -6,6 +6,7 @@
   width: 100%;
   margin-bottom: 12px;
   background: t.$color-card-body;
+  color: t.$color-dark-navy;
   border-radius: t.$radius-card;
   box-shadow: t.$shadow-card;
 
@@ -16,7 +17,7 @@
     background: t.$color-card-header;
     position: relative;
 
-    font-size: 20px;
+    font-size: 25px;
     font-weight: bold;
 
     min-height: 40px;

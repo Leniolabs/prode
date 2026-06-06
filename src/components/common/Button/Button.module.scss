@@ -1,7 +1,7 @@
 @use 'styles/tokens' as t;
 
 .button {
-  padding: 5px 16px;
+  padding: 10px 20px;
   text-align: center;
   color: t.$color-dark-navy;
   background: t.$color-accent-yellow;
@@ -10,7 +10,8 @@
   cursor: pointer;
   user-select: none;
   width: max-content;
-  border-radius: t.$radius-button;
+  border-radius: 8px;
+  gap: 10px;
 
   &:hover:not(:disabled) {
     filter: contrast(1.1);
@@ -31,8 +32,9 @@
   }
 
   &.secondary {
-    background: t.$color-brand-blue;
+    background: t.$color-brand-light-blue;
     color: white;
+    border: none;
   }
 
   &.danger {
@@ -48,10 +50,21 @@
     background: transparent;
   }
 
+  &.outline {
+    background: white;
+    color: t.$color-brand-light-blue;
+    border: 1.5px solid t.$color-brand-light-blue;
+    font-size: 20px;
+  }
+
   &.invert {
     background: transparent;
-    border-color: t.$color-accent-yellow;
-    color: t.$color-accent-yellow;
+    border-color: #ffffff;
+    color: #ffffff;
+    border-width: 1px;
+    border-radius: 8px;
+    padding: 10px 20px;
+    gap: 10px;
 
     &.primary {
       border-color: t.$color-accent-yellow;
@@ -67,5 +80,15 @@
       border-color: #e02045;
       color: t.$color-dark-navy;
     }
+  }
+
+  &.transparent {
+    background: transparent;
+    border-color: #ffffff;
+    color: #ffffff;
+    border-width: 1px;
+    border-radius: 8px;
+    padding: 10px 20px;
+    gap: 10px;
   }
 }

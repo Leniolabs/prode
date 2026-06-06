@@ -8,7 +8,7 @@ interface ButtonProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
   disabled?: boolean;
-  variant?: "primary" | "secondary" | "transparent" | "danger";
+  variant?: "primary" | "secondary" | "transparent" | "outline" | "danger";
   invert?: boolean;
 }
 

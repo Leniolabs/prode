@@ -7,6 +7,7 @@ interface ContainerProps {
   direction?: "COL" | "ROW";
   full?: boolean;
   noPadding?: boolean;
+  narrow?: boolean;
 }
 
 export function Container(props: React.PropsWithChildren<ContainerProps>) {
@@ -17,7 +18,8 @@ export function Container(props: React.PropsWithChildren<ContainerProps>) {
         styles.container,
         props.direction === "COL" && styles.directionCol,
         props.full && styles.full,
-        props.noPadding && styles.noPadding
+        props.noPadding && styles.noPadding,
+        props.narrow && styles.narrow
       )}
     >
       {props.children}

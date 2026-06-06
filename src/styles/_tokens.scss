@@ -12,11 +12,11 @@ $color-card-header:                 $color-brand-green;
 $color-card-header-text:            $color-dark-navy;
 $color-card-body:                   #ffffff;
 $color-bg-gradient:                 linear-gradient(180deg, #005596 0%, #4597D3 100%);
-$color-footer-gradient:             linear-gradient(90deg, #4597D3 0%, #5BC2A7 100%);
+$color-footer-gradient:             linear-gradient(90deg, #5BC2A7 0%, #4597D3 100%);
 $color-header-bg:                   #005596CC;
 $color-table-header-bg:             #E8F4F1;
 $color-table-header-text:           $color-dark-navy;
-$color-table-stripe:                #FFCA3020;
+$color-table-stripe:                rgba(0, 0, 0, 0.04);
 
 // ─── Form tokens ──────────────────────────────────────────────────────────────
 $color-form-label:                  $color-brand-blue;

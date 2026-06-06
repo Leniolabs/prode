@@ -187,6 +187,7 @@ export default function AdminFinalsPage() {
             gridArea="matches-header"
           >
             <Button
+              variant="transparent"
               disabled={!isModified}
               className={commonStyles.marginLeftAuto}
               onClick={handleSave}

@@ -37,10 +37,12 @@ export interface LocaleData {
   buttonLabelSaving: string;
   buttonLabelExit: string;
   buttonLabelCreate: string;
+  buttonLabelCancel: string;
   buttonLabelCopyLink: string;
   buttonLabelLeave: string;
   buttonCompleteRanking: string;
   buttonLabelRanking: string;
+  buttonLabelGoToMyProde: string;
 
   roomsWarning: string;
   roomsProdeListTitle: string;
@@ -117,6 +119,7 @@ export interface LocaleData {
   createPointsGoalsLegend: string;
   createPointsPenaltisLabel: string;
   createPointsPenaltisLegend: string;
+  createPointsPodioLabel: string;
 
   viewTitle: string;
   viewTitleAfter: string;

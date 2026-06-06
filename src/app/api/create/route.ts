@@ -18,6 +18,10 @@ export async function POST(req: NextRequest) {
     public: isPublic, emailDomain,
   } = await req.json()
 
+  if (!name || !name.trim()) {
+    return NextResponse.json({ error: 'ROOM_NAME_REQUIRED' }, { status: 400 })
+  }
+
   const newRoom = await prisma.prodeRoom.create({
     data: {
       created: new Date(),

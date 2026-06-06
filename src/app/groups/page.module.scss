@@ -1,0 +1,59 @@
+@use 'styles/tokens' as t;
+
+.stageHeader {
+  margin-bottom: 18px;
+
+  > :first-child {
+    background: t.$color-brand-green;
+    color: white;
+    border-radius: 8px;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1.15;
+    padding: 11px 20px 13px;
+    text-transform: none;
+  }
+}
+
+.sectionCard {
+  > :first-child {
+    background: t.$color-brand-green;
+    color: white;
+    border-radius: 8px 8px 0 0;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1.15;
+    min-height: 40px;
+    padding: 11px 20px 13px;
+    text-transform: none;
+  }
+}
+
+.groupCard {
+  border-radius: 8px;
+  overflow: hidden;
+
+  > :first-child {
+    background: white;
+    color: t.$color-brand-blue;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+    min-height: 28px;
+    padding: 7px 12px 5px;
+    text-transform: uppercase;
+  }
+}
+
+.matchPair0 {
+  background: #f6f5f5;
+}
+
+.matchPair1 {
+  background: #ededed;
+}
+
+.matchPair2 {
+  background: #e1e1e1;
+}

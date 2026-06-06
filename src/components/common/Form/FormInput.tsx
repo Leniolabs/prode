@@ -20,6 +20,7 @@ type FormInputProps = {
       type: "string";
       value?: string;
       placeholder?: string;
+      inputType?: string;
       onChange?: (value: string) => void;
     }
   | {
@@ -30,6 +31,9 @@ type FormInputProps = {
 );
 
 export function FormInput(props: React.PropsWithChildren<FormInputProps>) {
+  const inputId = React.useId();
+  const errorId = props.error ? `${inputId}-error` : undefined;
+
   const handleChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value, checked } = e.target;
@@ -59,24 +63,45 @@ export function FormInput(props: React.PropsWithChildren<FormInputProps>) {
         props.inline && styles.inline
       )}
     >
-      <div className={styles.formInputLabel}>{props.label}</div>
+      {props.label && (
+        <label className={styles.formInputLabel} htmlFor={inputId}>
+          {props.label}
+        </label>
+      )}
       <div className={styles.formInputValue}>
         {props.type === "boolean" && (
-          <Toggle value={props.value} onChange={handleBooleanChange} />
+          <Toggle
+            id={inputId}
+            ariaLabel={props.label}
+            value={props.value}
+            onChange={handleBooleanChange}
+          />
         )}
         {props.type === "string" && (
           <input
-            type="text"
+            id={inputId}
+            type={props.inputType ?? "text"}
             placeholder={props.placeholder}
             value={props.value}
             onChange={handleChange}
+            aria-invalid={!!props.error}
+            aria-describedby={errorId}
           />
         )}
         {props.type === "number" && (
-          <input type="number" value={props.value} onChange={handleChange} />
+          <input
+            id={inputId}
+            type="number"
+            value={props.value}
+            onChange={handleChange}
+            aria-invalid={!!props.error}
+            aria-describedby={errorId}
+          />
         )}
         {props.error && (
-          <label className={styles.formInputError}>{props.error}</label>
+          <div id={errorId} role="alert" className={styles.formInputError}>
+            {props.error}
+          </div>
         )}
       </div>
       {props.legend && (

@@ -9,7 +9,9 @@ import {
   getBaselinePath,
   getScreenshotPath,
   harnessRoutes,
+  type HarnessAuthMode,
   type HarnessFixtures,
+  type HarnessViewport,
 } from "./routes";
 import {
   captureRouteScreenshot,
@@ -207,46 +209,48 @@ async function main() {
     run: async (baseUrl) => {
     const fixtures = await resolveFixtures(baseUrl);
     const browser = await chromium.launch();
-    const viewport = {
+    const defaultViewport = {
       width: 1280,
       height: 800,
     };
-
-    const userContext = await browser.newContext({
-      viewport,
-      locale: "en-US",
-      colorScheme: "light",
-      deviceScaleFactor: 1,
-    });
-    const userEmail =
-      process.env.HARNESS_USER_EMAIL ?? "playwright@dev.local";
-    await loginWithDevProvider(userContext, baseUrl, userEmail);
-
-    const adminContext = await browser.newContext({
-      viewport,
-      locale: "en-US",
-      colorScheme: "light",
-      deviceScaleFactor: 1,
-    });
+    const contextCache = new Map<string, Awaited<ReturnType<typeof browser.newContext>>>();
+    const userEmail = process.env.HARNESS_USER_EMAIL ?? "playwright@dev.local";
     const adminEmail = process.env.ADMIN_EMAIL;
+
     if (!adminEmail) {
       throw new Error("ADMIN_EMAIL must be set to capture the admin baseline");
     }
-    await loginWithDevProvider(adminContext, baseUrl, adminEmail);
 
-    const authContexts = {
-      public: await browser.newContext({
+    const getContext = async (
+      auth: HarnessAuthMode,
+      viewport: HarnessViewport
+    ) => {
+      const cacheKey = `${auth}:${viewport.width}x${viewport.height}`;
+      const cached = contextCache.get(cacheKey);
+      if (cached) return cached;
+
+      const context = await browser.newContext({
         viewport,
         locale: "en-US",
         colorScheme: "light",
         deviceScaleFactor: 1,
-      }),
-      user: userContext,
-      admin: adminContext,
-    } as const;
+      });
+
+      if (auth === "user") {
+        await loginWithDevProvider(context, baseUrl, userEmail);
+      }
+
+      if (auth === "admin") {
+        await loginWithDevProvider(context, baseUrl, adminEmail);
+      }
+
+      contextCache.set(cacheKey, context);
+      return context;
+    };
 
     for (const route of harnessRoutes) {
-      const context = authContexts[route.auth];
+      const viewport = route.viewport ?? defaultViewport;
+      const context = await getContext(route.auth, viewport);
       const outputPath = resolve(getScreenshotPath(route.fileName));
       const path = route.buildPath(fixtures);
 
@@ -277,7 +281,7 @@ async function main() {
       });
 
       process.stdout.write(
-        `${mode}: ${route.name} ${capture.status} ${capture.url} -> ${outputPath}\n`
+        `${mode}: ${route.name} ${capture.status} ${capture.url} ${viewport.width}x${viewport.height} -> ${outputPath}\n`
       );
       if (mode === "check") {
         process.stdout.write(
@@ -288,6 +292,7 @@ async function main() {
       }
     }
 
+    await Promise.all(Array.from(contextCache.values()).map((context) => context.close()));
     await browser.close();
     },
   });

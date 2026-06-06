@@ -7,3 +7,12 @@
   display: flex;
   flex-direction: column;
 }
+
+.dark {
+  background: t.$color-brand-blue;
+  color: white;
+  position: relative;
+  isolation: isolate;
+
+  background: url('/bg-trophy.png') no-repeat center 60% / cover;
+}

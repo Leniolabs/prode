@@ -1,0 +1,1 @@
+export { WelcomeBar } from './WelcomeBar';

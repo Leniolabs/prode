@@ -23,6 +23,8 @@ export interface ScreenshotArgs {
   output: string;
   auth: boolean;
   user: string;
+  width: number;
+  height: number;
 }
 
 export async function loginWithDevProvider(
@@ -137,11 +139,17 @@ function parseArgs(): ScreenshotArgs {
   let output: string | undefined;
   let auth = true;
   let user = "playwright@dev.local";
+  let width = 1280;
+  let height = 800;
 
   for (let i = 0; i < argv.length; i++) {
     const current = argv[i];
     if (current === "--output") {
       output = argv[++i];
+    } else if (current === "--width") {
+      width = parseInt(argv[++i] ?? "1280", 10);
+    } else if (current === "--height") {
+      height = parseInt(argv[++i] ?? "800", 10);
     } else if (current === "--no-auth") {
       auth = false;
     } else if (current === "--user") {
@@ -164,7 +172,7 @@ function parseArgs(): ScreenshotArgs {
     output = `harness/screenshots/${slug}.png`;
   }
 
-  return { route, output, auth, user };
+  return { route, output, auth, user, width, height };
 }
 
 async function main() {
@@ -175,7 +183,7 @@ async function main() {
     run: async (baseUrl) => {
     const browser = await chromium.launch();
     const context = await browser.newContext({
-      viewport: { width: 1280, height: 800 },
+      viewport: { width: args.width, height: args.height },
       locale: "en-US",
       colorScheme: "light",
       deviceScaleFactor: 1,

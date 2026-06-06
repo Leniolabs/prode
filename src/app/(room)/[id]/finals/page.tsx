@@ -231,7 +231,7 @@ export default function RoomFinalsPage() {
       <Container full>
         <FinalsContainer>
           <ContainerHeader gridArea="matches-header" sticky title={i18n.finalsTitle}>
-            <Button disabled={!isModified || submissionsEnded} onClick={handleSave}>
+            <Button variant="transparent" disabled={!isModified || submissionsEnded} onClick={handleSave}>
               {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}
             </Button>
           </ContainerHeader>

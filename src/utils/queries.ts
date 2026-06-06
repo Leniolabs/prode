@@ -1,7 +1,11 @@
-import { Match, ProdeRoom, User, UserProde } from '@/generated/prisma';
+import { Match, ProdeRoom, User, UserProde } from "@/generated/prisma";
 import { prisma } from "../lib";
 import { matchCountriesMatchStatus, matchFinalResultStatus } from "./points";
-export { computeGroupMatchPoints, computeFinalMatchPoints, finalMatchPoints } from "@/lib/scoring";
+export {
+  computeGroupMatchPoints,
+  computeFinalMatchPoints,
+  finalMatchPoints,
+} from "@/lib/scoring";
 import {
   getFullRankingQuery,
   getRankingQuery,
@@ -207,7 +211,7 @@ export async function registerUserToRoom(room: ProdeRoom, user: User) {
       match.userGoalsLeft &&
       match.userGoalsRight &&
       match.userCountryLeftId &&
-      match.userCountryRightId
+      match.userCountryRightId,
   );
 
   await prisma.$transaction([
@@ -217,7 +221,7 @@ export async function registerUserToRoom(room: ProdeRoom, user: User) {
           (match) =>
             new Date(match.date) > new Date() &&
             match.userGoalsLeft &&
-            match.userGoalsRight
+            match.userGoalsRight,
         )
         .map((match) => ({
           matchId: match.id,
@@ -245,7 +249,7 @@ export async function registerUserToRoom(room: ProdeRoom, user: User) {
 
 export async function getUserFinalMatches(
   room: ProdeRoomWithDeadlines,
-  user: User
+  user: User,
 ) {
   return (
     await prisma.match.findMany({
@@ -264,7 +268,8 @@ export async function getUserFinalMatches(
             "GROUP_I",
             "GROUP_J",
             "GROUP_K",
-            "GROUP_L",          ],
+            "GROUP_L",
+          ],
         },
       },
       include: {
@@ -340,7 +345,8 @@ export async function getUserTemplateFinalMatches(user: User) {
             "GROUP_I",
             "GROUP_J",
             "GROUP_K",
-            "GROUP_L",          ],
+            "GROUP_L",
+          ],
         },
       },
       include: {
@@ -398,7 +404,7 @@ export async function getUserTemplateFinalMatches(user: User) {
 
 export async function getUserGroupMatches(
   room: ProdeRoomWithDeadlines,
-  user: User
+  user: User,
 ) {
   return (
     await prisma.match.findMany({
@@ -417,7 +423,8 @@ export async function getUserGroupMatches(
             "GROUP_I",
             "GROUP_J",
             "GROUP_K",
-            "GROUP_L",          ],
+            "GROUP_L",
+          ],
         },
       },
       include: {
@@ -476,7 +483,8 @@ export async function getUserTemplateGroupMatches(user: User) {
             "GROUP_I",
             "GROUP_J",
             "GROUP_K",
-            "GROUP_L",          ],
+            "GROUP_L",
+          ],
         },
       },
       include: {
@@ -515,9 +523,10 @@ export async function getUserTemplateGroupMatches(user: User) {
     }));
 }
 
-
-interface Rank
-  extends Pick<User, "id" | "name" | "image" | "email" | "prodePublic"> {
+interface Rank extends Pick<
+  User,
+  "id" | "name" | "image" | "email" | "prodePublic"
+> {
   userId: string;
   points: number;
   ranking: number;
@@ -543,7 +552,7 @@ interface Rank
 export async function getRanking(
   room: ProdeRoom,
   page: number,
-  pageLength: number
+  pageLength: number,
 ) {
   const query = getRankingQuery(room, {
     offset: page * pageLength,
@@ -573,7 +582,7 @@ export async function getRanking(
 export async function getFullRanking(
   room: ProdeRoom,
   page: number,
-  pageLength: number
+  pageLength: number,
 ) {
   const query = getFullRankingQuery(room, {
     offset: page * pageLength,
@@ -645,7 +654,7 @@ export async function getUserRanking(room: ProdeRoom, userProde: UserProde) {
 
 export async function getUserFullRanking(
   room: ProdeRoom,
-  userProde: UserProde
+  userProde: UserProde,
 ) {
   const query = getUserFullRankingQuery(room, userProde.id);
   const data: Rank[] = await prisma.$queryRaw(query);
@@ -689,7 +698,6 @@ export async function getUserFullRanking(
   })?.[0] as Rank;
 }
 
-
 export async function syncronizeTemplate(room: ProdeRoom, user: User) {
   const currentProdeMatches = await prisma.prodeUserGroupMatch.findMany({
     where: {
@@ -721,10 +729,10 @@ export async function syncronizeTemplate(room: ProdeRoom, user: User) {
 
   const createTemplateMatches = currentProdeMatches.filter(
     (match) =>
-      !templateProdeMatches.find((tMatch) => tMatch.matchId === match.matchId)
+      !templateProdeMatches.find((tMatch) => tMatch.matchId === match.matchId),
   );
   const updateTemplateMatches = currentProdeMatches.filter((match) =>
-    templateProdeMatches.find((tMatch) => tMatch.matchId === match.matchId)
+    templateProdeMatches.find((tMatch) => tMatch.matchId === match.matchId),
   );
 
   await prisma.$transaction([
@@ -748,7 +756,7 @@ export async function syncronizeTemplate(room: ProdeRoom, user: User) {
             template: true,
           },
         },
-      })
+      }),
     ),
   ]);
 }
@@ -789,10 +797,10 @@ export async function syncronizeFinalsTemplate(room: ProdeRoom, user: User) {
 
   const createTemplateMatches = currentProdeMatches.filter(
     (match) =>
-      !templateProdeMatches.find((tMatch) => tMatch.matchId === match.matchId)
+      !templateProdeMatches.find((tMatch) => tMatch.matchId === match.matchId),
   );
   const updateTemplateMatches = currentProdeMatches.filter((match) =>
-    templateProdeMatches.find((tMatch) => tMatch.matchId === match.matchId)
+    templateProdeMatches.find((tMatch) => tMatch.matchId === match.matchId),
   );
 
   await prisma.$transaction([
@@ -823,7 +831,7 @@ export async function syncronizeFinalsTemplate(room: ProdeRoom, user: User) {
             template: true,
           },
         },
-      })
+      }),
     ),
   ]);
 }
@@ -834,7 +842,7 @@ export async function getCountries() {
 
 export async function getAllowedMatchesToModify(
   ids: string[],
-  submissionsEnd: Date
+  submissionsEnd: Date,
 ) {
   if (isDeadlineReached(submissionsEnd)) return [];
 

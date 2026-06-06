@@ -2,12 +2,16 @@
 
 .toggle {
   display: flex;
+  align-items: center;
+  justify-content: flex-start;
   width: 44px;
   height: 24px;
   padding: 2px;
-  background: t.$color-toggle-off;
+  background: #CD5367;
+  border: 0;
   border-radius: 15px;
   cursor: pointer;
+  transition: background-color ease-in-out 0.1s;
 
   .innerToggle {
     border-radius: 50%;
@@ -15,13 +19,23 @@
     height: 20px;
     background: white;
     transition: transform ease-in-out 0.1s;
-    cursor: pointer;
   }
 
   &.toggled {
     background: t.$color-toggle-on;
+
     .innerToggle {
       transform: translate(100%, 0);
     }
+  }
+
+  &:focus-visible {
+    outline: 2px solid t.$color-brand-blue;
+    outline-offset: 2px;
+  }
+
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 }
