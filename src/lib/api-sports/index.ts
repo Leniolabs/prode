@@ -3,7 +3,5 @@ export {
   syncMatchResults,
   shouldSyncApiMatch,
   findPendingMatch,
-  type PendingMatch,
-  type PendingMatchResolution,
-  type SyncResult,
 } from "./sync";
+export type { PendingMatch, PendingMatchResolution, SyncResult } from "./sync";

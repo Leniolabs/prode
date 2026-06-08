@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { syncMatchResults } from "@/lib/api-sports";
+import { syncMatchResults } from "@/lib/results-sync";
 
 export async function POST(req: NextRequest) {
   const secret = process.env.CRON_SECRET;

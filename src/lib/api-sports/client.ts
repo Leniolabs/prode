@@ -1,15 +1,6 @@
-export type ApiSportsMatch = {
-  id: number;
-  kickoffUtc: string;
-  homeTeamCode: string | null;
-  awayTeamCode: string | null;
-  homeScore: number | null;
-  awayScore: number | null;
-  homePen: number | null;
-  awayPen: number | null;
-  status: string | null;
-  phase: string | null;
-};
+import type { ProviderMatch } from "@/lib/results-sync/core";
+
+export type ApiSportsMatch = ProviderMatch;
 
 type RawApiSportsMatch = {
   id?: unknown;
