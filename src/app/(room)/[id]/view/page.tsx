@@ -100,7 +100,7 @@ export default function ViewPage() {
   const { matches, finalsMatches } = props ?? {};
 
   return (
-    <Layout backgroundImage={`/${props?.userRanking?.background}.png`}>
+    <Layout>
       <Meta />
       {props?.userRanking && (
         <DesktopHeader

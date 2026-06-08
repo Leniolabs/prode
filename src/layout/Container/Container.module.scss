@@ -28,6 +28,12 @@
     min-width: 100%;
     width: 100%;
   }
+
+  &.narrow {
+    width: 100%;
+    min-width: unset;
+    max-width: 560px;
+  }
 }
 
 header + .container {

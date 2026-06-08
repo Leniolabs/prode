@@ -22,6 +22,14 @@ interface TableProps<T> {
 }
 
 export function Table<T>(props: React.PropsWithChildren<TableProps<T>>) {
+  const hasHeaders = props.columns.some((col) => col.header);
+  const isRowClickable = React.useCallback(
+    (row: T) =>
+      !!props.clickable &&
+      (typeof props.clickable === "boolean" || props.clickable(row)),
+    [props.clickable]
+  );
+
   return (
     <table
       className={className(
@@ -30,33 +38,46 @@ export function Table<T>(props: React.PropsWithChildren<TableProps<T>>) {
         props.stripped && styles.stripped
       )}
     >
-      <thead>
-        <tr>
-          {props.columns.map((col, index) => (
-            <th
-              key={index}
-              style={{ width: col.width }}
-              className={className(
-                col.align ? styles[col.align] : "",
-                col.bold && styles.bold,
-                col.hideInMobile && styles.hideInMobile
-              )}
-            >
-              {col.header}
-            </th>
-          ))}
-        </tr>
-      </thead>
+      {hasHeaders && (
+        <thead>
+          <tr>
+            {props.columns.map((col, index) => (
+              <th
+                key={index}
+                scope="col"
+                style={{ width: col.width }}
+                className={className(
+                  col.align ? styles[col.align] : "",
+                  col.bold && styles.bold,
+                  col.hideInMobile && styles.hideInMobile
+                )}
+              >
+                {col.header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+      )}
       <tbody>
         {props.data.map((row, index, arr) => (
           <tr
             key={index}
-            onClick={() => props.onRowClick?.(row as T)}
+            onClick={() => {
+              if (isRowClickable(row)) {
+                props.onRowClick?.(row as T);
+              }
+            }}
+            onKeyDown={(event) => {
+              if (!isRowClickable(row)) return;
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                props.onRowClick?.(row as T);
+              }
+            }}
+            tabIndex={isRowClickable(row) ? 0 : undefined}
+            role={isRowClickable(row) ? "button" : undefined}
             className={className(
-              props.clickable &&
-                (typeof props.clickable === "boolean" ||
-                  props.clickable?.(row)) &&
-                styles.clickable
+              isRowClickable(row) && styles.clickable
             )}
           >
             {props.columns.map((col, colIndex) => (

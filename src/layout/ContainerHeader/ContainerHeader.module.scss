@@ -1,3 +1,5 @@
+@use 'styles/tokens' as t;
+
 .containerHeader {
   display: flex;
   width: 100%;
@@ -12,7 +14,7 @@
 
   .title {
     width: 100%;
-    background: #1f2740;
+    background: t.$color-container-header;
     color: white;
     display: flex;
     align-items: center;
@@ -39,7 +41,7 @@
 
   &.SECONDARY {
     .title {
-      background: #343f52;
+      background: t.$color-container-header-secondary;
       color: white;
       text-transform: uppercase;
       *:has(img) {

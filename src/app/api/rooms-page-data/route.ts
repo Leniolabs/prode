@@ -16,41 +16,44 @@ export async function GET(req: NextRequest) {
   const user = await getUserByEmail(session.user.email)
   if (!user) return NextResponse.json({}, { status: 401 })
 
-  const rooms = await prisma.prodeRoom.findMany({
-    where: {
-      AND: [
-        {
-          OR: [
-            { public: true },
-            { UserProde: { some: { userId: user.id } } },
-          ],
-        },
-        {
-          OR: [
-            { emailDomain: null },
-            { emailDomain: getUserEmailDomain(user) },
-          ],
-        },
-      ],
-    },
-    select: {
-      id: true,
-      password: true,
-      name: true,
-      _count: true,
-      UserProde: { where: { userId: user.id } },
-    },
-  })
-
-  const userProdeNotTemplate = await prisma.userProde.findMany({
-    where: { userId: user.id, template: false },
-    include: { prodeRoom: true },
-  })
+  const [rooms, userProdeNotTemplate, prode] = await Promise.all([
+    prisma.prodeRoom.findMany({
+      where: {
+        AND: [
+          {
+            OR: [
+              { public: true },
+              { UserProde: { some: { userId: user.id } } },
+            ],
+          },
+          {
+            OR: [
+              { emailDomain: null },
+              { emailDomain: getUserEmailDomain(user) },
+            ],
+          },
+        ],
+      },
+      select: {
+        id: true,
+        password: true,
+        name: true,
+        _count: true,
+        UserProde: { where: { userId: user.id } },
+      },
+    }),
+    prisma.userProde.findMany({
+      where: { userId: user.id, template: false },
+      include: { prodeRoom: true },
+    }),
+    prisma.prode.findFirst({ select: { prodeEnd: true } }),
+  ])
 
   const { finalsStarted } = await import('@/utils/queries')
 
   return NextResponse.json({
     finalsStarted: await finalsStarted(),
+    prodeEnd: prode?.prodeEnd?.toISOString() ?? null,
     rooms: rooms.map((room) => ({
       id: room.id,
       name: room.name,

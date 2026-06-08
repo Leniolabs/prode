@@ -1,3 +1,5 @@
+@use 'styles/tokens' as t;
+
 .modalContainer {
   position: fixed;
   left: 0;
@@ -10,7 +12,7 @@
 
   &::before {
     content: "";
-    background: #1f2740cc;
+    background: t.$color-modal-overlay;
     position: absolute;
     left: 0;
     top: 0;
@@ -23,6 +25,9 @@
     display: block;
     margin: auto;
     max-width: 100%;
+    border-radius: t.$radius-card;
+    overflow: hidden;
+    box-shadow: t.$shadow-card;
 
     @media screen and (min-width: 400px) {
       min-width: 400px;
@@ -30,7 +35,7 @@
 
     .modalHeader {
       width: 100%;
-      background: #1f2740;
+      background: t.$color-modal-header;
       color: white;
       font-size: 24px;
       font-weight: bold;
@@ -45,7 +50,7 @@
     }
 
     .modalContent {
-      background: #f6f5f5cc;
+      background: t.$color-modal-body;
       min-height: 200px;
     }
   }

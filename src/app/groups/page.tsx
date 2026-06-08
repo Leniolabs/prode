@@ -20,19 +20,17 @@ import axios from "axios";
 import {
   CardsContainer,
   GroupsContainer,
-  LeniCard,
 } from "@/components/view/Groups";
 import { Warning } from "@/components/common/Warning";
 import Link from "next/link";
 import { LocaleSelect } from "@/components/common/LocaleSelect";
 import { useLocalizedText } from "@/locale";
-import { getNextMatches, getTodayMatches } from "@/utils/date";
 import {
   DailyMatches,
   DailyMatchInput,
 } from "@/components/common/DailyMatches";
-import { ShareToday } from "@/components/common/ShareButton/ShareToday";
 import { useQuery } from "@tanstack/react-query";
+import styles from "./page.module.scss";
 
 type UIMatch = Pick<
   Match,
@@ -117,6 +115,11 @@ export default function GroupsPage() {
 
   const isModified = !!differentMatches.length;
 
+  const formattedGroupsTitle = React.useMemo(() => {
+    const title = i18n.groupsTitle.toLowerCase();
+    return title.charAt(0).toUpperCase() + title.slice(1);
+  }, [i18n.groupsTitle]);
+
   const handleSave = React.useCallback(() => {
     setUpdating(true);
     axios
@@ -143,7 +146,7 @@ export default function GroupsPage() {
     return null;
 
   return (
-    <Layout backgroundImage={`/${props?.userRanking?.background}.png`}>
+    <Layout>
       <DesktopHeader userRanking={props?.userRanking}>
         <Button invert href={`/rooms`}>
           {i18n.buttonLabelProdeList}
@@ -168,10 +171,12 @@ export default function GroupsPage() {
         <GroupsContainer full>
           <ContainerHeader
             sticky
-            title={i18n.groupsTitle}
+            className={styles.stageHeader}
+            title={formattedGroupsTitle}
             gridArea="matches-header"
           >
             <Button
+              variant="transparent"
               disabled={!isModified || submissionsEnded}
               className={commonStyles.marginLeftAuto}
               onClick={handleSave}
@@ -184,13 +189,18 @@ export default function GroupsPage() {
               "GROUP_A", "GROUP_B", "GROUP_C", "GROUP_D", "GROUP_E", "GROUP_F",
               "GROUP_G", "GROUP_H", "GROUP_I", "GROUP_J", "GROUP_K", "GROUP_L",
             ].map((group) => (
-              <Card key={group} title={group.replace("GROUP_", "GRUPO ")}>
+              <Card
+                key={group}
+                className={styles.groupCard}
+                title={i18n[group as keyof typeof i18n]}
+              >
                 <CardContent>
                   {matches
                     .filter((match) => match.stage === group)
-                    .map((match) => (
+                    .map((match, index) => (
                       <MatchInput
                         key={match.id}
+                        className={styles[`matchPair${Math.floor(index / 2)}` as keyof typeof styles]}
                         disabled={match.disabled || submissionsEnded}
                         date={new Date(match.date)}
                         countryLeftId={match.countryLeftId}
@@ -203,21 +213,20 @@ export default function GroupsPage() {
                         filled={match.filled}
                         userGoalsLeft={match.userGoalsLeft}
                         userGoalsRight={match.userGoalsRight}
-                      />
+                  />
                     ))}
                 </CardContent>
               </Card>
             ))}
-            <LeniCard />
           </CardsContainer>
 
           <Card
+            className={styles.sectionCard}
             title={
               <>
                 {todayMatches
                   ? i18n.todayMatchesLabel
                   : i18n.upcomingMatchesLabel}
-                <ShareToday userProdeId={props?.userProdeId} />
               </>
             }
             gridArea="following"

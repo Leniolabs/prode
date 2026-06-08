@@ -2,7 +2,7 @@
 import React from "react";
 import { User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
-import { DesktopHeader, MobileHeader } from "@/components/common/Header";
+import { WelcomeBar } from "@/components/common/Header/WelcomeBar";
 import {
   Layout,
   Footer,
@@ -12,13 +12,13 @@ import {
 } from "@/layout";
 import { useRequireSession } from "@/hooks";
 import { Button } from "@/components/common/Button";
+import { Toggle } from "@/components/common/Toggle";
 import {
   Form,
   FormInput,
   FormSection,
-  FormSectionTitle,
-  FormFooter,
   FormSectionContent,
+  FormFooter,
 } from "@/components/common/Form";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -28,6 +28,7 @@ import { Meta } from "@/components/common/Meta";
 import { LocaleSelect } from "@/components/common/LocaleSelect";
 import { useLocalizedText } from "@/locale";
 import { useQuery } from "@tanstack/react-query";
+import styles from "./new-prode.module.scss";
 
 interface NewProdeData {
   userRanking?: Pick<User, "id" | "name" | "image" | "email" | "prodePublic" | "background" | "dark">;
@@ -41,7 +42,6 @@ type FormType = {
   pointsWinner: number;
   pointsGoals: number;
   pointsPenal: number;
-  emailDomain: string;
 };
 
 export default function NewProdePage() {
@@ -49,7 +49,11 @@ export default function NewProdePage() {
   const router = useRouter();
   const i18n = useLocalizedText();
 
-  const { data: props } = useQuery<NewProdeData>({ queryKey: ["new-prode-page-data"], queryFn: () => fetch("/api/new-prode-page-data").then((r) => r.json()), enabled: session.status === "authenticated" });
+  const { data: props } = useQuery<NewProdeData>({
+    queryKey: ["new-prode-page-data"],
+    queryFn: () => fetch("/api/new-prode-page-data").then((r) => r.json()),
+    enabled: session.status === "authenticated",
+  });
 
   const [error, setError] = React.useState<string>("");
   const [roomNameError, setRoomNameError] = React.useState<boolean | undefined>(undefined);
@@ -57,10 +61,9 @@ export default function NewProdePage() {
     name: "",
     password: "",
     public: true,
-    pointsWinner: 1,
-    pointsGoals: 3,
-    pointsPenal: 5,
-    emailDomain: "",
+    pointsWinner: 10,
+    pointsGoals: 10,
+    pointsPenal: 10,
   });
 
   const checkRoomName = React.useMemo(() => {
@@ -111,93 +114,96 @@ export default function NewProdePage() {
     return null;
 
   return (
-    <Layout backgroundImage={`/${props?.userRanking?.background}.png`}>
+    <Layout dark>
       <Meta />
-      <DesktopHeader userRanking={props?.userRanking}>
-        {props && props.registeredProdes <= 1 && (
-          <Button invert href={`/`}>
-            {i18n.buttonLabelGroupPhase}
-          </Button>
-        )}
-        <Button invert href="/rooms">
-          {i18n.buttonLabelGoBackToList}
+      <WelcomeBar
+        title={i18n.headerTitle}
+        deadlinePre={i18n.headerWelcomeLine1}
+        deadlinePost={i18n.headerWelcomeLine2}
+      >
+        <Button variant="secondary" href="/rooms">
+          {i18n.buttonLabelGoToMyProde}
         </Button>
-      </DesktopHeader>
-      <MobileHeader userRanking={props?.userRanking} />
-      <Container>
-        <Card title={i18n.createTitle}>
+      </WelcomeBar>
+      <Container narrow className={styles.contentContainer}>
+        <Card title={i18n.createTitle} className={styles.titleCard}>
           <CardContent>
             <Form>
-              <FormSection>
-                <FormSectionTitle>{i18n.createGeneralTitle}</FormSectionTitle>
+              <FormSection className={styles.fullSection}>
+                <div className={styles.sectionHeading}>{i18n.createGeneralTitle}</div>
                 <FormSectionContent>
                   <FormInput
+                    className={styles.compactField}
                     label={i18n.createNameLabel}
                     type="string"
-                    inline
+                    placeholder="Nuevo Prode 1"
                     value={form.name}
-                    onChange={handleChange("name")}
+                    onChange={handleChange("name") as (v: string) => void}
                     error={roomNameError ? "Name already taken" : ""}
                   />
                   <FormInput
-                    label={i18n.createPasswordLabel}
-                    legend={i18n.createPasswordLegend}
+                    className={styles.compactField}
+                    label={`${i18n.createPasswordLabel} ${i18n.createPasswordLegend}`}
                     type="string"
-                    inline
+                    inputType="password"
                     value={form.password}
-                    onChange={handleChange("password")}
+                    onChange={handleChange("password") as (v: string) => void}
                   />
-                  <FormInput
-                    label={i18n.createDomainLabel}
-                    legend={i18n.createDomainLegend}
-                    type="string"
-                    inline
-                    placeholder="(ex: @leniolabs.com)"
-                    value={form.emailDomain}
-                    onChange={handleChange("emailDomain")}
-                  />
-                  <FormInput
-                    label={i18n.createPublicLabel}
-                    legend={i18n.createPublicLegend}
-                    type="boolean"
-                    inline
-                    value={form.public}
-                    onChange={handleChange("public")}
-                  />
+                  <div className={styles.toggleRow}>
+                    <span className={styles.toggleLabel}>{i18n.createPublicLabel}</span>
+                    <div className={styles.toggleGroup}>
+                      <span>No</span>
+                      <Toggle
+                        ariaLabel={i18n.createPublicLabel}
+                        value={form.public}
+                        onChange={handleChange("public") as (v: boolean) => void}
+                      />
+                      <span>Si</span>
+                    </div>
+                  </div>
                 </FormSectionContent>
               </FormSection>
-              <FormSection>
-                <FormSectionTitle>{i18n.createPointsTitle}</FormSectionTitle>
+
+              <hr className={styles.divider} />
+
+              <FormSection className={styles.fullSection}>
+                <div className={styles.sectionHeading}>{i18n.createPointsTitle}</div>
                 <FormSectionContent>
                   <FormInput
+                    className={styles.pointsField}
                     label={i18n.createPointsResultLabel}
-                    legend={i18n.createPointsResultLegend}
                     type="number"
                     inline
                     value={form.pointsWinner}
-                    onChange={handleChange("pointsWinner")}
+                    onChange={handleChange("pointsWinner") as (v: number) => void}
                   />
                   <FormInput
+                    className={styles.pointsField}
                     label={i18n.createPointsGoalsLabel}
-                    legend={i18n.createPointsGoalsLegend}
                     type="number"
                     inline
                     value={form.pointsGoals}
-                    onChange={handleChange("pointsGoals")}
+                    onChange={handleChange("pointsGoals") as (v: number) => void}
                   />
                   <FormInput
+                    className={styles.pointsField}
                     label={i18n.createPointsPenaltisLabel}
-                    legend={i18n.createPointsPenaltisLegend}
                     type="number"
                     inline
                     value={form.pointsPenal}
-                    onChange={handleChange("pointsPenal")}
+                    onChange={handleChange("pointsPenal") as (v: number) => void}
                   />
                 </FormSectionContent>
               </FormSection>
-              <FormFooter>
+
+              <FormFooter className={styles.footer}>
                 {error && <FormError>{formError(error)}</FormError>}
-                <Button onClick={handleCreate}>{i18n.buttonLabelCreate}</Button>
+                <Button variant="outline" href="/rooms">
+                  {i18n.buttonLabelCancel}
+                </Button>
+                <Button variant="secondary" onClick={handleCreate} disabled={!form.name.trim() || roomNameError === true}>
+                  {i18n.buttonLabelSave}
+                </Button>
               </FormFooter>
             </Form>
           </CardContent>

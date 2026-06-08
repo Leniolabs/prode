@@ -191,7 +191,7 @@ export default function FinalsPage() {
     return null;
 
   return (
-    <Layout backgroundImage={`/${props?.userRanking?.background}.png`}>
+    <Layout>
       <Meta />
       <DesktopHeader userRanking={props?.userRanking}>
         <Button invert href={`/rooms`}>
@@ -213,7 +213,7 @@ export default function FinalsPage() {
       <Container full>
         <FinalsContainer full>
           <ContainerHeader sticky title="FINALES">
-            <Button disabled={!isModified || submissionsEnded} onClick={handleSave}>
+            <Button variant="transparent" disabled={!isModified || submissionsEnded} onClick={handleSave}>
               {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}
             </Button>
           </ContainerHeader>

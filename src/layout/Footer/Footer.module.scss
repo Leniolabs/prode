@@ -1,15 +1,14 @@
+@use 'styles/tokens' as t;
+
 .footer {
   width: 100%;
-
-  background-color: #1f2740cc;
-
+  background: t.$color-footer-gradient;
   padding: 16px 42px;
   margin: 0;
-
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-
-  justify-content: space-between;
+  justify-content: flex-end;
 
   @media screen and (max-width: 1024px) {
     padding: 16px 16px;
@@ -18,4 +17,8 @@
   @media screen and (max-width: 512px) {
     padding: 8px 8px;
   }
+}
+
+.dark {
+  background: t.$color-dark-navy;
 }

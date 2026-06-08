@@ -17,6 +17,7 @@ interface DesktopHeaderProps {
   id?: string;
   name?: string;
   roomAdmin?: boolean;
+  prodeEnd?: string | null;
   room?: Pick<
     ProdeRoom,
     | "id"
@@ -37,6 +38,14 @@ interface DesktopHeaderProps {
   };
 }
 
+function formatProdeEnd(iso: string): string {
+  return new Date(iso).toLocaleDateString('es', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+
 export function DesktopHeader(
   props: React.PropsWithChildren<DesktopHeaderProps>
 ) {
@@ -52,20 +61,28 @@ export function DesktopHeader(
     window.location.reload();
   }, []);
 
+  const welcomeSubtitle = !props.name && (
+    props.prodeEnd ? (
+      <>
+        {i18n.headerWelcomeLine1}{' '}
+        <span>{formatProdeEnd(props.prodeEnd)}</span>{' '}
+        {i18n.headerWelcomeLine2}
+      </>
+    ) : (
+      <>
+        {i18n.headerWelcomeLine1}
+        <br />
+        <span>{i18n.headerWelcomeLine2}</span>.
+      </>
+    )
+  );
+
   return (
     <Header className={styles.desktopHeader}>
       <PageLogo />
       <HeaderMessage
         title={i18n.headerTitle}
-        subtitle={
-          !props.name && (
-            <>
-              {i18n.headerWelcomeLine1}
-              <br />
-              <span>{i18n.headerWelcomeLine2}</span>.
-            </>
-          )
-        }
+        subtitle={welcomeSubtitle || undefined}
         prodeTitle={
           props.name && (
             <>

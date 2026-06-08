@@ -3,10 +3,12 @@ import { className } from "../../../utils/classname";
 import styles from "./Toggle.module.scss";
 
 interface ToggleProps {
+  id?: string;
   className?: string;
   value?: boolean;
   onChange?: (value: boolean) => void;
   disabled?: boolean;
+  ariaLabel?: string;
 }
 
 export function Toggle(props: React.PropsWithChildren<ToggleProps>) {
@@ -15,7 +17,13 @@ export function Toggle(props: React.PropsWithChildren<ToggleProps>) {
   }, [props.onChange, props.value]);
 
   return (
-    <div
+    <button
+      id={props.id}
+      type="button"
+      role="switch"
+      aria-checked={!!props.value}
+      aria-label={props.ariaLabel}
+      disabled={props.disabled}
       className={className(
         styles.toggle,
         props.className,
@@ -25,6 +33,6 @@ export function Toggle(props: React.PropsWithChildren<ToggleProps>) {
       onClick={handleClick}
     >
       <div className={styles.innerToggle} />
-    </div>
+    </button>
   );
 }

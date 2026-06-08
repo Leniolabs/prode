@@ -1,0 +1,48 @@
+// ─── Brand colors ─────────────────────────────────────────────────────────────
+$color-brand-blue:                  #005596;
+$color-brand-light-blue:            #4597D3;
+$color-brand-green:                 #5BC2A7;
+$color-accent-yellow:               #FFCA30;
+$color-accent-cta:                  #F5BB41;
+$color-dark-navy:                   #00192C;
+$color-neutral-gray:                #A7A8A9;
+
+// ─── Surface tokens ───────────────────────────────────────────────────────────
+$color-card-header:                 $color-brand-green;
+$color-card-header-text:            $color-dark-navy;
+$color-card-body:                   #ffffff;
+$color-bg-gradient:                 linear-gradient(180deg, #005596 0%, #4597D3 100%);
+$color-footer-gradient:             linear-gradient(90deg, #5BC2A7 0%, #4597D3 100%);
+$color-header-bg:                   #005596CC;
+$color-table-header-bg:             #E8F4F1;
+$color-table-header-text:           $color-dark-navy;
+$color-table-stripe:                rgba(0, 0, 0, 0.04);
+
+// ─── Form tokens ──────────────────────────────────────────────────────────────
+$color-form-label:                  $color-brand-blue;
+$color-input-border:                $color-neutral-gray;
+$color-form-legend:                 rgba(0, 25, 44, 0.6);
+$color-section-title-bg:            #E8F4F1;
+
+// ─── Component tokens ─────────────────────────────────────────────────────────
+$color-modal-overlay:               rgba(0, 25, 44, 0.5);
+$color-modal-header:                $color-brand-blue;
+$color-modal-body:                  #ffffff;
+$color-toggle-off:                  $color-neutral-gray;
+$color-toggle-on:                   $color-brand-green;
+$color-warning-bg:                  #f6f5f5;
+$color-warning-text:                $color-dark-navy;
+$color-mobile-menu-bg:              $color-brand-blue;
+$color-container-header:            $color-brand-blue;
+$color-container-header-secondary:  #343f52;
+
+// ─── Gameplay semantics — DO NOT CHANGE in any design phase ───────────────────
+$color-correct:                     #309e3a;
+$color-winner:                      #0093dd;
+$color-wrong:                       #f9aa51;
+
+// ─── Radius / shadow ──────────────────────────────────────────────────────────
+$radius-card:                       8px;
+$radius-input:                      8px;
+$radius-button:                     8px;
+$shadow-card:                       0px 9px 28px rgba(0, 0, 0, 0.05);

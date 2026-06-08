@@ -4,9 +4,7 @@ import { useLocalizedText } from "../../../../locale";
 import { Header } from "@/layout";
 import { EditRoomModal } from "../../../view/EditRoomModal";
 import { ButtonIcon } from "../../ButtonIcon";
-import { PencilIcon, ShareIcon, ToggleIcon } from "../../Icons";
-import { PageLogo } from "../../PageLogo";
-import { ShareButton, ShareProdeStoryButton } from "../../ShareButton";
+import { PencilIcon, ToggleIcon } from "../../Icons";
 import { HeaderDivider } from "../HeaderDivider";
 import { HeaderIndicator } from "../HeaderIndicator";
 import { HeaderMenu } from "../HeaderMenu";
@@ -115,14 +113,6 @@ export function MobileHeader(
           roomAdmin={props.roomAdmin}
         />
       )}
-
-      {props.shareUserProdeId && (
-        <>
-          <ShareButton big userProdeId={props.shareUserProdeId} />
-          <ShareProdeStoryButton big userProdeId={props.shareUserProdeId} />
-        </>
-      )}
-
       <HeaderMenu
         position={props.userRanking?.ranking}
         prodePublic={props.userRanking?.prodePublic}

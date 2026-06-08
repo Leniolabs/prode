@@ -1,3 +1,5 @@
+@use 'styles/tokens' as t;
+
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -16,10 +18,10 @@
   }
 
   thead {
-    background-color: #cbd2e9;
+    background-color: t.$color-table-header-bg;
 
     th {
-      color: #1f2740;
+      color: t.$color-table-header-text;
       font-weight: 600;
       text-align: left;
       padding: 6px 12px;
@@ -60,7 +62,7 @@
 
   &.stripped {
     tbody tr:nth-child(2n + 1) {
-      background-color: #ffca3020;
+      background-color: t.$color-table-stripe;
     }
   }
 
@@ -70,9 +72,15 @@
     }
   }
 
+  @media screen and (max-width: 600px) {
+    td, th {
+      font-size: 14px;
+    }
+  }
+
   tr {
     &.clickable:hover {
-      background: #ffca3020;
+      background: t.$color-table-stripe;
 
       * {
         cursor: pointer;
@@ -99,5 +107,6 @@
 
   .paginationNumber {
     padding: 4px 4px;
+    color: white;
   }
 }

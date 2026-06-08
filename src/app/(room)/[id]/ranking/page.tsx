@@ -39,6 +39,7 @@ interface RankingData {
     ranking: number;
     GROUP_A: number; GROUP_B: number; GROUP_C: number; GROUP_D: number;
     GROUP_E: number; GROUP_F: number; GROUP_G: number; GROUP_H: number;
+    GROUP_I: number; GROUP_J: number; GROUP_K: number; GROUP_L: number;
     FINALS_8: number; FINALS_4: number; FINALS_2: number; FINAL: number;
     isAdmin: boolean;
   };
@@ -46,6 +47,7 @@ interface RankingData {
     points: number; ranking: number;
     GROUP_A: number; GROUP_B: number; GROUP_C: number; GROUP_D: number;
     GROUP_E: number; GROUP_F: number; GROUP_G: number; GROUP_H: number;
+    GROUP_I: number; GROUP_J: number; GROUP_K: number; GROUP_L: number;
     FINALS_8: number; FINALS_4: number; FINALS_2: number; FINAL: number;
     isAdmin: boolean;
   })[];
@@ -97,7 +99,7 @@ export default function RankingPage() {
     return null;
 
   return (
-    <Layout backgroundImage={`/${props?.userRanking?.background}.png`}>
+    <Layout>
       <Meta />
       <DesktopHeader
         id={props?.id}
@@ -192,6 +194,10 @@ export default function RankingPage() {
                 { header: "F", accesor: (row) => row.GROUP_F, align: "RIGHT", hideInMobile: true },
                 { header: "G", accesor: (row) => row.GROUP_G, align: "RIGHT", hideInMobile: true },
                 { header: "H", accesor: (row) => row.GROUP_H, align: "RIGHT", hideInMobile: true },
+                { header: "I", accesor: (row) => row.GROUP_I, align: "RIGHT", hideInMobile: true },
+                { header: "J", accesor: (row) => row.GROUP_J, align: "RIGHT", hideInMobile: true },
+                { header: "K", accesor: (row) => row.GROUP_K, align: "RIGHT", hideInMobile: true },
+                { header: "L", accesor: (row) => row.GROUP_L, align: "RIGHT", hideInMobile: true },
                 { header: i18n.ranking8Column, accesor: (row) => row.FINALS_8, align: "RIGHT", hideInMobile: true },
                 { header: i18n.ranking4Column, accesor: (row) => row.FINALS_4, align: "RIGHT", hideInMobile: true },
                 { header: i18n.ranking2Column, accesor: (row) => row.FINALS_2, align: "RIGHT", hideInMobile: true },

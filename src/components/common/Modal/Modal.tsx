@@ -2,7 +2,6 @@ import React from "react";
 import { className } from "../../../utils/classname";
 import { ButtonIcon } from "../ButtonIcon";
 import { CloseIcon } from "../Icons";
-import { UserImage } from "../UserImage";
 import styles from "./Modal.module.scss";
 
 interface ModalProps {
@@ -12,10 +11,34 @@ interface ModalProps {
 }
 
 export function Modal(props: React.PropsWithChildren<ModalProps>) {
+  const titleId = React.useId();
+  const modalRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const focusable = modalRef.current?.querySelector<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    focusable?.focus();
+  }, []);
+
+  React.useEffect(() => {
+    if (!props.onClose) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") props.onClose!();
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [props.onClose]);
+
   return (
-    <div className={className(styles.modalContainer)}>
-      <div className={styles.modal}>
-        <div className={styles.modalHeader}>
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      className={className(styles.modalContainer)}
+    >
+      <div className={styles.modal} ref={modalRef}>
+        <div id={titleId} className={styles.modalHeader}>
           {props.title}
           {props.onClose && (
             <div className={styles.modalClose}>

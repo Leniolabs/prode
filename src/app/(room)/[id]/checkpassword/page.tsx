@@ -38,7 +38,7 @@ export default function CheckPasswordPage() {
   if (session.status === 'loading' || session.status === 'unauthenticated') return null
 
   return (
-    <Layout backgroundImage={`/${data?.userRanking?.background}.png`}>
+    <Layout>
       <Header>
         <HeaderMessage
           title={i18n.headerTitle}
