@@ -16,7 +16,5 @@ namespace NodeJS {
 
     readonly FACEBOOK_ID: string;
     readonly FACEBOOK_SECRET: string;
-
-    readonly ADMIN_EMAIL: string;
   }
 }

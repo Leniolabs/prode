@@ -5,8 +5,9 @@ import { useLocalizedText } from "../../../locale";
 import { className } from "../../../utils/classname";
 import { formatDate, formatHour } from "../../../utils/date";
 import { matchResultStatus } from "../../../utils/points";
+import { ButtonIcon } from "../ButtonIcon";
 import { CountryFlag } from "../CountryFlag";
-import { LockIcon } from "../Icons";
+import { EditIcon, LockIcon } from "../Icons";
 import styles from "./DailyMatches.module.scss";
 
 interface DailyMatchInputProps {
@@ -28,6 +29,7 @@ interface DailyMatchInputProps {
   filled?: boolean;
 
   today?: boolean;
+  onEditResult?: () => void;
 
   onChange?: (goalsLeft: number | null, goalsRight: number | null) => void;
 }
@@ -207,6 +209,11 @@ export function DailyMatchInput(
         </div>
         <div className={styles.date}>
           {date}
+          {props.onEditResult && !props.filled && (
+            <ButtonIcon className={styles.editResultButton} onClick={props.onEditResult}>
+              <EditIcon />
+            </ButtonIcon>
+          )}
           {props.filled && (
             <div className={styles.result}>
               <span>{i18n.matchResultLabel}:</span>
@@ -225,6 +232,11 @@ export function DailyMatchInput(
                 tiny
                 disabled={(props.goalsLeft || 0) > (props.goalsRight || 0)}
               />
+              {props.onEditResult && (
+                <ButtonIcon className={styles.editResultButton} onClick={props.onEditResult}>
+                  <EditIcon />
+                </ButtonIcon>
+              )}
             </div>
           )}
         </div>

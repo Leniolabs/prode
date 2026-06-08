@@ -54,6 +54,12 @@ model User {
   prodePublic Boolean @default(true)
   background  String  @default("background-1")
   dark        Boolean @default(false)
+  role        UserRole @default(MEMBER)
+}
+
+enum UserRole {
+  MEMBER
+  ADMIN
 }
 
 model VerificationToken {

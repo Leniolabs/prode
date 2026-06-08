@@ -31,6 +31,7 @@ export async function GET(req: NextRequest) {
     userProdeId,
     submissionEndsAt: prode?.groupSubmissionsEnd.toISOString() ?? new Date().toISOString(),
     finalsStarted: await finalsStarted(),
+    canEditResults: user.role === 'ADMIN',
     userRanking: {
       id: user.id,
       name: user.name,

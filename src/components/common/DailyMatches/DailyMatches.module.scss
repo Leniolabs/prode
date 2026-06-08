@@ -122,11 +122,15 @@
     white-space: nowrap;
     cursor: default;
     text-align: center;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
 
     .result {
       display: flex;
       align-items: center;
+      gap: 3px;
     }
 
     span { margin-right: 5px; margin-left: 5px; }
@@ -134,6 +138,31 @@
     :has(> img):last-of-type  { margin-left: 3px; }
 
     img { width: 16px; height: 16px; }
+
+    .editResultButton {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      min-height: 18px;
+      max-width: 18px;
+      max-height: 18px;
+      margin-left: 4px;
+      padding: 0;
+      color: #767676;
+
+      &:hover {
+        background: #00000014;
+      }
+
+      svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      path {
+        stroke: currentColor;
+      }
+    }
   }
 }
 
