@@ -15,7 +15,7 @@ import {
   ContainerHeader,
   CardContent,
 } from "@/layout";
-import { useRequireSession } from "@/hooks";
+import { useBodyRedirect, useRequireSession } from "@/hooks";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { Meta } from "@/components/common/Meta";
 import { ButtonIcon } from "@/components/common/ButtonIcon";
@@ -53,6 +53,8 @@ interface RankingData {
   })[];
 }
 
+type RankingResponse = RankingData & { redirect?: string };
+
 export default function RankingPage() {
   const session = useRequireSession();
   const router = useRouter();
@@ -62,7 +64,8 @@ export default function RankingPage() {
   const page = parseInt(searchParams?.get("page") || "0", 10);
   const i18n = useLocalizedText();
 
-  const { data: props } = useQuery<RankingData>({ queryKey: ["ranking-page-data", id, page], queryFn: () => fetch(`/api/room-ranking-data?id=${id}&page=${page}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
+  const { data: props } = useQuery<RankingResponse>({ queryKey: ["ranking-page-data", id, page], queryFn: () => fetch(`/api/room-ranking-data?id=${id}&page=${page}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
+  const redirected = useBodyRedirect(props?.redirect);
 
   const handleUserClick = React.useCallback(
     (row: { id: string }) => {
@@ -97,6 +100,8 @@ export default function RankingPage() {
 
   if (session.status === "loading" || session.status === "unauthenticated")
     return null;
+
+  if (redirected) return null;
 
   return (
     <Layout>

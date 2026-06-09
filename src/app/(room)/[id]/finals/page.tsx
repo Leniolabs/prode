@@ -16,7 +16,7 @@ import {
   CardFooter,
   CardContent,
 } from "@/layout";
-import { useRequireSession } from "@/hooks";
+import { useBodyRedirect, useRequireSession } from "@/hooks";
 import { useInterval } from "@/hooks/useInterval";
 import { filterUniquePredicate } from "@/utils/array";
 import axios from "axios";
@@ -87,6 +87,8 @@ interface RoomFinalsData {
   nextMatches?: UIMatch[];
 }
 
+type RoomFinalsResponse = RoomFinalsData & { redirect?: string };
+
 
 export default function RoomFinalsPage() {
   const session = useRequireSession();
@@ -96,7 +98,8 @@ export default function RoomFinalsPage() {
   const id = params?.id as string;
   const timezone = React.useMemo(() => new Date().getTimezoneOffset().toString(), []);
 
-  const { data: props } = useQuery<RoomFinalsData>({ queryKey: ["room-finals-data", id, timezone], queryFn: () => fetch(`/api/room-finals-data?id=${id}&timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
+  const { data: props } = useQuery<RoomFinalsResponse>({ queryKey: ["room-finals-data", id, timezone], queryFn: () => fetch(`/api/room-finals-data?id=${id}&timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
+  const redirected = useBodyRedirect(props?.redirect);
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);
@@ -201,6 +204,8 @@ export default function RoomFinalsPage() {
 
   if (session.status === "loading" || session.status === "unauthenticated")
     return null;
+
+  if (redirected) return null;
 
   return (
     <Layout>

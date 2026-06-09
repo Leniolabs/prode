@@ -61,6 +61,7 @@ export function HeaderMenu(props: React.PropsWithChildren<HeaderMenuProps>) {
   return (
     <div
       className={className(props.className, styles.headerMenu)}
+      data-testid="header-menu"
       onClick={handleOpen}
     >
       <UserImage image={session?.data?.user?.image} />

@@ -19,7 +19,10 @@
     "test:db:reset": "docker compose rm -sfv prode-test-db && npm run test:db:up",
     "screenshot": "tsx harness/screenshot.ts",
     "harness:baseline": "tsx harness/screenshots.ts --mode baseline",
-    "harness:check": "tsx harness/screenshots.ts --mode check"
+    "harness:check": "tsx harness/screenshots.ts --mode check",
+    "e2e": "playwright test --config e2e/playwright.config.ts",
+    "e2e:headed": "playwright test --config e2e/playwright.config.ts --headed",
+    "e2e:ui": "playwright test --config e2e/playwright.config.ts --ui"
   },
   "prisma": {
     "seed": "tsx prisma/seed/index.ts"

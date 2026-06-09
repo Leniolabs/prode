@@ -170,6 +170,7 @@ export default function RoomsPage() {
                 <div
                   key={row.id}
                   className={styles.roomRow}
+                  data-testid={`room-row-${row.id}`}
                   data-striped={index % 2 === 0}
                   data-locked={locked}
                 >
@@ -195,6 +196,7 @@ export default function RoomsPage() {
                     <button
                       type="button"
                       className={styles.enterButton}
+                      data-testid={`room-enter-${row.id}`}
                       disabled={locked}
                       onClick={onRoomClick(row.id, row.open ? false : row.hasPassword)}
                     >

@@ -17,7 +17,7 @@ import {
   CardFooter,
   CardContent,
 } from "@/layout";
-import { useRequireSession } from "@/hooks";
+import { useBodyRedirect, useRequireSession } from "@/hooks";
 import { useInterval } from "@/hooks/useInterval";
 import commonStyles from "@/styles/CommonStyles.module.scss";
 import axios from "axios";
@@ -73,6 +73,8 @@ interface RoomGroupsData {
   nextMatches?: UIMatch[];
 }
 
+type RoomGroupsResponse = RoomGroupsData & { redirect?: string };
+
 export default function RoomGroupsPage() {
   const session = useRequireSession();
   const router = useRouter();
@@ -81,7 +83,8 @@ export default function RoomGroupsPage() {
   const i18n = useLocalizedText();
   const timezone = React.useMemo(() => new Date().getTimezoneOffset().toString(), []);
 
-  const { data: props } = useQuery<RoomGroupsData>({ queryKey: ["room-groups-data", id, timezone], queryFn: () => fetch(`/api/room-groups-data?id=${id}&timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
+  const { data: props } = useQuery<RoomGroupsResponse>({ queryKey: ["room-groups-data", id, timezone], queryFn: () => fetch(`/api/room-groups-data?id=${id}&timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
+  const redirected = useBodyRedirect(props?.redirect);
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);
@@ -172,6 +175,8 @@ export default function RoomGroupsPage() {
 
   if (session.status === "loading" || session.status === "unauthenticated")
     return null;
+
+  if (redirected) return null;
 
   return (
     <Layout>
