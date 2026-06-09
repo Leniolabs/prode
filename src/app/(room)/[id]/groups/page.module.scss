@@ -56,3 +56,59 @@
 .matchPair2 {
   background: #e1e1e1;
 }
+
+.resultEditor {
+  display: grid;
+  gap: 14px;
+  min-width: min(100%, 280px);
+}
+
+.resultEditorTeams {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.resultEditorTeam {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.resultEditorVersus {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.resultEditorInputs {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+
+  input {
+    width: 100%;
+    min-width: 0;
+    padding: 8px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    color: inherit;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
+  }
+}
+
+.resultEditorActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

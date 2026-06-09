@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   if (!session?.user?.email) return NextResponse.json({}, { status: 401 })
 
   const user = await prisma.user.findUnique({ where: { email: session.user.email } })
-  if (!user || user.email !== process.env.ADMIN_EMAIL) return NextResponse.json({}, { status: 401 })
+  if (!user || user.role!== 'ADMIN') return NextResponse.json({}, { status: 401 })
 
   const prode = await prisma.prode.findFirst({ where: { prodeEnd: { gte: new Date() } } })
   if (!prode) return NextResponse.json({}, { status: 404 })

@@ -5,7 +5,6 @@ on:
   # endpoint (secrets.APP_URL) for the runner to call. Re-enable by uncommenting
   # the block below once the service is deployed.
   #
-  # Note: ESPN is keyless and unlimited, so the old API quota no longer applies.
   # GitHub Actions enforces a 5-minute minimum cron interval and runs are
   # best-effort (often delayed several minutes), so */5 is the practical floor.
   #
@@ -17,10 +16,6 @@ on:
   #   - cron: "*/5 0-1 * * *"     # Window A part 2: 00:00–01:59 UTC
   #   - cron: "*/5 3-5 * * *"     # Window B:        03:00–05:59 UTC
   workflow_dispatch:
-    inputs:
-      date:
-        description: "Date to sync (YYYY-MM-DD). Leave blank to fetch all finished fixtures."
-        required: false
 
 jobs:
   sync:
@@ -29,15 +24,10 @@ jobs:
     steps:
       - name: Call sync endpoint
         run: |
-          DATE_PARAM=""
-          if [ -n "${{ github.event.inputs.date }}" ]; then
-            DATE_PARAM="?date=${{ github.event.inputs.date }}"
-          fi
-
           RESPONSE=$(curl -s -o /tmp/sync-response.json -w "%{http_code}" \
             -X POST \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            "${{ secrets.APP_URL }}/api/cron/sync-matches${DATE_PARAM}")
+            "${{ secrets.APP_URL }}/api/cron/sync-matches")
 
           echo "HTTP status: $RESPONSE"
           cat /tmp/sync-response.json

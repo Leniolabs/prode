@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
 
   const user = await prisma.user.findUnique({ where: { email: session.user.email } })
   if (!user) return NextResponse.json({}, { status: 401 })
-  if (user.email !== process.env.ADMIN_EMAIL) return NextResponse.json({}, { status: 403 })
+  if (user.role!== 'ADMIN') return NextResponse.json({}, { status: 403 })
 
   const matches = await prisma.match.findMany({
     where: {

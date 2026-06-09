@@ -8,7 +8,9 @@ import {
   getAdminMatchWinner,
   matchResultStatus,
 } from "../../../utils/points";
+import { ButtonIcon } from "../ButtonIcon";
 import { CountryFlag } from "../CountryFlag";
+import { EditIcon } from "../Icons";
 import styles from "./MatchInput.module.scss";
 
 interface MatchInputProps {
@@ -27,6 +29,7 @@ interface MatchInputProps {
   date: Date;
 
   filled?: boolean;
+  onEditResult?: () => void;
 
   onChange?: (goalsLeft: number | null, goalsRight: number | null) => void;
 }
@@ -167,10 +170,22 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
                 tiny
                 disabled={(props.goalsLeft || 0) > (props.goalsRight || 0)}
               />
+              {props.onEditResult && (
+                <ButtonIcon className={styles.editResultButton} onClick={props.onEditResult}>
+                  <EditIcon />
+                </ButtonIcon>
+              )}
             </div>
           </>
         ) : (
-          <div className={styles.date}>{date}</div>
+          <div className={styles.date}>
+            {date}
+            {props.onEditResult && (
+              <ButtonIcon className={styles.editResultButton} onClick={props.onEditResult}>
+                <EditIcon />
+              </ButtonIcon>
+            )}
+          </div>
         )}
       </div>
       <div className={styles.rightTeam}>

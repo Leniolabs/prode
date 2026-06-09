@@ -22,7 +22,15 @@ export type EspnCompetitor = {
 export type EspnEvent = {
   id: string;
   date: string;
-  status: { type: { name: string; completed: boolean } };
+  status: {
+    type: {
+      name: string;
+      completed: boolean;
+      state?: string;
+      description?: string;
+      detail?: string;
+    };
+  };
   competitions: { competitors: EspnCompetitor[] }[];
 };
 
@@ -60,6 +68,13 @@ export function isFinal(event: EspnEvent): boolean {
 export async function fetchScoreboard(date: string): Promise<EspnEvent[]> {
   const yyyymmdd = date.replace(/-/g, "");
   const url = `${BASE_URL}/scoreboard?dates=${yyyymmdd}`;
+  const data = await getJson<ScoreboardResponse>(url);
+  return data.events ?? [];
+}
+
+/** Fetch the scoreboard for a date range. `dates` is YYYYMMDD-YYYYMMDD. */
+export async function fetchScoreboardRange(dates: string): Promise<EspnEvent[]> {
+  const url = `${BASE_URL}/scoreboard?dates=${dates}`;
   const data = await getJson<ScoreboardResponse>(url);
   return data.events ?? [];
 }

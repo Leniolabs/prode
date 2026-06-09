@@ -7,6 +7,16 @@ const __dirname = dirname(__filename)
 
 const compat = new FlatCompat({ baseDirectory: __dirname })
 
-export default [
+const config = [
+  {
+    ignores: ['.next/**'],
+  },
   ...compat.extends('next/core-web-vitals'),
+  {
+    rules: {
+      '@next/next/no-html-link-for-pages': 'off',
+    },
+  },
 ]
+
+export default config

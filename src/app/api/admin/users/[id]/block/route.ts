@@ -10,7 +10,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ id: st
   if (!session?.user?.email) return NextResponse.json({}, { status: 401 })
 
   const user = await prisma.user.findUnique({ where: { email: session.user.email } })
-  if (!user || user.email !== process.env.ADMIN_EMAIL) return NextResponse.json({}, { status: 401 })
+  if (!user || user.role!== 'ADMIN') return NextResponse.json({}, { status: 401 })
 
   const userToBlock = await prisma.user.findUnique({ where: { id } })
   await prisma.user.update({ where: { id }, data: { blocked: !userToBlock?.blocked } })

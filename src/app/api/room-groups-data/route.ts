@@ -61,6 +61,7 @@ export async function GET(req: NextRequest) {
     id,
     userProdeId,
     roomAdmin: room.userId === user.id,
+    canEditResults: user.role === 'ADMIN',
     name: room.name,
     room: {
       id: room.id,
