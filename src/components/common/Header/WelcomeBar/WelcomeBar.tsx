@@ -26,7 +26,6 @@ export function WelcomeBar({
   subtitle,
   children,
 }: WelcomeBarProps) {
-  const date = prodeEnd ? formatDeadline(prodeEnd) : "xx de junio";
   return (
     <div className={styles.bar}>
       <Image
@@ -40,12 +39,14 @@ export function WelcomeBar({
       <div className={styles.text}>
         <div className={styles.title}>{title}</div>
         <div className={styles.subtitle}>
-          {subtitle ?? (
-            <>
-              {deadlinePre} <span className={styles.highlight}>{date}</span>{" "}
-              {deadlinePost}
-            </>
-          )}
+          {subtitle ??
+            (prodeEnd ? (
+              <>
+                {deadlinePre}{" "}
+                <span className={styles.highlight}>{formatDeadline(prodeEnd)}</span>{" "}
+                {deadlinePost}
+              </>
+            ) : null)}
         </div>
       </div>
       {children && <div className={styles.actions}>{children}</div>}

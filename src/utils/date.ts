@@ -18,10 +18,32 @@ function applyTimezoneOffset(date: Date, timezone?: string) {
   return newDate;
 }
 
-export function getNextTenMinutesDate() {
-  const now = new Date();
-  now.setMinutes(now.getMinutes() + 10);
-  return now;
+/**
+ * The lock time of the matchday ("fecha") a group match belongs to: the
+ * greatest deadline that is <= the match date. `deadlines` must be ascending
+ * (see config/matchdays.ts). Returns null if the match starts before the first
+ * deadline (should not happen for seeded data).
+ */
+export function groupMatchLockTime(matchDate: Date, deadlines: Date[]) {
+  let lock: Date | null = null;
+  for (const deadline of deadlines) {
+    if (deadline.getTime() <= matchDate.getTime()) lock = deadline;
+    else break;
+  }
+  return lock;
+}
+
+/**
+ * True once the matchday containing `matchDate` has kicked off, i.e. its first
+ * match has started. All matches of a fecha lock together at that moment.
+ */
+export function isGroupMatchLocked(
+  matchDate: Date,
+  deadlines: Date[],
+  now: Date = new Date(),
+) {
+  const lock = groupMatchLockTime(matchDate, deadlines);
+  return lock !== null && lock.getTime() <= now.getTime();
 }
 
 export function formatDate(date: Date, locale: string, timezone?: string) {

@@ -1,8 +1,7 @@
 import { auth } from "@/lib/auth"
 import { prisma } from '@/lib'
 import {
-  groupSubmissionsEnded,
-  getAllowedMatchesToModify,
+  getAllowedGroupMatchesToModify,
   getProdeRoom,
   getUserByEmail,
   syncronizeTemplate,
@@ -21,7 +20,6 @@ export async function POST(req: NextRequest, context: { params: Promise<{ id: st
 
   const room = await getProdeRoom(id)
   if (!room) return NextResponse.json({}, { status: 404 })
-  if (groupSubmissionsEnded(room)) return NextResponse.json({}, { status: 403 })
 
   const { matches } = await req.json()
   if (!matches) return NextResponse.json({}, { status: 400 })
@@ -39,9 +37,8 @@ export async function POST(req: NextRequest, context: { params: Promise<{ id: st
     (match: any) => !updateMatches.find((x: any) => x.matchId === match.matchId)
   )
 
-  const allowedMatchesToModify = await getAllowedMatchesToModify(
-    matches.map((match: any) => match.matchId),
-    room.prode.groupSubmissionsEnd
+  const allowedMatchesToModify = await getAllowedGroupMatchesToModify(
+    matches.map((match: any) => match.matchId)
   )
 
   await prisma.$transaction([

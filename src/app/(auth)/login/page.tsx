@@ -36,7 +36,7 @@ export default function LoginPage() {
         </div>
         <h1 className={styles.title}>Prode</h1>
         <p className={styles.subtitle}>(SPORTS LOTTERY)</p>
-        {session.status !== "authenticated" && (
+        {session.status === "unauthenticated" && (
           <Register authError={error ?? undefined} />
         )}
         {session.status === "authenticated" && (

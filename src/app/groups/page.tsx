@@ -33,6 +33,8 @@ import {
   DailyMatchInput,
 } from "@/components/common/DailyMatches";
 import { useQuery } from "@tanstack/react-query";
+import { isGroupMatchLocked, groupMatchLockTime } from "@/utils/date";
+import { GROUP_MATCHDAY_DEADLINES } from "@/config/matchdays";
 import styles from "./page.module.scss";
 
 type UIMatch = Pick<
@@ -69,11 +71,6 @@ export default function GroupsPage() {
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);
-  const submissionsEnded = React.useMemo(() => {
-    if (!props) return false;
-    return new Date(props.submissionEndsAt).getTime() <= now;
-  }, [now, props]);
-
   const [updating, setUpdating] = React.useState(false);
   const [savingResult, setSavingResult] = React.useState(false);
   const [originalMatches, setOriginalMatches] = React.useState<UIMatch[]>([]);
@@ -189,7 +186,15 @@ export default function GroupsPage() {
     });
   }, [originalMatches, matches]);
 
-  const isModified = !!differentMatches.length;
+  // A match locks at its matchday's first kickoff. Saving is allowed while any
+  // modified match still belongs to an open fecha; the server drops locked ones.
+  const hasEditableChanges = React.useMemo(() => {
+    const nowDate = new Date(now);
+    return differentMatches.some(
+      (match) =>
+        !isGroupMatchLocked(new Date(match.date), GROUP_MATCHDAY_DEADLINES, nowDate)
+    );
+  }, [differentMatches, now]);
 
   const formattedGroupsTitle = React.useMemo(() => {
     const title = i18n.groupsTitle.toLowerCase();
@@ -247,7 +252,7 @@ export default function GroupsPage() {
           >
             <Button
               variant="transparent"
-              disabled={!isModified || submissionsEnded}
+              disabled={!hasEditableChanges}
               className={commonStyles.marginLeftAuto}
               onClick={handleSave}
             >
@@ -271,7 +276,7 @@ export default function GroupsPage() {
                       <MatchInput
                         key={match.id}
                         className={styles[`matchPair${Math.floor(index / 2)}` as keyof typeof styles]}
-                        disabled={match.disabled || submissionsEnded}
+                        disabled={match.disabled || isGroupMatchLocked(new Date(match.date), GROUP_MATCHDAY_DEADLINES, new Date(now))}
                         date={new Date(match.date)}
                         countryLeftId={match.countryLeftId}
                         goalsLeft={match.goalsLeft}
@@ -308,8 +313,8 @@ export default function GroupsPage() {
                   {(todayMatches || nextMatches)?.map((match) => (
                     <DailyMatchInput
                       key={match.id}
-                      disabled={match.disabled || submissionsEnded}
-                      submissionEndsAt={props?.submissionEndsAt ?? ""}
+                      disabled={match.disabled || isGroupMatchLocked(new Date(match.date), GROUP_MATCHDAY_DEADLINES, new Date(now))}
+                      submissionEndsAt={groupMatchLockTime(new Date(match.date), GROUP_MATCHDAY_DEADLINES)?.toISOString() ?? props?.submissionEndsAt ?? ""}
                       date={new Date(match.date)}
                       countryLeftId={match.countryLeftId}
                       today={!!todayMatches}

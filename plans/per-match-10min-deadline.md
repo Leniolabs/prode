@@ -31,10 +31,10 @@ individual matches. Steps below note where the two variants diverge.
 
 ## 2. Source of truth: a single helper in `lib/scoring` or `utils/date`
 
-There is already a dead helper `getNextTenMinutesDate()` in
-[`src/utils/date.ts`](../src/utils/date.ts) (no callers). Do **not** revive it
-as-is — it returns "now + 10 min" which is the inverted form and easy to misuse.
-Replace it with an intention-revealing predicate:
+Add an intention-revealing predicate to [`src/utils/date.ts`](../src/utils/date.ts).
+(Note: the per-fecha feature already added `groupMatchLockTime` /
+`isGroupMatchLocked` there — a per-match variant would sit alongside them. The
+old inverted `getNextTenMinutesDate()` helper has since been removed.)
 
 ```ts
 // src/utils/date.ts
@@ -47,7 +47,7 @@ export function matchLocked(matchDate: Date, now: Date = new Date()) {
 ```
 
 Keep this pure and dependency-free (it belongs in `utils/`, not `lib/`, since it
-touches no Prisma and no domain types). Delete `getNextTenMinutesDate`.
+touches no Prisma and no domain types).
 
 ---
 

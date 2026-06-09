@@ -1,9 +1,8 @@
 import { auth } from "@/lib/auth"
 import { prisma } from '@/lib'
 import {
-  getAllowedMatchesToModify,
+  getAllowedGroupMatchesToModify,
   getUserByEmail,
-  groupSubmissionsEnded,
 } from '@/utils/queries'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -22,7 +21,6 @@ export async function POST(req: NextRequest) {
     include: { matches: true, prode: true },
   })
   if (!userProde) return NextResponse.json({}, { status: 404 })
-  if (groupSubmissionsEnded(userProde)) return NextResponse.json({}, { status: 403 })
 
   const updateMatches = matches.filter((match: any) =>
     userProde.matches.find((x) => x.matchId === match.matchId)
@@ -31,9 +29,8 @@ export async function POST(req: NextRequest) {
     (match: any) => !updateMatches.find((x: any) => x.matchId === match.matchId)
   )
 
-  const allowedMatchesToModify = await getAllowedMatchesToModify(
-    matches.map((match: any) => match.matchId),
-    userProde.prode.groupSubmissionsEnd
+  const allowedMatchesToModify = await getAllowedGroupMatchesToModify(
+    matches.map((match: any) => match.matchId)
   )
 
   await prisma.$transaction([
