@@ -5,6 +5,7 @@ import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
 import { CountryFlag } from "@/components/common/CountryFlag";
 import { DesktopHeader, MobileHeader } from "@/components/common/Header";
+import { RoomWelcomeBar } from "@/components/common/Header";
 import { MatchInput } from "@/components/common/MatchInput";
 import { Modal } from "@/components/common/Modal";
 import { Table } from "@/components/common/Table";
@@ -19,7 +20,7 @@ import {
   CardFooter,
   CardContent,
 } from "@/layout";
-import { useCountries, useRequireSession } from "@/hooks";
+import { useBodyRedirect, useCountries, useRequireSession } from "@/hooks";
 import { useInterval } from "@/hooks/useInterval";
 import commonStyles from "@/styles/CommonStyles.module.scss";
 import axios from "axios";
@@ -76,6 +77,8 @@ interface RoomGroupsData {
   nextMatches?: UIMatch[];
 }
 
+type RoomGroupsResponse = RoomGroupsData & { redirect?: string };
+
 export default function RoomGroupsPage() {
   const session = useRequireSession();
   const router = useRouter();
@@ -85,7 +88,8 @@ export default function RoomGroupsPage() {
   const countries = useCountries();
   const timezone = React.useMemo(() => new Date().getTimezoneOffset().toString(), []);
 
-  const { data: props } = useQuery<RoomGroupsData>({ queryKey: ["room-groups-data", id, timezone], queryFn: () => fetch(`/api/room-groups-data?id=${id}&timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
+  const { data: props } = useQuery<RoomGroupsResponse>({ queryKey: ["room-groups-data", id, timezone], queryFn: () => fetch(`/api/room-groups-data?id=${id}&timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
+  const redirected = useBodyRedirect(props?.redirect);
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);
@@ -248,10 +252,12 @@ export default function RoomGroupsPage() {
   if (session.status === "loading" || session.status === "unauthenticated")
     return null;
 
+  if (redirected) return null;
+
   return (
     <Layout>
       <Meta />
-      <DesktopHeader
+      <RoomWelcomeBar
         id={props?.id}
         name={props?.name}
         room={props?.room}
@@ -264,19 +270,7 @@ export default function RoomGroupsPage() {
         <Button disabled={!props?.finalsStarted} invert href={`/${id}/finals`}>
           {i18n.buttonLabelFinalsPhase}
         </Button>
-      </DesktopHeader>
-      <MobileHeader
-        list
-        id={id}
-        name={props?.name}
-        room={props?.room}
-        finalsStarted={props?.finalsStarted}
-        userRanking={props?.userRanking}
-        roomAdmin={props?.roomAdmin}
-        groups={true}
-        finals={true}
-        shareUserProdeId={props?.userProdeId}
-      />
+      </RoomWelcomeBar>
       {props?.room && (
         <GroupsResultsWarning
           roomConfig={{

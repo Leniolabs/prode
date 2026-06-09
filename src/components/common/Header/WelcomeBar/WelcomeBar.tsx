@@ -4,9 +4,10 @@ import styles from "./WelcomeBar.module.scss";
 
 interface WelcomeBarProps {
   title: string;
-  deadlinePre: string;
-  deadlinePost: string;
+  deadlinePre?: string;
+  deadlinePost?: string;
   prodeEnd?: string | null;
+  subtitle?: React.ReactNode;
   children?: React.ReactNode;
 }
 
@@ -22,6 +23,7 @@ export function WelcomeBar({
   deadlinePre,
   deadlinePost,
   prodeEnd,
+  subtitle,
   children,
 }: WelcomeBarProps) {
   const date = prodeEnd ? formatDeadline(prodeEnd) : "xx de junio";
@@ -38,8 +40,12 @@ export function WelcomeBar({
       <div className={styles.text}>
         <div className={styles.title}>{title}</div>
         <div className={styles.subtitle}>
-          {deadlinePre} <span className={styles.highlight}>{date}</span>{" "}
-          {deadlinePost}
+          {subtitle ?? (
+            <>
+              {deadlinePre} <span className={styles.highlight}>{date}</span>{" "}
+              {deadlinePost}
+            </>
+          )}
         </div>
       </div>
       {children && <div className={styles.actions}>{children}</div>}

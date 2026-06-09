@@ -1,11 +1,9 @@
 'use client'
 import React from "react";
 import { User } from "@/generated/prisma";
-import { BrandLogo } from "@/components/common/BrandLogo";
 import { WelcomeBar } from "@/components/common/Header/WelcomeBar";
 import {
   Layout,
-  Footer,
   Container,
   Card,
   CardContent,
@@ -25,7 +23,6 @@ import { useRouter } from "next/navigation";
 import { FormError } from "@/components/common/Form/FormError";
 import { formError } from "@/utils/errors";
 import { Meta } from "@/components/common/Meta";
-import { LocaleSelect } from "@/components/common/LocaleSelect";
 import { useLocalizedText } from "@/locale";
 import { useQuery } from "@tanstack/react-query";
 import styles from "./new-prode.module.scss";
@@ -33,6 +30,7 @@ import styles from "./new-prode.module.scss";
 interface NewProdeData {
   userRanking?: Pick<User, "id" | "name" | "image" | "email" | "prodePublic" | "background" | "dark">;
   registeredProdes: number;
+  prodeEnd?: string | null;
 }
 
 type FormType = {
@@ -61,9 +59,9 @@ export default function NewProdePage() {
     name: "",
     password: "",
     public: true,
-    pointsWinner: 10,
-    pointsGoals: 10,
-    pointsPenal: 10,
+    pointsWinner: 1,
+    pointsGoals: 3,
+    pointsPenal: 5,
   });
 
   const checkRoomName = React.useMemo(() => {
@@ -120,6 +118,7 @@ export default function NewProdePage() {
         title={i18n.headerTitle}
         deadlinePre={i18n.headerWelcomeLine1}
         deadlinePost={i18n.headerWelcomeLine2}
+        prodeEnd={props?.prodeEnd}
       >
         <Button variant="secondary" href="/rooms">
           {i18n.buttonLabelGoToMyProde}
@@ -209,10 +208,6 @@ export default function NewProdePage() {
           </CardContent>
         </Card>
       </Container>
-      <Footer>
-        <BrandLogo />
-        <LocaleSelect />
-      </Footer>
     </Layout>
   );
 }

@@ -8,6 +8,7 @@ import styles from "./PasswordModal.module.scss";
 
 interface PasswordModalProps {
   className?: string;
+  error?: string;
   onClose?: (password: string) => void;
 }
 
@@ -34,10 +35,14 @@ export function PasswordModal(
       <input
         placeholder={i18n.passwordCheckLabel}
         className={styles.password}
+        data-testid="password-modal-input"
         value={password}
         onChange={onChange}
       />
-      <Button onClick={handleClose}>{i18n.passwordCheckButtonLabel}</Button>
+      {props.error ? <div role="alert">{props.error}</div> : null}
+      <Button onClick={handleClose} className="password-modal-submit" >
+        {i18n.passwordCheckButtonLabel}
+      </Button>
     </Modal>
   );
 }

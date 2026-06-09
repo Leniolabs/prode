@@ -3,7 +3,7 @@ import React from "react";
 import { Match, ProdeRoom, Stage, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
-import { DesktopHeader, MobileHeader } from "@/components/common/Header";
+import { RoomWelcomeBar } from "@/components/common/Header";
 import { Table } from "@/components/common/Table";
 import { UserPositionDisplay } from "@/components/common/UserPositionDisplay";
 import { UserRankingDisplay } from "@/components/common/UserRankingDisplay";
@@ -16,21 +16,17 @@ import {
   CardFooter,
   CardContent,
 } from "@/layout";
-import { useRequireSession } from "@/hooks";
+import { useBodyRedirect, useRequireSession } from "@/hooks";
 import { useInterval } from "@/hooks/useInterval";
 import { filterUniquePredicate } from "@/utils/array";
 import axios from "axios";
 import { UserMatchFinalsInput } from "@/components/common/UserMatchFinalsInput";
 import {
-  BracketIcon,
-  bracketOffsetQuarter,
-  BracketsContainer,
   BracketsMobileContainer,
-  BracketTitle,
+  FinalsBracket,
   FinalsContainer,
   FinalsResultsWarning,
 } from "@/components/view/Finals";
-import { className } from "@/utils/classname";
 import {
   Collapsable,
   CollapsableContainer,
@@ -87,6 +83,8 @@ interface RoomFinalsData {
   nextMatches?: UIMatch[];
 }
 
+type RoomFinalsResponse = RoomFinalsData & { redirect?: string };
+
 
 export default function RoomFinalsPage() {
   const session = useRequireSession();
@@ -96,7 +94,8 @@ export default function RoomFinalsPage() {
   const id = params?.id as string;
   const timezone = React.useMemo(() => new Date().getTimezoneOffset().toString(), []);
 
-  const { data: props } = useQuery<RoomFinalsData>({ queryKey: ["room-finals-data", id, timezone], queryFn: () => fetch(`/api/room-finals-data?id=${id}&timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
+  const { data: props } = useQuery<RoomFinalsResponse>({ queryKey: ["room-finals-data", id, timezone], queryFn: () => fetch(`/api/room-finals-data?id=${id}&timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
+  const redirected = useBodyRedirect(props?.redirect);
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);
@@ -202,10 +201,12 @@ export default function RoomFinalsPage() {
   if (session.status === "loading" || session.status === "unauthenticated")
     return null;
 
+  if (redirected) return null;
+
   return (
     <Layout>
       <Meta />
-      <DesktopHeader
+      <RoomWelcomeBar
         id={props?.id}
         name={props?.name}
         room={props?.room}
@@ -214,19 +215,7 @@ export default function RoomFinalsPage() {
       >
         <Button invert href={`/rooms`}>{i18n.buttonLabelProdeList}</Button>
         <Button invert href={`/${id}/groups`}>{i18n.buttonLabelGroupPhase}</Button>
-      </DesktopHeader>
-      <MobileHeader
-        list
-        id={id}
-        name={props?.name}
-        room={props?.room}
-        finalsStarted={true}
-        userRanking={props?.userRanking}
-        roomAdmin={props?.roomAdmin}
-        groups={true}
-        finals={true}
-        shareUserProdeId={props?.userProdeId}
-      />
+      </RoomWelcomeBar>
       {props?.room && <FinalsResultsWarning roomConfig={props.room} />}
       <Container full>
         <FinalsContainer>
@@ -235,61 +224,12 @@ export default function RoomFinalsPage() {
               {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}
             </Button>
           </ContainerHeader>
-          <BracketsContainer gridArea="matches">
-            <BracketTitle full order={0}>{i18n.FINALS_16}</BracketTitle>
-            {matches.filter((x) => x.stage.includes("FINALS_16_")).sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match) => (
-              <UserMatchFinalsInput disabled={match.disabled || submissionsEnded} submissionEndsAt={props?.submissionEndsAt ?? ""}
-                key={match.id} date={new Date(match.date)} userCountryLeftId={match.countryLeftId} userGoalsLeft={match.userGoalsLeft}
-                userCountryRightId={match.countryRightId} userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}
-                userPenaltisRight={match.userPenaltisRight} penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                goalsLeft={match.goalsLeft} goalsRight={match.goalsRight} countryLeftId={match.countryLeftId}
-                countryRightId={match.countryRightId} onChange={handleMatchChange(match.id)} order={getMatchOrder(match.stage)} filled={match.filled} />
-            ))}
-            <BracketIcon order={17} /><BracketIcon order={17} /><BracketIcon order={17} /><BracketIcon order={17} />
-            <BracketIcon order={17} /><BracketIcon order={17} /><BracketIcon order={17} /><BracketIcon order={17} />
-            <BracketTitle full order={17}>{i18n.FINALS_8}</BracketTitle>
-            {matches.filter((x) => x.stage.includes("FINALS_8_")).sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match) => (
-              <UserMatchFinalsInput disabled={match.disabled || submissionsEnded} submissionEndsAt={props?.submissionEndsAt ?? ""}
-                key={match.id} date={new Date(match.date)} userCountryLeftId={match.countryLeftId} userGoalsLeft={match.userGoalsLeft}
-                userCountryRightId={match.countryRightId} userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}
-                userPenaltisRight={match.userPenaltisRight} penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                goalsLeft={match.goalsLeft} goalsRight={match.goalsRight} countryLeftId={match.countryLeftId}
-                countryRightId={match.countryRightId} onChange={handleMatchChange(match.id)} order={getMatchOrder(match.stage)} filled={match.filled} />
-            ))}
-            <BracketIcon order={26} /><BracketIcon order={26} /><BracketIcon order={26} /><BracketIcon order={26} />
-            <BracketTitle order={26} full>{i18n.FINALS_4}</BracketTitle>
-            {matches.filter((x) => x.stage.includes("FINALS_4_")).sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match) => (
-              <UserMatchFinalsInput showCountryStatus disabled={match.disabled || submissionsEnded} submissionEndsAt={props?.submissionEndsAt ?? ""}
-                key={match.id} date={new Date(match.date)} userCountryLeftId={match.userCountryLeftId} userGoalsLeft={match.userGoalsLeft}
-                userCountryRightId={match.userCountryRightId} userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}
-                userPenaltisRight={match.userPenaltisRight} penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                goalsLeft={match.goalsLeft} goalsRight={match.goalsRight} countryLeftId={match.countryLeftId}
-                countryRightId={match.countryRightId} onChange={handleMatchChange(match.id)} order={getMatchOrder(match.stage)} filled={match.filled} />
-            ))}
-            <BracketIcon order={31} big /><BracketIcon order={31} big />
-            <BracketTitle className={bracketOffsetQuarter} order={31} full>{i18n.FINALS_2}</BracketTitle>
-            {matches.filter((x) => x.stage.includes("FINALS_2_")).sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match, index) => (
-              <UserMatchFinalsInput showCountryStatus key={match.id} disabled={match.disabled || submissionsEnded}
-                submissionEndsAt={props?.submissionEndsAt ?? ""} className={className(index === 0 && bracketOffsetQuarter)}
-                date={new Date(match.date)} userCountryLeftId={match.userCountryLeftId} userGoalsLeft={match.userGoalsLeft}
-                userCountryRightId={match.userCountryRightId} userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}
-                userPenaltisRight={match.userPenaltisRight} penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                goalsLeft={match.goalsLeft} goalsRight={match.goalsRight} countryLeftId={match.countryLeftId}
-                countryRightId={match.countryRightId} onChange={handleMatchChange(match.id)} order={getMatchOrder(match.stage)} filled={match.filled} />
-            ))}
-            <BracketIcon className={className(bracketOffsetQuarter)} order={34} big />
-            <BracketTitle className={className(bracketOffsetQuarter)} order={34}>{i18n.FINAL}</BracketTitle>
-            <BracketTitle order={34}>{i18n.THIRD_PLACE}</BracketTitle>
-            {matches.filter((x) => x.stage === "FINALS" || x.stage === "THIRD_PLACE").sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match, index) => (
-              <UserMatchFinalsInput showCountryStatus className={className(index === 0 && bracketOffsetQuarter)}
-                disabled={match.disabled || submissionsEnded} submissionEndsAt={props?.submissionEndsAt ?? ""}
-                key={match.id} date={new Date(match.date)} userCountryLeftId={match.userCountryLeftId} userGoalsLeft={match.userGoalsLeft}
-                userCountryRightId={match.userCountryRightId} userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}
-                userPenaltisRight={match.userPenaltisRight} penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                goalsLeft={match.goalsLeft} goalsRight={match.goalsRight} countryLeftId={match.countryLeftId}
-                countryRightId={match.countryRightId} onChange={handleMatchChange(match.id)} order={getMatchOrder(match.stage)} filled={match.filled} />
-            ))}
-          </BracketsContainer>
+          <FinalsBracket
+            matches={matches}
+            submissionEndsAt={props?.submissionEndsAt ?? ""}
+            submissionsEnded={submissionsEnded}
+            onChange={handleMatchChange}
+          />
           <BracketsMobileContainer gridArea="matches">
             <CollapsableContainer>
               <Collapsable title={i18n.FINALS_16}>

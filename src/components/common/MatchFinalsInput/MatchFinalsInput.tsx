@@ -358,6 +358,7 @@ export function MatchFinalsInput(
           type="number"
           inputMode={"decimal"}
           tabIndex={props.order * 4}
+          data-testid="finals-match-goals-left"
           className={className(styles.goalsLeft)}
           defaultValue={props.goalsLeft}
           onChange={handleGoalsLeftChange}
@@ -369,6 +370,7 @@ export function MatchFinalsInput(
             type="number"
             inputMode={"decimal"}
             tabIndex={props.order * 4 + 2}
+            data-testid="finals-match-penalties-left"
             className={className(styles.penaltisLeft)}
             defaultValue={props.penaltisLeft ?? ""}
             onChange={handlePenaltisLeftChange}
@@ -399,6 +401,7 @@ export function MatchFinalsInput(
           type="number"
           inputMode={"decimal"}
           tabIndex={props.order * 4 + 1}
+          data-testid="finals-match-goals-right"
           className={className(styles.goalsRight)}
           defaultValue={props.goalsRight}
           onChange={handleGoalsRightChange}
@@ -410,6 +413,7 @@ export function MatchFinalsInput(
             type="number"
             inputMode={"decimal"}
             tabIndex={props.order * 4 + 3}
+            data-testid="finals-match-penalties-right"
             className={className(styles.penaltisRight)}
             defaultValue={props.penaltisRight ?? ""}
             onChange={handlePenaltisRightChange}

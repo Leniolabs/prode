@@ -1,0 +1,47 @@
+.roomName {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  span {
+    font-weight: 700;
+  }
+
+  // The edit pencil is a 40x40 ButtonIcon by default, which stretches the
+  // subtitle line and the whole bar. Constrain it to fit the text line.
+  div {
+    width: 26px;
+    height: 26px;
+    max-width: 26px;
+    max-height: 26px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  // Shrink the nav buttons (rendered as <a>/<button>) so they fit the bar
+  // height instead of stretching it. Descendant selector outranks the
+  // Button module's own single-class rules.
+  a,
+  button {
+    padding: 6px 14px;
+    font-size: 14px;
+    height: auto;
+  }
+
+  // Enlarge the avatar a bit while keeping it under the 54px trophy height so
+  // it doesn't grow the bar. !important overrides the UserImage .small sizing.
+  div:has(> img),
+  div:has(> img) img {
+    width: 46px !important;
+    height: 46px !important;
+  }
+}

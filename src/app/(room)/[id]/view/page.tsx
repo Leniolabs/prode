@@ -2,7 +2,7 @@
 import React from "react";
 import { Match, ProdeRoom, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
-import { DesktopHeader, MobileHeader } from "@/components/common/Header";
+import { RoomWelcomeBar } from "@/components/common/Header";
 import { MatchInput } from "@/components/common/MatchInput";
 import {
   Layout,
@@ -46,6 +46,7 @@ import { ShareToday } from "@/components/common/ShareButton/ShareToday";
 import { getMatchOrder } from "@/utils/finals";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
+import { useBodyRedirect } from "@/hooks";
 
 type UIMatch = Pick<
   Match,
@@ -90,38 +91,30 @@ interface ViewData {
   finalsMatches?: UIFinalMatch[];
 }
 
+type ViewResponse = ViewData & { redirect?: string };
+
 export default function ViewPage() {
   const params = useParams();
   const id = params?.id as string;
   const i18n = useLocalizedText();
 
-  const { data: props } = useQuery<ViewData>({ queryKey: ["view-page-data", id], queryFn: () => fetch(`/api/view-page-data?id=${id}`).then((r) => r.json()), enabled: !!id });
+  const { data: props } = useQuery<ViewResponse>({ queryKey: ["view-page-data", id], queryFn: () => fetch(`/api/view-page-data?id=${id}`).then((r) => r.json()), enabled: !!id });
+  const redirected = useBodyRedirect(props?.redirect);
 
   const { matches, finalsMatches } = props ?? {};
+
+  if (redirected) return null;
 
   return (
     <Layout>
       <Meta />
       {props?.userRanking && (
-        <DesktopHeader
+        <RoomWelcomeBar
           id={props.id}
           name={props.name}
           room={props.room}
           userRanking={props.userRanking}
           roomAdmin={props.roomAdmin}
-        />
-      )}
-      {props?.userRanking && (
-        <MobileHeader
-          list
-          id={props.id}
-          name={props.name}
-          room={props.room}
-          finalsStarted={props.finalsStarted}
-          userRanking={props.userRanking}
-          roomAdmin={props.roomAdmin}
-          groups={props.userInRoom}
-          finals={props.userInRoom}
         />
       )}
       <Container full>

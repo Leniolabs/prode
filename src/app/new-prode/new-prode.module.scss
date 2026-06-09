@@ -1,8 +1,8 @@
 @use 'styles/tokens' as t;
 
 .contentContainer {
-  margin-top: 108px;
-  margin-bottom: 128px;
+  margin-top: clamp(16px, 3vh, 48px);
+  margin-bottom: clamp(16px, 3vh, 48px);
 }
 
 .fullSection {

@@ -10,10 +10,13 @@ export async function GET(req: NextRequest) {
   const user = await getUserByEmail(session.user.email)
   if (!user) return NextResponse.json({}, { status: 401 })
 
-  const userProdeNotTemplate = await prisma.userProde.findMany({
-    where: { userId: user.id, template: false },
-    include: { prodeRoom: true },
-  })
+  const [userProdeNotTemplate, prode] = await Promise.all([
+    prisma.userProde.findMany({
+      where: { userId: user.id, template: false },
+      include: { prodeRoom: true },
+    }),
+    prisma.prode.findFirst({ select: { prodeEnd: true } }),
+  ])
 
   return NextResponse.json({
     userRanking: {
@@ -25,5 +28,6 @@ export async function GET(req: NextRequest) {
       background: user.background,
     },
     registeredProdes: userProdeNotTemplate.length,
+    prodeEnd: prode?.prodeEnd?.toISOString() ?? null,
   })
 }

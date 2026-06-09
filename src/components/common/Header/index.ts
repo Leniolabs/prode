@@ -6,3 +6,5 @@ export { LeniBall } from "./LeniBall";
 export { HeaderModal } from "./HeaderModal";
 export { DesktopHeader } from "./DesktopHeader";
 export { MobileHeader } from "./MobileHeader";
+export { WelcomeBar } from "./WelcomeBar";
+export { RoomWelcomeBar } from "./RoomWelcomeBar";

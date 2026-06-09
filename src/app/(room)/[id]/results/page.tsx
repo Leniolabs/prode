@@ -3,7 +3,7 @@ import React from "react";
 import { ProdeRoom, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
-import { DesktopHeader, MobileHeader } from "@/components/common/Header";
+import { RoomWelcomeBar } from "@/components/common/Header";
 import { Layout, Footer, Container } from "@/layout";
 import { useRequireSession } from "@/hooks";
 import { Winners } from "@/components/view/Winners";
@@ -43,7 +43,7 @@ export default function ResultsPage() {
   return (
     <Layout>
       <Meta />
-      <DesktopHeader
+      <RoomWelcomeBar
         id={props?.id}
         name={props?.name}
         room={props?.room}
@@ -56,18 +56,7 @@ export default function ResultsPage() {
         <Button invert href={`/${id}/ranking`}>
           {i18n.buttonLabelRanking}
         </Button>
-      </DesktopHeader>
-      <MobileHeader
-        list
-        id={id}
-        finalsStarted={props?.finalsStarted}
-        name={props?.name}
-        room={props?.room}
-        userRanking={props?.userRanking}
-        roomAdmin={props?.roomAdmin}
-        groups={true}
-        finals={true}
-      />
+      </RoomWelcomeBar>
       <Container noPadding full>
         <Winners
           firstPlace={props?.ranking?.find((row) => row.ranking === 1)}

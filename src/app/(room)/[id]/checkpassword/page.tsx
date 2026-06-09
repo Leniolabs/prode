@@ -15,6 +15,7 @@ export default function CheckPasswordPage() {
   const params = useParams()
   const id = params?.id as string
   const i18n = useLocalizedText()
+  const [error, setError] = React.useState("")
 
   const { data } = useQuery<{ userRanking?: { background?: string } }>({
     queryKey: ['checkpassword-page-data', id],
@@ -26,9 +27,20 @@ export default function CheckPasswordPage() {
       axios.post(`/api/${id}/checkpassword`, { password }).then((response) => {
         const allowed = response.data?.allowed as boolean
         if (allowed) {
+          setError("")
           router.push(`/${id}/ranking`)
         } else {
-          router.push(`/${id}/groups`)
+          if (response.data?.code === "EMAIL_DOMAIN") {
+            setError("Tu email no pertenece al dominio permitido.")
+            return
+          }
+
+          if (response.data?.code === "WRONG_PASSWORD") {
+            setError("La contraseña es incorrecta.")
+            return
+          }
+
+          setError("No pudimos validar la contraseña.")
         }
       })
     },
@@ -55,7 +67,7 @@ export default function CheckPasswordPage() {
         <LeniBall />
       </Header>
       <Container>
-        <PasswordModal onClose={handlePassword} />
+        <PasswordModal error={error} onClose={handlePassword} />
       </Container>
     </Layout>
   )

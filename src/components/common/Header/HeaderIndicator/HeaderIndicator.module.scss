@@ -22,4 +22,20 @@
       text-align: left;
     }
   }
+
+  &.compact {
+    margin: 0 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+
+    .headerIndicatorValue {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .headerIndicatorText {
+      font-size: 13px;
+    }
+  }
 }

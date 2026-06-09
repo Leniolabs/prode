@@ -27,6 +27,7 @@ export function Register(props: RegisterProps) {
       {error && <div className={styles.registerError}>{error}</div>}
       <div className={styles.registerButtons}>
         <RegisterButton icon="Google" onClick={() => signIn("google")} />
+        <RegisterButton icon="Microsoft" onClick={() => signIn("azure-ad")} />
       </div>
     </div>
   );

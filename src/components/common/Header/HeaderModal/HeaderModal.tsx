@@ -115,7 +115,7 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
           </div>
           <div className={styles.headerModalInfoLine}>
             <label>{i18n.profileNameLabel}</label>
-            <input value={name} onChange={handleNameChange} />
+            <input data-testid="profile-name-input" value={name} onChange={handleNameChange} />
           </div>
         </div>
       </div>
@@ -125,15 +125,23 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
         </div>
         <div className={styles.headerModalSetting}>
           <label>{i18n.profilePublicLabel}</label>
-          <Toggle value={prodePublic} onChange={handleProdePublicChange} />
+          <Toggle
+            ariaLabel={i18n.profilePublicLabel}
+            value={prodePublic}
+            onChange={handleProdePublicChange}
+          />
         </div>
         <div className={styles.headerModalSetting}>
           <label>{i18n.profileDarkModeLabel}</label>
-          <Toggle value={dark} onChange={handleDarkChange} />
+          <Toggle
+            ariaLabel={i18n.profileDarkModeLabel}
+            value={dark}
+            onChange={handleDarkChange}
+          />
         </div>
         <div className={styles.headerModalSetting}>
           <label>{i18n.profileBackgroundLabel}</label>
-          <select value={background} onChange={handleBackgroundChange}>
+          <select data-testid="profile-background-select" value={background} onChange={handleBackgroundChange}>
             <option value="background-1">Default</option>
             <option value="background-2">Field</option>
             <option value="background-3">Qatar</option>

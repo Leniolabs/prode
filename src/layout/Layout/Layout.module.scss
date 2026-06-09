@@ -14,5 +14,6 @@
   position: relative;
   isolation: isolate;
 
-  background: url('/bg-trophy.png') no-repeat center 60% / cover;
+  background: t.$color-brand-blue url('/bg-trophy.png') no-repeat center 60% / cover;
+  background-attachment: fixed;
 }

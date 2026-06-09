@@ -9,6 +9,7 @@ interface HeaderIndicatorProps {
   value: React.ReactNode;
 
   align?: "LEFT" | "RIGHT";
+  compact?: boolean;
 }
 
 export function HeaderIndicator(
@@ -19,7 +20,8 @@ export function HeaderIndicator(
       className={className(
         props.className,
         styles.headerIndicator,
-        props.align && styles[props.align]
+        props.align && styles[props.align],
+        props.compact && styles.compact
       )}
     >
       <div className={styles.headerIndicatorValue}>{props.value}</div>

@@ -593,6 +593,7 @@ export function UserMatchFinalsInput(
           type="number"
           inputMode={"decimal"}
           tabIndex={props.order * 4}
+          data-testid="finals-match-goals-left"
           className={className(
             styles.goalsLeft,
             resultStatus && styles[resultStatus]
@@ -609,6 +610,7 @@ export function UserMatchFinalsInput(
               type="number"
               inputMode={"decimal"}
               tabIndex={props.order * 4 + 2}
+              data-testid="finals-match-penalties-left"
               className={className(
                 styles.penaltisLeft,
                 penaltisStatus && styles[penaltisStatus]
@@ -640,6 +642,7 @@ export function UserMatchFinalsInput(
           type="number"
           inputMode={"decimal"}
           tabIndex={props.order * 4 + 1}
+          data-testid="finals-match-goals-right"
           className={className(
             styles.goalsRight,
             resultStatus && styles[resultStatus]
@@ -656,6 +659,7 @@ export function UserMatchFinalsInput(
               type="number"
               inputMode={"decimal"}
               tabIndex={props.order * 4 + 3}
+              data-testid="finals-match-penalties-right"
               className={className(
                 styles.penaltisRight,
                 penaltisStatus && styles[penaltisStatus]

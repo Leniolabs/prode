@@ -125,6 +125,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
             max={99}
             type="number"
             inputMode={"decimal"}
+            data-testid="group-match-goals-left"
             className={className(
               styles.leftGoals,
               resultStatus && styles[resultStatus]
@@ -139,6 +140,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
             max={99}
             type="number"
             inputMode={"decimal"}
+            data-testid="group-match-goals-right"
             className={className(
               styles.rightGoals,
               resultStatus && styles[resultStatus]
