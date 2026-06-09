@@ -62,5 +62,5 @@ harness/screenshots/
 .claude/worktrees/
 
 # Playwright data
-playwright-report/data/
+playwright-report/
 test-results/
