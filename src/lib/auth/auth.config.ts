@@ -3,7 +3,7 @@ import Google from 'next-auth/providers/google'
 import Facebook from 'next-auth/providers/facebook'
 import GitHub from 'next-auth/providers/github'
 import Twitter from 'next-auth/providers/twitter'
-import AzureAD from 'next-auth/providers/azure-ad'
+import MicrosoftEntraID from 'next-auth/providers/microsoft-entra-id'
 
 const hasCredentials = (id?: string, secret?: string): id is string =>
   Boolean(id && secret)
@@ -51,13 +51,19 @@ if (
   process.env.AZURE_AD_TENANT_ID
 ) {
   oauthProviders.push(
-    AzureAD({
+    MicrosoftEntraID({
+      // Keep the provider id as 'azure-ad' so the already-registered redirect
+      // URI (/api/auth/callback/azure-ad) and the signIn('azure-ad') call stay
+      // valid. The underlying implementation is the maintained Entra provider;
+      // the deprecated 'azure-ad' provider throws on the callback in this beta.
+      id: 'azure-ad',
+      name: 'Microsoft',
       clientId: process.env.AZURE_AD_CLIENT_ID,
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
       issuer: `https://login.microsoftonline.com/${process.env.AZURE_AD_TENANT_ID}/v2.0`,
       authorization: {
         params: {
-          scope: 'openid profile email',
+          scope: 'openid profile email User.Read',
         },
       },
     }),
