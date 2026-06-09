@@ -40,6 +40,8 @@ import {
   getFinalsStageOrder,
   getMatchOrder,
 } from "@/utils/finals";
+import { finalsTierLockTime, isFinalsMatchLocked } from "@/utils/date";
+import { FINALS_TIER_DEADLINES } from "@/config/matchdays";
 
 type UIMatch = Pick<
   Match,
@@ -85,10 +87,22 @@ export default function FinalsPage() {
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);
-  const submissionsEnded = React.useMemo(() => {
-    if (!props) return false;
-    return new Date(props.submissionEndsAt).getTime() <= now;
-  }, [now, props]);
+
+  // Finals lock per knockout tier at the tier's first kickoff (mirrors the group
+  // fecha rule). A match's input is disabled once its tier has started; the tier
+  // deadline drives the countdown shown on each input.
+  const lockNow = React.useMemo(() => new Date(now), [now]);
+  const isLocked = React.useCallback(
+    (stage: string) => isFinalsMatchLocked(stage, FINALS_TIER_DEADLINES, lockNow),
+    [lockNow]
+  );
+  const tierDeadline = React.useCallback(
+    (stage: string) =>
+      finalsTierLockTime(stage, FINALS_TIER_DEADLINES)?.toISOString() ??
+      props?.submissionEndsAt ??
+      "",
+    [props?.submissionEndsAt]
+  );
 
   const [updating, setUpdating] = React.useState(false);
   const [matches, setMatches] = React.useState<UIMatch[]>([]);
@@ -155,7 +169,12 @@ export default function FinalsPage() {
     });
   }, [originalMatches, matches]);
 
-  const isModified = !!differentMatches.length;
+  // Saving is allowed while any modified match still belongs to an open tier;
+  // the server drops locked ones (getAllowedFinalMatchesToModify).
+  const hasEditableChanges = React.useMemo(
+    () => differentMatches.some((match) => !isLocked(match.stage)),
+    [differentMatches, isLocked]
+  );
 
   const handleSave = React.useCallback(() => {
     setUpdating(true);
@@ -204,14 +223,13 @@ export default function FinalsPage() {
       <Container full>
         <FinalsContainer full>
           <ContainerHeader sticky title="FINALES">
-            <Button variant="transparent" disabled={!isModified || submissionsEnded} onClick={handleSave}>
+            <Button variant="transparent" disabled={!hasEditableChanges} onClick={handleSave}>
               {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}
             </Button>
           </ContainerHeader>
           <FinalsBracket
             matches={matches}
-            submissionEndsAt={props?.submissionEndsAt ?? ""}
-            submissionsEnded={submissionsEnded}
+            now={now}
             onChange={handleMatchChange}
           />
           <BracketsMobileContainer gridArea="matches">
@@ -222,8 +240,8 @@ export default function FinalsPage() {
                   .sort((a, b) => (a.date > b.date ? 1 : -1))
                   .map((match, index) => (
                     <UserMatchFinalsInput
-                      disabled={match.disabled || submissionsEnded}
-                      submissionEndsAt={props?.submissionEndsAt ?? ""}
+                      disabled={match.disabled || isLocked(match.stage)}
+                      submissionEndsAt={tierDeadline(match.stage)}
                       key={match.id}
                       date={new Date(match.date)}
                       userCountryLeftId={match.countryLeftId}
@@ -250,8 +268,8 @@ export default function FinalsPage() {
                   .sort((a, b) => getFinalsStageOrder(a.stage) - getFinalsStageOrder(b.stage))
                   .map((match, index) => (
                     <UserMatchFinalsInput
-                      disabled={match.disabled || submissionsEnded}
-                      submissionEndsAt={props?.submissionEndsAt ?? ""}
+                      disabled={match.disabled || isLocked(match.stage)}
+                      submissionEndsAt={tierDeadline(match.stage)}
                       key={match.id}
                       date={new Date(match.date)}
                       userCountryLeftId={match.countryLeftId}
@@ -279,8 +297,8 @@ export default function FinalsPage() {
                   .map((match, index) => (
                     <UserMatchFinalsInput
                       showCountryStatus
-                      disabled={match.disabled || submissionsEnded}
-                      submissionEndsAt={props?.submissionEndsAt ?? ""}
+                      disabled={match.disabled || isLocked(match.stage)}
+                      submissionEndsAt={tierDeadline(match.stage)}
                       key={match.id}
                       date={new Date(match.date)}
                       userCountryLeftId={match.userCountryLeftId}
@@ -309,8 +327,8 @@ export default function FinalsPage() {
                     <UserMatchFinalsInput
                       showCountryStatus
                       key={match.id}
-                      disabled={match.disabled || submissionsEnded}
-                      submissionEndsAt={props?.submissionEndsAt ?? ""}
+                      disabled={match.disabled || isLocked(match.stage)}
+                      submissionEndsAt={tierDeadline(match.stage)}
                       date={new Date(match.date)}
                       userCountryLeftId={match.userCountryLeftId}
                       userGoalsLeft={match.userGoalsLeft}
@@ -337,8 +355,8 @@ export default function FinalsPage() {
                   .map((match, index) => (
                     <UserMatchFinalsInput
                       showCountryStatus
-                      disabled={match.disabled || submissionsEnded}
-                      submissionEndsAt={props?.submissionEndsAt ?? ""}
+                      disabled={match.disabled || isLocked(match.stage)}
+                      submissionEndsAt={tierDeadline(match.stage)}
                       key={match.id}
                       date={new Date(match.date)}
                       userCountryLeftId={match.userCountryLeftId}
@@ -373,8 +391,8 @@ export default function FinalsPage() {
                 <DailyMatches>
                   {(todayMatches || nextMatches)?.map((match) => (
                     <DailyMatchFinalInput
-                      disabled={match.disabled || submissionsEnded}
-                      submissionEndsAt={props?.submissionEndsAt ?? ""}
+                      disabled={match.disabled || isLocked(match.stage)}
+                      submissionEndsAt={tierDeadline(match.stage)}
                       key={match.id}
                       today={!!props?.todayMatches}
                       date={new Date(match.date)}

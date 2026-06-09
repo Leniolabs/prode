@@ -1,8 +1,7 @@
 import { auth } from "@/lib/auth"
 import { prisma } from '@/lib'
 import {
-  finalsSubmissionsEnded,
-  getAllowedMatchesToModify,
+  getAllowedFinalMatchesToModify,
   getUserByEmail,
 } from '@/utils/queries'
 import { NextRequest, NextResponse } from 'next/server'
@@ -22,7 +21,6 @@ export async function POST(req: NextRequest) {
     include: { finalsMatches: true, prode: true },
   })
   if (!userProde) return NextResponse.json({}, { status: 400 })
-  if (finalsSubmissionsEnded(userProde)) return NextResponse.json({}, { status: 403 })
 
   const updateMatches = matches.filter((match: any) =>
     userProde.finalsMatches.find((x) => x.matchId === match.matchId)
@@ -31,9 +29,8 @@ export async function POST(req: NextRequest) {
     (match: any) => !updateMatches.find((x: any) => x.matchId === match.matchId)
   )
 
-  const allowedMatchesToModify = await getAllowedMatchesToModify(
-    matches.map((match: any) => match.matchId),
-    userProde.prode.finalsSubmissionsEnd
+  const allowedMatchesToModify = await getAllowedFinalMatchesToModify(
+    matches.map((match: any) => match.matchId)
   )
 
   await prisma.$transaction([

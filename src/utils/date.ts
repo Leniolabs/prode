@@ -1,4 +1,5 @@
 import { Match } from '@/generated/prisma';
+import { FinalsStageGroup, getFinalsStageGroup } from '@/utils/finals';
 
 function parseTimezoneOffset(timezone?: string) {
   if (!timezone) return null;
@@ -43,6 +44,35 @@ export function isGroupMatchLocked(
   now: Date = new Date(),
 ) {
   const lock = groupMatchLockTime(matchDate, deadlines);
+  return lock !== null && lock.getTime() <= now.getTime();
+}
+
+/**
+ * The lock time of the knockout tier a finals match belongs to: the first
+ * kickoff of its tier (see FINALS_TIER_DEADLINES in config/matchdays.ts).
+ * Unlike groups, finals matches lock by stage tier rather than by date, because
+ * within a tier the matches are spread across several days but must all close
+ * together at the tier's opener. Returns null for non-finals stages.
+ */
+export function finalsTierLockTime(
+  stage: string,
+  deadlines: Record<FinalsStageGroup, Date>,
+): Date | null {
+  const group = getFinalsStageGroup(stage);
+  return group ? deadlines[group] ?? null : null;
+}
+
+/**
+ * True once the tier containing `stage` has kicked off, i.e. its first match
+ * has started. All matches of a tier lock together at that moment; later tiers
+ * stay open until their own first kickoff.
+ */
+export function isFinalsMatchLocked(
+  stage: string,
+  deadlines: Record<FinalsStageGroup, Date>,
+  now: Date = new Date(),
+) {
+  const lock = finalsTierLockTime(stage, deadlines);
   return lock !== null && lock.getTime() <= now.getTime();
 }
 

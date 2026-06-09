@@ -2,6 +2,8 @@ import React from "react";
 import { useLocalizedText } from "@/locale";
 import { UserMatchFinalsInput } from "@/components/common/UserMatchFinalsInput";
 import { getFinalsStageGroup } from "@/utils/finals";
+import { finalsTierLockTime, isFinalsMatchLocked } from "@/utils/date";
+import { FINALS_TIER_DEADLINES } from "@/config/matchdays";
 import { BracketsContainer } from "./BracketsContainer";
 import { BracketRound } from "./BracketRound";
 
@@ -36,8 +38,7 @@ interface MatchChangeValue {
 
 interface FinalsBracketProps {
   matches: FinalsBracketMatch[];
-  submissionEndsAt: string;
-  submissionsEnded: boolean;
+  now: number;
   onChange: (id: string) => (value: MatchChangeValue) => void;
 }
 
@@ -46,11 +47,14 @@ const stageNum = (stage: string) =>
 
 export function FinalsBracket({
   matches,
-  submissionEndsAt,
-  submissionsEnded,
+  now,
   onChange,
 }: FinalsBracketProps) {
   const i18n = useLocalizedText();
+
+  // Each match locks at its knockout tier's first kickoff; the tier deadline
+  // drives the per-input countdown. Mirrors the group fecha lock.
+  const lockNow = new Date(now);
 
   const byGroup = (group: string) =>
     matches
@@ -68,8 +72,8 @@ export function FinalsBracket({
       key={match.id}
       showCountryStatus={advanced}
       highlight={match.stage === "FINALS"}
-      disabled={match.disabled || submissionsEnded}
-      submissionEndsAt={submissionEndsAt}
+      disabled={match.disabled || isFinalsMatchLocked(match.stage, FINALS_TIER_DEADLINES, lockNow)}
+      submissionEndsAt={finalsTierLockTime(match.stage, FINALS_TIER_DEADLINES)?.toISOString() ?? ""}
       date={new Date(match.date)}
       userCountryLeftId={advanced ? match.userCountryLeftId : match.countryLeftId}
       userCountryRightId={advanced ? match.userCountryRightId : match.countryRightId}

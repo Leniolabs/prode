@@ -1,8 +1,8 @@
 import { Match, ProdeRoom, User, UserProde } from "@/generated/prisma";
 import { prisma } from "../lib";
 import { matchCountriesMatchStatus, matchFinalResultStatus } from "./points";
-import { isGroupMatchLocked } from "./date";
-import { GROUP_MATCHDAY_DEADLINES } from "@/config/matchdays";
+import { isGroupMatchLocked, isFinalsMatchLocked } from "./date";
+import { GROUP_MATCHDAY_DEADLINES, FINALS_TIER_DEADLINES } from "@/config/matchdays";
 export {
   computeGroupMatchPoints,
   computeFinalMatchPoints,
@@ -38,24 +38,12 @@ export async function finalsStarted() {
   return prode?.stage === "FINALS";
 }
 
-function isDeadlineReached(deadline: Date) {
-  return deadline.getTime() <= Date.now();
-}
-
 type ProdeRoomWithDeadlines = ProdeRoom & {
   prode: {
     groupSubmissionsEnd: Date;
     finalsSubmissionsEnd: Date;
   };
 };
-
-export function finalsSubmissionsEnded(room: {
-  prode: {
-    finalsSubmissionsEnd: Date;
-  };
-}) {
-  return isDeadlineReached(room.prode.finalsSubmissionsEnd);
-}
 
 export async function getUserByEmail(email: string) {
   return prisma.user.findFirst({
@@ -294,11 +282,7 @@ export async function getUserFinalMatches(
           ? matchFinalResultStatus(match, match.userFinalResults[0])
           : null,
 
-      disabled: finalsSubmissionsEnded({
-        prode: {
-          finalsSubmissionsEnd: room.prode.finalsSubmissionsEnd,
-        },
-      }),
+      disabled: isFinalsMatchLocked(match.stage, FINALS_TIER_DEADLINES),
 
       goalsLeft: match.goalsLeft,
       penaltisLeft: match.penaltisLeft,
@@ -363,11 +347,7 @@ export async function getUserTemplateFinalMatches(user: User) {
       stage: match.stage,
       filled: match.filled,
 
-      disabled: finalsSubmissionsEnded({
-        prode: {
-          finalsSubmissionsEnd: prode.finalsSubmissionsEnd,
-        },
-      }),
+      disabled: isFinalsMatchLocked(match.stage, FINALS_TIER_DEADLINES),
 
       countryStatus: match.userFinalResults[0]
         ? matchCountriesMatchStatus(match, match.userFinalResults[0])
@@ -826,31 +806,11 @@ export async function getCountries() {
   return prisma.country.findMany({});
 }
 
-export async function getAllowedMatchesToModify(
-  ids: string[],
-  submissionsEnd: Date,
-) {
-  if (isDeadlineReached(submissionsEnd)) return [];
-
-  return (
-    await prisma.match.findMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-      select: {
-        id: true,
-      },
-    })
-  ).map((match) => match.id);
-}
-
 /**
- * Group-stage variant of getAllowedMatchesToModify. Locks per matchday: a match
- * is editable only while its fecha has not kicked off (see config/matchdays.ts).
- * Unlike the phase-wide finals path, this stays open across fechas so players
- * complete the tournament fecha by fecha.
+ * Locks group predictions per matchday: a match is editable only while its
+ * fecha has not kicked off (see GROUP_MATCHDAY_DEADLINES in config/matchdays.ts).
+ * Editing stays open across fechas so players complete the tournament fecha by
+ * fecha. The finals analogue is getAllowedFinalMatchesToModify (per tier).
  */
 export async function getAllowedGroupMatchesToModify(ids: string[]) {
   const now = new Date();
@@ -869,6 +829,33 @@ export async function getAllowedGroupMatchesToModify(ids: string[]) {
     })
   )
     .filter((match) => !isGroupMatchLocked(match.date, GROUP_MATCHDAY_DEADLINES, now))
+    .map((match) => match.id);
+}
+
+/**
+ * Finals variant of getAllowedGroupMatchesToModify. Locks per knockout tier: a
+ * match is editable only while its tier has not kicked off (see
+ * FINALS_TIER_DEADLINES in config/matchdays.ts). Like the group path and unlike
+ * the old phase-wide finals deadline, this stays open across tiers so players
+ * complete the bracket round by round.
+ */
+export async function getAllowedFinalMatchesToModify(ids: string[]) {
+  const now = new Date();
+
+  return (
+    await prisma.match.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      select: {
+        id: true,
+        stage: true,
+      },
+    })
+  )
+    .filter((match) => !isFinalsMatchLocked(match.stage, FINALS_TIER_DEADLINES, now))
     .map((match) => match.id);
 }
 
