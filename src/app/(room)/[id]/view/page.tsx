@@ -10,13 +10,11 @@ import {
   Container,
   Card,
   ContainerHeader,
-  Header,
   CardContent,
 } from "@/layout";
 import {
   CardsContainer,
   GroupsContainer,
-  LeniCard,
 } from "@/components/view/Groups";
 import {
   BracketIcon,
@@ -34,19 +32,13 @@ import {
 } from "@/components/common/Collapsable";
 import { UserImage } from "@/components/common/UserImage";
 import { Meta } from "@/components/common/Meta";
-import { ButtonIcon } from "@/components/common/ButtonIcon";
-import { ShareIcon } from "@/components/common/Icons";
-import {
-  ShareButton,
-  ShareProdeStoryButton,
-} from "@/components/common/ShareButton";
 import { LocaleSelect } from "@/components/common/LocaleSelect";
 import { useLocalizedText } from "@/locale";
-import { ShareToday } from "@/components/common/ShareButton/ShareToday";
 import { getMatchOrder } from "@/utils/finals";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useBodyRedirect } from "@/hooks";
+import styles from "../groups/page.module.scss";
 
 type UIMatch = Pick<
   Match,
@@ -121,36 +113,51 @@ export default function ViewPage() {
         <GroupsContainer full admin>
           <ContainerHeader
             gridArea="matches-header"
-            noMarginBottom
+            className={`${styles.groupsStageHeader} ${styles.viewTitleHeader}`}
             noMarginTop={!props?.userRanking}
-            variant="SECONDARY"
             title={
               <>
-                <UserImage small image={props?.viewUser?.image} />
+                <UserImage
+                  small
+                  image={props?.viewUser?.image}
+                  className={styles.viewTitleAvatar}
+                />
                 {i18n.viewTitle}
                 {props?.viewUser?.name}
                 {i18n.viewTitleAfter}
-                <ShareButton big marginLeftAuto userProdeId={props?.userProdeId} />
-                <ShareProdeStoryButton big marginLeftAuto userProdeId={props?.userProdeId} />
               </>
             }
           />
         </GroupsContainer>
         <GroupsContainer full admin>
-          <ContainerHeader gridArea="matches-header" sticky noMarginTop title={i18n.groupsTitle} />
+          <ContainerHeader
+            gridArea="matches-header"
+            sticky
+            noMarginTop
+            className={styles.groupsStageHeader}
+            title={i18n.groupsTitle}
+          />
           <CardsContainer gridArea="matches">
             {[
               "GROUP_A", "GROUP_B", "GROUP_C", "GROUP_D", "GROUP_E", "GROUP_F",
               "GROUP_G", "GROUP_H", "GROUP_I", "GROUP_J", "GROUP_K", "GROUP_L",
             ].map((group) => (
-              //@ts-ignore
-              <Card key={group} title={i18n[group]}>
+              <Card
+                key={group}
+                className={styles.groupCard}
+                title={i18n[group as keyof typeof i18n]}
+              >
                 <CardContent>
                   {(matches || [])
                     .filter((match) => match.stage === group)
-                    .map((match) => (
+                    .map((match, index) => (
                       <MatchInput
                         key={match.id}
+                        className={
+                          styles[
+                            `matchPair${Math.floor(index / 2)}` as keyof typeof styles
+                          ]
+                        }
                         disabled={true}
                         date={new Date(match.date)}
                         countryLeftId={match.countryLeftId}
@@ -160,17 +167,23 @@ export default function ViewPage() {
                         filled={match.filled}
                         userGoalsLeft={match.userGoalsLeft}
                         userGoalsRight={match.userGoalsRight}
-                      />
+                  />
                     ))}
                 </CardContent>
               </Card>
             ))}
-            <LeniCard />
           </CardsContainer>
         </GroupsContainer>
         {props?.finalsStarted && (
           <FinalsContainer full admin>
-            <ContainerHeader gridArea="matches-header" noMarginTop noMarginBottom sticky title={i18n.finalsTitle} />
+            <ContainerHeader
+              gridArea="matches-header"
+              noMarginTop
+              noMarginBottom
+              sticky
+              className={styles.stageHeader}
+              title={i18n.finalsTitle}
+            />
             <BracketsContainer gridArea="matches">
               <BracketTitle full order={0}>{i18n.FINALS_8}</BracketTitle>
               {(finalsMatches || []).filter((x) => x.stage.includes("FINALS_8_")).sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match) => (

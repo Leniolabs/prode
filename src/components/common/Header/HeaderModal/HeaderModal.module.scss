@@ -1,5 +1,9 @@
 @use 'styles/tokens' as t;
 
+.headerModalHeader {
+  background: #00192c !important;
+}
+
 .headerModalProfile {
   display: flex;
   padding: 24px;
@@ -30,13 +34,14 @@
 
     label {
       color: t.$color-dark-navy;
-      font-weight: bold;
+      font-size: 20px;
+      font-weight: 600;
       margin-right: 6px;
     }
 
     .headerModalInfoLine {
       display: flex;
-      flex-wrap: wrap;
+      // flex-wrap: wrap;
       position: relative;
     }
 
@@ -63,13 +68,10 @@
   }
   .headerModalSetting {
     display: flex;
+    align-items: center;
     width: 100%;
     margin-bottom: 12px;
-    label {
-      font-size: 18px;
-      font-weight: bold;
-      margin-right: auto;
-    }
+
     input,
     select {
       margin-left: auto;
@@ -87,9 +89,47 @@
   }
 }
 
+.headerModalSettingText {
+  margin-right: auto;
+
+  label {
+    display: block;
+    color: #00192c;
+    font-family: Poppins, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  p {
+    margin: 4px 0 0;
+    color: #717171;
+    font-family: Poppins, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+}
+
+.headerModalToggle {
+  width: 44px;
+  height: 24px;
+  min-width: 44px;
+  min-height: 24px;
+  padding: 2px;
+  margin-left: auto;
+  flex: 0 0 44px;
+}
+
 .headerModalTitle {
   display: flex;
   padding: 24px;
   padding-top: 0;
   justify-content: space-between;
+}
+
+.headerModalActionButton {
+  border: none !important;
+  font-size: 20px !important;
+  padding: 10px 20px !important;
 }

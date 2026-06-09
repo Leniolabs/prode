@@ -1,11 +1,15 @@
 .userRankingDisplay {
   display: flex;
   align-items: center;
+  min-width: 0;
 
   .userName {
+    flex: 1;
+    min-width: 0;
     font-weight: normal;
     font-size: 20px;
     margin-left: 12px;
-    text-overflow: ellipsis;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 }

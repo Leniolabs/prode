@@ -5,24 +5,22 @@
 
   gap: 0px 12px;
   grid-template-columns: 1fr;
-  grid-template-rows: max-content max-content max-content max-content;
+  grid-template-rows: max-content max-content max-content;
 
   grid-template-areas:
     "matches-header"
-    "following"
     "matches"
-    "ranking";
+    "sidebar";
 
   @media screen and (min-width: 1300px) {
     margin-right: 12px;
 
-    grid-template-columns: 70% 1fr;
+    grid-template-columns: minmax(0, 60%) auto minmax(420px, 1fr);
+    align-items: start;
 
     grid-template-areas:
-      "matches-header following"
-      "matches following"
-      "matches ranking"
-      "matches -";
+      "matches-header matches-header sidebar"
+      "matches matches sidebar";
   }
 
   &.full {
@@ -127,6 +125,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      color: #112632;
+      font-size: 12px;
 
       div {
         display: flex;
@@ -137,22 +137,36 @@
         padding: 0 6px;
         box-sizing: border-box;
         border-radius: 4px;
-        color: white;
+        color: #112632;
+        font-size: 12px;
         font-weight: bold;
-        border: 1px solid #233042;
       }
     }
 
     .primary {
-      background: #309e3a;
+      background: #5bc2a7;
     }
 
     .secondary {
-      background: #0093dd;
+      background: #4597d3;
     }
 
     .warning {
-      background: #f9aa51;
+      background: #f5bb41;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    & > :nth-child(2) {
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .indicator {
+      flex-wrap: nowrap;
+      white-space: nowrap;
     }
   }
 }

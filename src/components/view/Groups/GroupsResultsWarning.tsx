@@ -6,6 +6,7 @@ import { Warning } from "../../common/Warning";
 import styles from "./Groups.module.scss";
 
 interface GroupsResultsWarningProps {
+  className?: string;
   roomConfig: Pick<ProdeRoom, "pointsGoals" | "pointsPenal" | "pointsWinner">;
 }
 
@@ -15,7 +16,10 @@ export function GroupsResultsWarning(
   const i18n = useLocalizedText();
 
   return (
-    <Warning offset className={styles.groupsResultWarning}>
+    <Warning
+      offset
+      className={className(styles.groupsResultWarning, props.className)}
+    >
       <div className={styles.indicator}>
         <div className={styles.primary}>+{props.roomConfig.pointsGoals}</div>
         {i18n.groupsExactGoals}

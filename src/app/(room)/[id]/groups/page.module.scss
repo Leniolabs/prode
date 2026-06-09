@@ -15,18 +15,154 @@
   }
 }
 
-.sectionCard {
+.groupsStageHeader {
+  margin-bottom: 18px;
+
   > :first-child:first-child {
-    background: t.$color-brand-green;
+    background: #00192c;
+    color: white;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.15;
+    min-height: 50px;
+    padding: 0 20px;
+    text-transform: none;
+  }
+}
+
+.viewTitleHeader {
+  margin-bottom: 9px;
+}
+
+.viewTitleAvatar {
+  margin-right: 8px;
+}
+
+.groupsHeaderStack {
+  grid-area: matches-header;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 12px;
+  min-width: 0;
+  margin-bottom: 18px;
+}
+
+.headerResultsWarning {
+  margin: 0;
+  border-radius: 8px;
+  flex: 0 0 auto;
+  min-height: 50px;
+  background: rgb(255 255 255 / 75%);
+  align-items: center;
+  padding: 0 16px;
+
+  @media screen and (min-width: 1024px) {
+    > :nth-child(2) {
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      gap: 16px;
+    }
+  }
+}
+
+.groupsHeaderTitle {
+  background: #00192c;
+  color: white;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.15;
+  min-height: 50px;
+  padding: 0 20px;
+  text-transform: none;
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.headerSaveAction {
+  display: flex;
+  flex: 0 0 auto;
+  min-height: 50px;
+}
+
+.saveButton {
+  background: #f5bb41 !important;
+  color: #00192c !important;
+  border-color: #f5bb41 !important;
+  font-size: 20px !important;
+  min-height: 50px;
+  justify-content: center;
+
+  &:disabled {
+    background: #f5bb41 !important;
+    color: #00192c !important;
+    border-color: #f5bb41 !important;
+  }
+}
+
+.sectionCard {
+  align-self: start;
+
+  > :first-child:first-child {
+    background: #00192c;
     color: white;
     border-radius: 8px 8px 0 0;
-    font-size: 25px;
-    font-weight: 700;
+    font-size: 20px;
+    font-weight: 600;
     line-height: 1.15;
     min-height: 40px;
     padding: 11px 20px 13px;
     text-transform: none;
   }
+}
+
+.sidebar {
+  @media screen and (min-width: 1300px) {
+    grid-area: sidebar;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+}
+
+.rankingCard {
+  @media screen and (min-width: 1300px) {
+    flex: 1;
+    min-height: 0;
+  }
+
+  > :nth-child(2) {
+    flex: 1;
+  }
+
+  > :nth-child(3) {
+    margin-top: auto;
+  }
+}
+
+.rankingTable {
+  thead {
+    background: transparent;
+  }
+
+  thead th {
+    color: #005596;
+    font-family: Poppins, sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+  }
+}
+
+.completeRankingButton {
+  color: #4597d3 !important;
+  border: 2px solid #4597d3 !important;
+  background: transparent !important;
+  font-size: 20px !important;
+  font-weight: 600 !important;
 }
 
 .groupCard {

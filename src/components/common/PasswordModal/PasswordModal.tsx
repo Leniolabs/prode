@@ -13,7 +13,7 @@ interface PasswordModalProps {
 }
 
 export function PasswordModal(
-  props: React.PropsWithChildren<PasswordModalProps>
+  props: React.PropsWithChildren<PasswordModalProps>,
 ) {
   const [password, setPassword] = React.useState("");
   const i18n = useLocalizedText();
@@ -23,7 +23,7 @@ export function PasswordModal(
       const { value } = e.target;
       setPassword(value);
     },
-    []
+    [],
   );
 
   const handleClose = React.useCallback(() => {
@@ -40,7 +40,7 @@ export function PasswordModal(
         onChange={onChange}
       />
       {props.error ? <div role="alert">{props.error}</div> : null}
-      <Button onClick={handleClose} className="password-modal-submit" >
+      <Button onClick={handleClose} className={styles.passwordModalSubmit}>
         {i18n.passwordCheckButtonLabel}
       </Button>
     </Modal>

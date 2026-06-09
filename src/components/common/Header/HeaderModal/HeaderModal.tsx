@@ -23,18 +23,15 @@ interface HeaderModalProps {
     prodePublic: boolean,
     dark: boolean,
     background: string,
-    image: string | null
+    image: string | null,
   ) => void;
 }
 
 export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
+  const { background, dark, onSave } = props;
   const [name, setName] = React.useState(props.name);
   const [prodePublic, setprodePublic] = React.useState<boolean>(
-    props.prodePublic || false
-  );
-  const [dark, setDark] = React.useState<boolean>(props.dark || false);
-  const [background, setBackground] = React.useState(
-    props.background || "background-1"
+    props.prodePublic || false,
   );
   const [image, setImage] = React.useState(props.image || null);
   const i18n = useLocalizedText();
@@ -56,27 +53,22 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setName(e.target.value);
     },
-    []
+    [],
   );
-
-  const handleBackgroundChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setBackground(e.target.value);
-    },
-    []
-  );
-
-  const handleDarkChange = React.useCallback((checked: boolean) => {
-    setDark(checked);
-  }, []);
 
   const handleProdePublicChange = React.useCallback((checked: boolean) => {
     setprodePublic(checked);
   }, []);
 
   const handleSave = React.useCallback(() => {
-    props.onSave?.(name, prodePublic, dark, background, image);
-  }, [props.onSave, name, prodePublic, dark, background, image]);
+    onSave?.(
+      name,
+      prodePublic,
+      dark || false,
+      background || "background-1",
+      image,
+    );
+  }, [onSave, name, prodePublic, dark, background, image]);
 
   const handleLogout = React.useCallback(() => {
     // Land on the public login page, not the current protected page.
@@ -86,7 +78,11 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
   }, []);
 
   return (
-    <Modal title={i18n.profileTitle} onClose={props.onCancel}>
+    <Modal
+      title={i18n.profileTitle}
+      onClose={props.onCancel}
+      headerClassName={styles.headerModalHeader}
+    >
       <div className={styles.headerModalProfile}>
         <UserImage
           editable
@@ -118,7 +114,11 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
           </div>
           <div className={styles.headerModalInfoLine}>
             <label>{i18n.profileNameLabel}</label>
-            <input data-testid="profile-name-input" value={name} onChange={handleNameChange} />
+            <input
+              data-testid="profile-name-input"
+              value={name}
+              onChange={handleNameChange}
+            />
           </div>
         </div>
       </div>
@@ -127,35 +127,29 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
           {i18n.profileSettingsLabel}
         </div>
         <div className={styles.headerModalSetting}>
-          <label>{i18n.profilePublicLabel}</label>
+          <div className={styles.headerModalSettingText}>
+            <label>{i18n.profilePublicLabel}</label>
+            <p>Si aparecerá en la lista de Prodes o no</p>
+          </div>
           <Toggle
+            className={styles.headerModalToggle}
             ariaLabel={i18n.profilePublicLabel}
             value={prodePublic}
             onChange={handleProdePublicChange}
           />
         </div>
-        <div className={styles.headerModalSetting}>
-          <label>{i18n.profileDarkModeLabel}</label>
-          <Toggle
-            ariaLabel={i18n.profileDarkModeLabel}
-            value={dark}
-            onChange={handleDarkChange}
-          />
-        </div>
-        <div className={styles.headerModalSetting}>
-          <label>{i18n.profileBackgroundLabel}</label>
-          <select data-testid="profile-background-select" value={background} onChange={handleBackgroundChange}>
-            <option value="background-1">Default</option>
-            <option value="background-2">Field</option>
-            <option value="background-3">Qatar</option>
-          </select>
-        </div>
       </div>
       <div className={styles.headerModalTitle}>
-        <Button variant="danger" onClick={handleLogout}>
+        <Button
+          variant="danger"
+          className={styles.headerModalActionButton}
+          onClick={handleLogout}
+        >
           {i18n.buttonLabelExit}
         </Button>
-        <Button onClick={handleSave}>{i18n.buttonLabelSave}</Button>
+        <Button className={styles.headerModalActionButton} onClick={handleSave}>
+          {i18n.buttonLabelSave}
+        </Button>
       </div>
     </Modal>
   );

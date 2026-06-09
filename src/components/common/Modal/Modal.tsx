@@ -6,6 +6,7 @@ import styles from "./Modal.module.scss";
 
 interface ModalProps {
   className?: string;
+  headerClassName?: string;
   title: string;
   onClose?: () => void;
 }
@@ -16,7 +17,7 @@ export function Modal(props: React.PropsWithChildren<ModalProps>) {
 
   React.useEffect(() => {
     const focusable = modalRef.current?.querySelector<HTMLElement>(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
     focusable?.focus();
   }, []);
@@ -38,7 +39,10 @@ export function Modal(props: React.PropsWithChildren<ModalProps>) {
       className={className(styles.modalContainer)}
     >
       <div className={styles.modal} ref={modalRef}>
-        <div id={titleId} className={styles.modalHeader}>
+        <div
+          id={titleId}
+          className={className(styles.modalHeader, props.headerClassName)}
+        >
           {props.title}
           {props.onClose && (
             <div className={styles.modalClose}>

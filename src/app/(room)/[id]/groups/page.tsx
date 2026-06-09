@@ -16,7 +16,6 @@ import {
   Footer,
   Container,
   Card,
-  ContainerHeader,
   CardFooter,
   CardContent,
 } from "@/layout";
@@ -276,32 +275,31 @@ export default function RoomGroupsPage() {
           {i18n.buttonLabelFinalsPhase}
         </Button>
       </RoomWelcomeBar>
-      {props?.room && (
-        <GroupsResultsWarning
-          roomConfig={{
-            pointsGoals: props.room.pointsGoals,
-            pointsWinner: props.room.pointsWinner,
-            pointsPenal: props.room.pointsPenal,
-          }}
-        />
-      )}
       <Container full>
         <GroupsContainer>
-          <ContainerHeader
-            sticky
-            className={styles.stageHeader}
-            title={formattedGroupsTitle}
-            gridArea="matches-header"
-          >
-            <Button
-              variant="transparent"
-              disabled={!hasEditableChanges}
-              className={commonStyles.marginLeftAuto}
-              onClick={handleSave}
-            >
-              {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}
-            </Button>
-          </ContainerHeader>
+          <div className={styles.groupsHeaderStack}>
+            <div className={styles.groupsHeaderTitle}>{formattedGroupsTitle}</div>
+            {props?.room && (
+              <GroupsResultsWarning
+                className={styles.headerResultsWarning}
+                roomConfig={{
+                  pointsGoals: props.room.pointsGoals,
+                  pointsWinner: props.room.pointsWinner,
+                  pointsPenal: props.room.pointsPenal,
+                }}
+              />
+            )}
+            <div className={styles.headerSaveAction}>
+              <Button
+                variant="transparent"
+                disabled={!hasEditableChanges}
+                className={`${commonStyles.marginLeftAuto} ${styles.saveButton}`}
+                onClick={handleSave}
+              >
+                {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}
+              </Button>
+            </div>
+          </div>
           <CardsContainer gridArea="matches">
             {[
               "GROUP_A", "GROUP_B", "GROUP_C", "GROUP_D", "GROUP_E", "GROUP_F",
@@ -338,82 +336,88 @@ export default function RoomGroupsPage() {
               </Card>
             ))}
           </CardsContainer>
-          <Card
-            className={styles.sectionCard}
-            title={
-              <>
-                {todayMatches ? i18n.todayMatchesLabel : i18n.upcomingMatchesLabel}
-              </>
-            }
-            gridArea="following"
-          >
-            <CardContent>
-              {(todayMatches || nextMatches)?.length ? (
-                <DailyMatches>
-                  {(todayMatches || nextMatches)?.map((match) => (
-                    <DailyMatchInput
-                      key={match.id}
-                      disabled={match.disabled || isGroupMatchLocked(new Date(match.date), GROUP_MATCHDAY_DEADLINES, new Date(now))}
-                      submissionEndsAt={groupMatchLockTime(new Date(match.date), GROUP_MATCHDAY_DEADLINES)?.toISOString() ?? props?.submissionEndsAt ?? ""}
-                      date={new Date(match.date)}
-                      today={!!todayMatches}
-                      countryLeftId={match.countryLeftId}
-                      goalsLeft={match.goalsLeft}
-                      countryRightId={match.countryRightId}
-                      goalsRight={match.goalsRight}
-                      onChange={(leftGoals, rightGoals) =>
-                        handleGoalsChange(match.id, leftGoals, rightGoals)
-                      }
-                      onEditResult={props?.canEditResults ? () => openResultEditor(match) : undefined}
-                      filled={match.filled}
-                      userGoalsLeft={match.userGoalsLeft}
-                      userGoalsRight={match.userGoalsRight}
-                    />
-                  ))}
-                </DailyMatches>
-              ) : (
-                <div style={{ padding: "12px", textAlign: "center" }}>
-                  {i18n.noMoreMatches}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-          <Card className={styles.sectionCard} title={i18n.rankingTitle} gridArea="ranking">
-            <CardContent>
-              <Table
-                columns={[
-                  {
-                    header: i18n.rankingPositionColumn,
-                    accesor: (row) => !row.gap && <UserPositionDisplay position={row.ranking} />,
-                    width: "50px",
-                  },
-                  {
-                    header: i18n.rankingNameColumn,
-                    accesor: (row) =>
-                      row.gap ? (
-                        <GapIcon />
-                      ) : (
-                        <UserRankingDisplay name={row.name || ""} image={row.image} />
-                      ),
-                  },
-                  {
-                    header: i18n.rankingTotalColumn,
-                    accesor: (row) => (!row.gap ? row.points : ""),
-                    align: "RIGHT",
-                    width: "50px",
-                  },
-                ]}
-                onRowClick={handleUserClick}
-                data={props?.ranking || []}
-                clickable={(row: Ranking & { gap: boolean }) => !row.gap}
+          <div className={styles.sidebar}>
+            <Card
+              className={styles.sectionCard}
+              title={
+                <>
+                  {todayMatches ? i18n.todayMatchesLabel : i18n.upcomingMatchesLabel}
+                </>
+              }
+            >
+              <CardContent>
+                {(todayMatches || nextMatches)?.length ? (
+                  <DailyMatches>
+                    {(todayMatches || nextMatches)?.map((match) => (
+                      <DailyMatchInput
+                        key={match.id}
+                        disabled={match.disabled || isGroupMatchLocked(new Date(match.date), GROUP_MATCHDAY_DEADLINES, new Date(now))}
+                        submissionEndsAt={groupMatchLockTime(new Date(match.date), GROUP_MATCHDAY_DEADLINES)?.toISOString() ?? props?.submissionEndsAt ?? ""}
+                        date={new Date(match.date)}
+                        today={!!todayMatches}
+                        countryLeftId={match.countryLeftId}
+                        goalsLeft={match.goalsLeft}
+                        countryRightId={match.countryRightId}
+                        goalsRight={match.goalsRight}
+                        onChange={(leftGoals, rightGoals) =>
+                          handleGoalsChange(match.id, leftGoals, rightGoals)
+                        }
+                        onEditResult={props?.canEditResults ? () => openResultEditor(match) : undefined}
+                        filled={match.filled}
+                        userGoalsLeft={match.userGoalsLeft}
+                        userGoalsRight={match.userGoalsRight}
+                      />
+                    ))}
+                  </DailyMatches>
+                ) : (
+                  <div style={{ padding: "12px", textAlign: "center" }}>
+                    {i18n.noMoreMatches}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            <Card className={`${styles.sectionCard} ${styles.rankingCard}`} title={i18n.rankingTitle}>
+              <CardContent>
+                <Table
+                  className={styles.rankingTable}
+                  columns={[
+                    {
+                      header: "Posicion",
+                      accesor: (row) => !row.gap && <UserPositionDisplay position={row.ranking} />,
+                      width: "50px",
+                    },
+                    {
+                      header: "Jugador",
+                      accesor: (row) =>
+                        row.gap ? (
+                          <GapIcon />
+                        ) : (
+                          <UserRankingDisplay name={row.name || ""} image={row.image} />
+                        ),
+                    },
+                    {
+                      header: "Puntos",
+                      accesor: (row) => (!row.gap ? row.points : ""),
+                      align: "RIGHT",
+                      width: "50px",
+                    },
+                  ]}
+                  onRowClick={handleUserClick}
+                  data={props?.ranking || []}
+                  clickable={(row: Ranking & { gap: boolean }) => !row.gap}
               />
             </CardContent>
             <CardFooter>
-              <Button href={`/${id}/ranking`} variant="secondary">
+              <Button
+                href={`/${id}/ranking`}
+                variant="secondary"
+                className={styles.completeRankingButton}
+              >
                 {i18n.buttonCompleteRanking}
               </Button>
             </CardFooter>
-          </Card>
+            </Card>
+          </div>
         </GroupsContainer>
       </Container>
       {props?.canEditResults && editingMatch && (

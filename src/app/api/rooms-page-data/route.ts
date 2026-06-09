@@ -38,6 +38,12 @@ export async function GET(req: NextRequest) {
         id: true,
         password: true,
         name: true,
+        userId: true,
+        emailDomain: true,
+        public: true,
+        pointsWinner: true,
+        pointsGoals: true,
+        pointsPenal: true,
         _count: true,
         UserProde: { where: { userId: user.id } },
       },
@@ -54,14 +60,33 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     finalsStarted: await finalsStarted(),
     prodeEnd: prode?.prodeEnd?.toISOString() ?? null,
-    rooms: rooms.map((room) => ({
-      id: room.id,
-      name: room.name,
-      hasPassword: !!room.password,
-      playerCount: room._count.UserProde,
-      open: room.password && !!room.UserProde.length,
-      alreadyJoin: !!room.UserProde.length,
-    })),
+    rooms: rooms.map((room) => {
+      const isCreator = room.userId === user.id
+
+      return {
+        id: room.id,
+        name: room.name,
+        hasPassword: !!room.password,
+        playerCount: room._count.UserProde,
+        open: room.password && !!room.UserProde.length,
+        alreadyJoin: !!room.UserProde.length,
+        isCreator,
+        ...(isCreator
+          ? {
+              room: {
+                id: room.id,
+                name: room.name,
+                password: room.password,
+                public: room.public,
+                emailDomain: room.emailDomain,
+                pointsWinner: room.pointsWinner,
+                pointsGoals: room.pointsGoals,
+                pointsPenal: room.pointsPenal,
+              },
+            }
+          : {}),
+      }
+    }),
     userRanking: {
       id: user.id,
       name: user.name,

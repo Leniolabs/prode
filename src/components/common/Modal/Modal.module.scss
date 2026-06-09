@@ -35,17 +35,22 @@
 
     .modalHeader {
       width: 100%;
-      background: t.$color-modal-header;
+      background: t.$color-dark-navy;
       color: white;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: bold;
-      padding: 4px 8px;
+      padding: 6px 12px;
       position: relative;
 
       .modalClose {
         position: absolute;
         right: 0;
         top: 0;
+
+        svg {
+          width: 20px;
+          height: 20px;
+        }
       }
     }
 

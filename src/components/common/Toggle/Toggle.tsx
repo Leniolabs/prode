@@ -12,9 +12,10 @@ interface ToggleProps {
 }
 
 export function Toggle(props: React.PropsWithChildren<ToggleProps>) {
+  const { onChange, value } = props;
   const handleClick = React.useCallback(() => {
-    props.onChange?.(!props.value);
-  }, [props.onChange, props.value]);
+    onChange?.(!value);
+  }, [onChange, value]);
 
   return (
     <button

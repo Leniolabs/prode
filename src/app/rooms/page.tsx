@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React from "react";
 import Image from "next/image";
 import { ProdeRoom, User } from "@/generated/prisma";
@@ -10,10 +10,24 @@ import { Button } from "@/components/common/Button";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { PasswordModal } from "@/components/common/PasswordModal";
+import { EditRoomModal } from "@/components/view/EditRoomModal";
 import { Meta } from "@/components/common/Meta";
 import { useLocalizedText } from "@/locale";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import styles from "./rooms.module.scss";
+import { InfoIcon } from "@/components/common/Icons";
+
+type EditableRoom = Pick<
+  ProdeRoom,
+  | "id"
+  | "name"
+  | "emailDomain"
+  | "password"
+  | "pointsGoals"
+  | "pointsPenal"
+  | "pointsWinner"
+  | "public"
+>;
 
 interface RoomsData {
   finalsStarted: boolean;
@@ -23,6 +37,8 @@ interface RoomsData {
     playerCount: number;
     open?: boolean;
     alreadyJoin?: boolean;
+    isCreator?: boolean;
+    room?: EditableRoom;
   })[];
   userRanking?: Pick<
     User,
@@ -101,11 +117,17 @@ function LockGlyph() {
 export default function RoomsPage() {
   const session = useRequireSession();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const i18n = useLocalizedText();
 
-  const { data: props } = useQuery<RoomsData>({ queryKey: ["rooms-page-data"], queryFn: () => fetch("/api/rooms-page-data").then((r) => r.json()), enabled: session.status === "authenticated" });
+  const { data: props } = useQuery<RoomsData>({
+    queryKey: ["rooms-page-data"],
+    queryFn: () => fetch("/api/rooms-page-data").then((r) => r.json()),
+    enabled: session.status === "authenticated",
+  });
 
   const [passwordModalId, setPasswordModalId] = React.useState<string>();
+  const [editRoom, setEditRoom] = React.useState<EditableRoom>();
 
   const onRoomClick = React.useCallback(
     (id: string, hasPassword?: boolean) => {
@@ -116,7 +138,7 @@ export default function RoomsPage() {
           router.push(`/${id}/${props?.finalsStarted ? "finals" : "groups"}`);
       };
     },
-    [props?.finalsStarted, router]
+    [props?.finalsStarted, router],
   );
 
   const handlePassword = React.useCallback(
@@ -128,13 +150,18 @@ export default function RoomsPage() {
           setPasswordModalId("");
           if (allowed) {
             router.push(
-              `/${passwordModalId}/${props?.finalsStarted ? "finals" : "groups"}`
+              `/${passwordModalId}/${props?.finalsStarted ? "finals" : "groups"}`,
             );
           }
         });
     },
-    [passwordModalId, props?.finalsStarted, router]
+    [passwordModalId, props?.finalsStarted, router],
   );
+
+  const handleEditRoomClose = React.useCallback(() => {
+    setEditRoom(undefined);
+    void queryClient.invalidateQueries({ queryKey: ["rooms-page-data"] });
+  }, [queryClient]);
 
   if (session.status === "loading" || session.status === "unauthenticated")
     return null;
@@ -150,16 +177,23 @@ export default function RoomsPage() {
       />
       <main className={styles.pageContent}>
         <div className={styles.ctaRow}>
-          <Button href="/new-prode">
-            {i18n.buttonLabelCreateRoom}
-          </Button>
+          <Button href="/new-prode">{i18n.buttonLabelCreateRoom}</Button>
           <span className={styles.divider}>○</span>
         </div>
-        <section className={styles.roomsPanel} aria-label={i18n.roomsProdeListTitle}>
+        <section
+          className={styles.roomsPanel}
+          aria-label={i18n.roomsProdeListTitle}
+        >
           <header className={styles.roomsPanelHeader}>
             <h1>{i18n.roomsProdeListTitle}</h1>
           </header>
           <div className={styles.roomsPanelBody}>
+            <div className={styles.roomsWarning}>
+              <div style={{ width: "40px", height: "40px" }}>
+                <InfoIcon />
+              </div>
+              <p>{i18n.roomsWarning}</p>
+            </div>
             {(props?.rooms || []).map((row, index) => {
               const locked = Boolean(row.hasPassword && !row.open);
               const label = row.alreadyJoin
@@ -185,20 +219,31 @@ export default function RoomsPage() {
                         <LockGlyph />
                       </span>
                     )}
-                    <span className={styles.editIcon} data-disabled={locked}>
-                      <Image
-                        src="/pencil-edit.png"
-                        alt=""
-                        width={22}
-                        height={22}
-                      />
-                    </span>
+                    {row.isCreator && row.room && (
+                      <button
+                        type="button"
+                        className={styles.editIcon}
+                        aria-label={i18n.headerMobileRoomSettings}
+                        data-testid={`room-edit-${row.id}`}
+                        onClick={() => setEditRoom(row.room)}
+                      >
+                        <Image
+                          src="/pencil-edit.png"
+                          alt=""
+                          width={22}
+                          height={22}
+                        />
+                      </button>
+                    )}
                     <button
                       type="button"
                       className={styles.enterButton}
                       data-testid={`room-enter-${row.id}`}
                       disabled={locked}
-                      onClick={onRoomClick(row.id, row.open ? false : row.hasPassword)}
+                      onClick={onRoomClick(
+                        row.id,
+                        row.open ? false : row.hasPassword,
+                      )}
                     >
                       {label}
                     </button>
@@ -209,6 +254,9 @@ export default function RoomsPage() {
           </div>
         </section>
         {passwordModalId && <PasswordModal onClose={handlePassword} />}
+        {editRoom && (
+          <EditRoomModal room={editRoom} onClose={handleEditRoomClose} />
+        )}
       </main>
       <Footer>
         <BrandLogo />
