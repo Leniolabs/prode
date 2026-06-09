@@ -41,24 +41,63 @@
 
 .bracketsContainer {
   display: none;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
   width: 100%;
   background: #f6f5f5cc;
-  padding: 12px;
-  padding-right: 0;
+  padding: 20px 16px;
   margin-bottom: 12px;
-
-  & > * {
-    flex: calc(25% - 12px);
-    max-width: calc(25% - 12px);
-    min-width: calc(25% - 12px);
-    margin-right: 12px;
-    margin-bottom: 12px;
-  }
 
   @media screen and (min-width: 1024px) {
     display: flex;
+  }
+}
+
+.bracketRound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  position: relative;
+}
+
+.bracketRoundTitle {
+  align-self: flex-start;
+  font-weight: bold;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+
+// Uniform, readable match boxes. Each round centers its matches, so the tree
+// funnels by row count (16 -> 8 -> 4 -> 2 -> final) while box size stays fixed.
+.bracketRoundMatches {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px 20px;
+  width: 100%;
+
+  & > * {
+    flex: 0 0 calc(25% - 15px);
+    max-width: calc(25% - 15px);
+    min-width: 170px;
+  }
+}
+
+// Final + third place sit side by side with extra breathing room.
+.bracketRoundFinalPair {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 64px;
+  width: 100%;
+
+  & > div {
+    flex: 0 0 calc(25% - 15px);
+    max-width: calc(25% - 15px);
+    min-width: 170px;
   }
 }
 

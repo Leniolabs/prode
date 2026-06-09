@@ -22,15 +22,11 @@ import { filterUniquePredicate } from "@/utils/array";
 import axios from "axios";
 import { UserMatchFinalsInput } from "@/components/common/UserMatchFinalsInput";
 import {
-  BracketIcon,
-  bracketOffsetQuarter,
-  BracketsContainer,
   BracketsMobileContainer,
-  BracketTitle,
+  FinalsBracket,
   FinalsContainer,
   FinalsResultsWarning,
 } from "@/components/view/Finals";
-import { className } from "@/utils/classname";
 import {
   Collapsable,
   CollapsableContainer,
@@ -228,61 +224,12 @@ export default function RoomFinalsPage() {
               {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}
             </Button>
           </ContainerHeader>
-          <BracketsContainer gridArea="matches">
-            <BracketTitle full order={0}>{i18n.FINALS_16}</BracketTitle>
-            {matches.filter((x) => x.stage.includes("FINALS_16_")).sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match) => (
-              <UserMatchFinalsInput disabled={match.disabled || submissionsEnded} submissionEndsAt={props?.submissionEndsAt ?? ""}
-                key={match.id} date={new Date(match.date)} userCountryLeftId={match.countryLeftId} userGoalsLeft={match.userGoalsLeft}
-                userCountryRightId={match.countryRightId} userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}
-                userPenaltisRight={match.userPenaltisRight} penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                goalsLeft={match.goalsLeft} goalsRight={match.goalsRight} countryLeftId={match.countryLeftId}
-                countryRightId={match.countryRightId} onChange={handleMatchChange(match.id)} order={getMatchOrder(match.stage)} filled={match.filled} />
-            ))}
-            <BracketIcon order={17} /><BracketIcon order={17} /><BracketIcon order={17} /><BracketIcon order={17} />
-            <BracketIcon order={17} /><BracketIcon order={17} /><BracketIcon order={17} /><BracketIcon order={17} />
-            <BracketTitle full order={17}>{i18n.FINALS_8}</BracketTitle>
-            {matches.filter((x) => x.stage.includes("FINALS_8_")).sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match) => (
-              <UserMatchFinalsInput disabled={match.disabled || submissionsEnded} submissionEndsAt={props?.submissionEndsAt ?? ""}
-                key={match.id} date={new Date(match.date)} userCountryLeftId={match.countryLeftId} userGoalsLeft={match.userGoalsLeft}
-                userCountryRightId={match.countryRightId} userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}
-                userPenaltisRight={match.userPenaltisRight} penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                goalsLeft={match.goalsLeft} goalsRight={match.goalsRight} countryLeftId={match.countryLeftId}
-                countryRightId={match.countryRightId} onChange={handleMatchChange(match.id)} order={getMatchOrder(match.stage)} filled={match.filled} />
-            ))}
-            <BracketIcon order={26} /><BracketIcon order={26} /><BracketIcon order={26} /><BracketIcon order={26} />
-            <BracketTitle order={26} full>{i18n.FINALS_4}</BracketTitle>
-            {matches.filter((x) => x.stage.includes("FINALS_4_")).sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match) => (
-              <UserMatchFinalsInput showCountryStatus disabled={match.disabled || submissionsEnded} submissionEndsAt={props?.submissionEndsAt ?? ""}
-                key={match.id} date={new Date(match.date)} userCountryLeftId={match.userCountryLeftId} userGoalsLeft={match.userGoalsLeft}
-                userCountryRightId={match.userCountryRightId} userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}
-                userPenaltisRight={match.userPenaltisRight} penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                goalsLeft={match.goalsLeft} goalsRight={match.goalsRight} countryLeftId={match.countryLeftId}
-                countryRightId={match.countryRightId} onChange={handleMatchChange(match.id)} order={getMatchOrder(match.stage)} filled={match.filled} />
-            ))}
-            <BracketIcon order={31} big /><BracketIcon order={31} big />
-            <BracketTitle className={bracketOffsetQuarter} order={31} full>{i18n.FINALS_2}</BracketTitle>
-            {matches.filter((x) => x.stage.includes("FINALS_2_")).sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match, index) => (
-              <UserMatchFinalsInput showCountryStatus key={match.id} disabled={match.disabled || submissionsEnded}
-                submissionEndsAt={props?.submissionEndsAt ?? ""} className={className(index === 0 && bracketOffsetQuarter)}
-                date={new Date(match.date)} userCountryLeftId={match.userCountryLeftId} userGoalsLeft={match.userGoalsLeft}
-                userCountryRightId={match.userCountryRightId} userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}
-                userPenaltisRight={match.userPenaltisRight} penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                goalsLeft={match.goalsLeft} goalsRight={match.goalsRight} countryLeftId={match.countryLeftId}
-                countryRightId={match.countryRightId} onChange={handleMatchChange(match.id)} order={getMatchOrder(match.stage)} filled={match.filled} />
-            ))}
-            <BracketIcon className={className(bracketOffsetQuarter)} order={34} big />
-            <BracketTitle className={className(bracketOffsetQuarter)} order={34}>{i18n.FINAL}</BracketTitle>
-            <BracketTitle order={34}>{i18n.THIRD_PLACE}</BracketTitle>
-            {matches.filter((x) => x.stage === "FINALS" || x.stage === "THIRD_PLACE").sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match, index) => (
-              <UserMatchFinalsInput showCountryStatus className={className(index === 0 && bracketOffsetQuarter)}
-                disabled={match.disabled || submissionsEnded} submissionEndsAt={props?.submissionEndsAt ?? ""}
-                key={match.id} date={new Date(match.date)} userCountryLeftId={match.userCountryLeftId} userGoalsLeft={match.userGoalsLeft}
-                userCountryRightId={match.userCountryRightId} userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}
-                userPenaltisRight={match.userPenaltisRight} penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                goalsLeft={match.goalsLeft} goalsRight={match.goalsRight} countryLeftId={match.countryLeftId}
-                countryRightId={match.countryRightId} onChange={handleMatchChange(match.id)} order={getMatchOrder(match.stage)} filled={match.filled} />
-            ))}
-          </BracketsContainer>
+          <FinalsBracket
+            matches={matches}
+            submissionEndsAt={props?.submissionEndsAt ?? ""}
+            submissionsEnded={submissionsEnded}
+            onChange={handleMatchChange}
+          />
           <BracketsMobileContainer gridArea="matches">
             <CollapsableContainer>
               <Collapsable title={i18n.FINALS_16}>
