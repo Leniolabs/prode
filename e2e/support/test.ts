@@ -6,7 +6,7 @@ interface E2EFixtures {
 }
 
 export const test = base.extend<E2EFixtures>({
-  mockApi: async ({ page }, use) => {
+  mockApi: async ({ page }, applyFixture) => {
     let installed = false;
     const installer = async (overrides: MockOverrides = {}) => {
       if (installed) {
@@ -16,7 +16,7 @@ export const test = base.extend<E2EFixtures>({
       await installApiMocks(page, overrides);
       installed = true;
     };
-    await use(installer);
+    await applyFixture(installer);
   },
 });
 
