@@ -61,9 +61,9 @@ export default function NewProdePage() {
     name: "",
     password: "",
     public: true,
-    pointsWinner: 10,
-    pointsGoals: 10,
-    pointsPenal: 10,
+    pointsWinner: 1,
+    pointsGoals: 3,
+    pointsPenal: 5,
   });
 
   const checkRoomName = React.useMemo(() => {
