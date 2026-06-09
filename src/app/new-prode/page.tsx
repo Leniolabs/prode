@@ -36,6 +36,7 @@ interface NewProdeData {
 type FormType = {
   name: string;
   password: string;
+  emailDomain: string;
   public: boolean;
   pointsWinner: number;
   pointsGoals: number;
@@ -58,6 +59,7 @@ export default function NewProdePage() {
   const [form, setForm] = React.useState<FormType>({
     name: "",
     password: "",
+    emailDomain: "",
     public: true,
     pointsWinner: 1,
     pointsGoals: 3,
@@ -147,6 +149,14 @@ export default function NewProdePage() {
                     inputType="password"
                     value={form.password}
                     onChange={handleChange("password") as (v: string) => void}
+                  />
+                  <FormInput
+                    className={styles.compactField}
+                    label={`${i18n.createDomainLabel} ${i18n.createDomainLegend}`}
+                    type="string"
+                    placeholder="improving.com"
+                    value={form.emailDomain}
+                    onChange={handleChange("emailDomain") as (v: string) => void}
                   />
                   <div className={styles.toggleRow}>
                     <span className={styles.toggleLabel}>{i18n.createPublicLabel}</span>
