@@ -1,8 +1,8 @@
 @use 'styles/tokens' as t;
 
 .contentContainer {
-  margin-top: clamp(16px, 3vh, 48px);
-  margin-bottom: clamp(16px, 3vh, 48px);
+  margin-top: clamp(8px, 1.5vh, 24px);
+  margin-bottom: clamp(8px, 1.5vh, 24px);
 }
 
 .fullSection {
@@ -14,14 +14,14 @@
   font-size: 18px;
   font-weight: 700;
   color: t.$color-dark-navy;
-  padding: 8px 16px 4px;
+  padding: 4px 16px 2px;
   width: 100%;
 }
 
 .divider {
   border: none;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
-  margin: 0 16px;
+  margin: 0.2em 16px;
   width: calc(100% - 32px);
 }
 
@@ -30,7 +30,7 @@
   align-items: center;
   width: 100%;
   gap: 8px;
-  margin-bottom: 1em;
+  margin-bottom: 0.4em;
 }
 
 .toggleLabel {
@@ -52,7 +52,7 @@
 }
 
 .compactField {
-  margin-bottom: 1.2em !important;
+  margin-bottom: 0.6em !important;
 }
 
 .pointsField {
