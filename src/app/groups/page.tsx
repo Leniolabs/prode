@@ -3,7 +3,7 @@ import React from "react";
 import { Match, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
-import { DesktopHeader, MobileHeader } from "@/components/common/Header";
+import { RoomWelcomeBar } from "@/components/common/Header";
 import { MatchInput } from "@/components/common/MatchInput";
 import {
   Layout,
@@ -147,20 +147,14 @@ export default function GroupsPage() {
 
   return (
     <Layout>
-      <DesktopHeader userRanking={props?.userRanking}>
+      <RoomWelcomeBar userRanking={props?.userRanking}>
         <Button invert href={`/rooms`}>
           {i18n.buttonLabelProdeList}
         </Button>
         <Button disabled={!props?.finalsStarted} invert href={`/finals`}>
           {i18n.buttonLabelFinalsPhase}
         </Button>
-      </DesktopHeader>
-      <MobileHeader
-        list
-        finalsStarted={props?.finalsStarted}
-        userRanking={props?.userRanking}
-        shareUserProdeId={props?.userProdeId}
-      />
+      </RoomWelcomeBar>
       <Warning offset>
         {i18n.groupsWarning}{" "}
         <Link href="/rooms">{i18n.groupsWarningLink}</Link>

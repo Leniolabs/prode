@@ -3,7 +3,7 @@ import React from "react";
 import { Match, Stage, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
-import { DesktopHeader, MobileHeader } from "@/components/common/Header";
+import { RoomWelcomeBar } from "@/components/common/Header";
 import {
   Layout,
   Footer,
@@ -193,19 +193,14 @@ export default function FinalsPage() {
   return (
     <Layout>
       <Meta />
-      <DesktopHeader userRanking={props?.userRanking}>
+      <RoomWelcomeBar userRanking={props?.userRanking}>
         <Button invert href={`/rooms`}>
           {i18n.buttonLabelProdeList}
         </Button>
         <Button invert href={`/groups`}>
           {i18n.buttonLabelGroupPhase}
         </Button>
-      </DesktopHeader>
-      <MobileHeader
-        finalsStarted={true}
-        userRanking={props?.userRanking}
-        shareUserProdeId={props?.userProdeId}
-      />
+      </RoomWelcomeBar>
       <Warning offset>
         {i18n.groupsWarning}{" "}
         <Link href="/rooms">{i18n.groupsWarningLink}</Link>
