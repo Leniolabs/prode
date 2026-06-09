@@ -60,3 +60,7 @@ harness/screenshots/
 # misc
 *.local
 .claude/worktrees/
+
+# Playwright data
+playwright-report/data/
+test-results/

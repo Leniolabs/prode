@@ -18,7 +18,7 @@ test.describe("Finals predictions", () => {
     await expect(saveBtn).toBeDisabled();
   });
 
-  test("save POSTs prediction body with 201", async ({ page, mockApi }) => {
+  test("autosave POSTs prediction body with 201", async ({ page, mockApi }) => {
     let capturedBody: {
       matches: Array<{
         matchId: string;
@@ -48,11 +48,9 @@ test.describe("Finals predictions", () => {
     await page.getByTestId("finals-match-penalties-left").first().fill("4");
     await page.getByTestId("finals-match-penalties-right").first().fill("3");
 
-    await page.locator('button:has-text("Guardar")').first().click();
-
     await expect(async () => {
       expect(capturedBody).not.toBeNull();
-    }).toPass({ timeout: 3000 });
+    }).toPass({ timeout: 4000 });
 
     expect(capturedBody!.matches[0]).toMatchObject({
       matchId: "clfinalmatch1",

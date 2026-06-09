@@ -247,6 +247,26 @@ export default function RoomGroupsPage() {
       });
   }, [id, differentMatches, matches]);
 
+  React.useEffect(() => {
+    if (updating || !hasEditableChanges) return;
+
+    const matchesToSave = differentMatches.filter(
+      (match) =>
+        (match.userGoalsLeft || match.userGoalsLeft === 0) &&
+        (match.userGoalsRight || match.userGoalsRight === 0)
+    );
+
+    if (matchesToSave.length === 0) return;
+
+    const timeout = window.setTimeout(() => {
+      handleSave();
+    }, 800);
+
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [differentMatches, handleSave, hasEditableChanges, updating]);
+
   const handleUserClick = React.useCallback(
     (row: Ranking) => {
       if (row && row.id) router.push(`/${row.id}/view`);

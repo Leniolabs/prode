@@ -34,7 +34,7 @@ test.describe("Group stage predictions", () => {
     await expect(saveBtn).toBeEnabled();
   });
 
-  test("save POSTs only the changed matches", async ({ page, mockApi }) => {
+  test("autosave POSTs only the changed matches", async ({ page, mockApi }) => {
     let capturedBody: { matches: Array<{ matchId: string; goalsLeft: number; goalsRight: number }> } | null = null;
 
     await mockApi({
@@ -52,11 +52,9 @@ test.describe("Group stage predictions", () => {
     await page.getByTestId("group-match-goals-left").first().fill("2");
     await page.getByTestId("group-match-goals-right").first().fill("0");
 
-    await page.locator('button:has-text("Guardar")').first().click();
-
     await expect(async () => {
       expect(capturedBody).not.toBeNull();
-    }).toPass({ timeout: 3000 });
+    }).toPass({ timeout: 4000 });
 
     expect(capturedBody!.matches).toHaveLength(1);
     expect(capturedBody!.matches[0].matchId).toBe(groupMatches[0].id);
