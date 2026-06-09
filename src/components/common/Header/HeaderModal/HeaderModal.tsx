@@ -79,7 +79,10 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
   }, [props.onSave, name, prodePublic, dark, background, image]);
 
   const handleLogout = React.useCallback(() => {
-    signOut();
+    // Land on the public login page, not the current protected page.
+    // useRequireSession auto-fires signIn("google") on unauthenticated pages,
+    // so a default signOut() would bounce the user straight back into Google.
+    signOut({ callbackUrl: "/login" });
   }, []);
 
   return (
