@@ -154,7 +154,7 @@ export default function NewProdePage() {
                     className={styles.compactField}
                     label={`${i18n.createDomainLabel} ${i18n.createDomainLegend}`}
                     type="string"
-                    placeholder="improving.com"
+                    placeholder="domain.com"
                     value={form.emailDomain}
                     onChange={handleChange("emailDomain") as (v: string) => void}
                   />
