@@ -5,6 +5,10 @@ import { getCountries } from "../utils/api";
 export function useCountries() {
   const i18n = useLocalizedCountries();
   const { data: countries } = useQuery({
+    // Countries are static — never refetch; keep them cached across navigations
+    // so the flags render instantly instead of flickering through a load state.
+    staleTime: Infinity,
+    gcTime: Infinity,
     queryKey: ["country_list"],
     queryFn: () =>
       getCountries().then((countries) => {

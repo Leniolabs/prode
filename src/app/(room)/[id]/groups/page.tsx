@@ -425,7 +425,7 @@ export default function RoomGroupsPage() {
                       width: "48px",
                     },
                     {
-                      header: "Jugador",
+                      header: i18n.rankingNameColumn,
                       accesor: (row) =>
                         row.gap ? (
                           <GapIcon />
