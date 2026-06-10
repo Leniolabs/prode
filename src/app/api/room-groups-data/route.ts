@@ -33,19 +33,22 @@ export async function GET(req: NextRequest) {
   const room = await getProdeRoom(id)
   if (!room) return NextResponse.json({ redirect: '/rooms' }, { status: 200 })
 
-  let userProdeId = (await getUserProde(room, user))?.id
-  if (!userProdeId) {
+  let userProde = await getUserProde(room, user)
+  if (!userProde) {
     if (shouldPasswordCheck(room)) return NextResponse.json({ redirect: `/${id}/checkpassword` }, { status: 200 })
     else if (!roomEmailCheck(room, user)) return NextResponse.json({ redirect: '/rooms' }, { status: 200 })
-    userProdeId = (await registerUserToRoom(room, user))?.id
+    await registerUserToRoom(room, user)
+    userProde = await getUserProde(room, user)
   }
 
-  const userProde = await getUserProde(room, user)
+  let userProdeId = userProde?.id
   if (!userProde) return NextResponse.json({ redirect: '/rooms' }, { status: 200 })
 
-  const matches = await getUserGroupMatches(room, user)
-  const ranking = await getRanking(room, 0, 10)
-  const userRanking = await getUserRanking(room, userProde)
+  const [matches, ranking, userRanking] = await Promise.all([
+    getUserGroupMatches(room, user),
+    getRanking(room, 0, 10),
+    getUserRanking(room, userProde),
+  ])
   const nextMatches = getNextMatches(matches, timezone)
   const todayMatches = getTodayMatches(matches, timezone)
 

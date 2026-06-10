@@ -172,6 +172,8 @@ model Match {
 
   userResults      ProdeUserGroupMatch[]
   userFinalResults ProdeUserFinalsMatch[]
+
+  @@index([prodeId, stage])
 }
 
 model ProdeRoom {
@@ -217,6 +219,7 @@ model UserProde {
   finalsMatches ProdeUserFinalsMatch[]
 
   @@unique([userId, prodeRoomId])
+  @@index([prodeRoomId])
 }
 
 model ProdeUserGroupMatch {
