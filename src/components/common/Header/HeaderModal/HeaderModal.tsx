@@ -1,6 +1,6 @@
 import { signOut } from "next-auth/react";
 import React from "react";
-import { useLocalizedText } from "../../../../locale";
+import { useLocalizedText, useLocale, useSetLocale, SUPPORTED_LOCALES } from "../../../../locale";
 import { className } from "../../../../utils/classname";
 import { Button } from "../../Button";
 import { Modal } from "../../Modal";
@@ -35,6 +35,8 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
   );
   const [image, setImage] = React.useState(props.image || null);
   const i18n = useLocalizedText();
+  const currentLocale = useLocale();
+  const setLocale = useSetLocale();
 
   const medalColor = React.useMemo(() => {
     switch (props.position) {
@@ -137,6 +139,30 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
             value={prodePublic}
             onChange={handleProdePublicChange}
           />
+        </div>
+        <div className={styles.headerModalSetting}>
+          <div className={styles.headerModalSettingText}>
+            <label>{i18n.profileLanguageLabel}</label>
+          </div>
+          <div className={styles.headerModalLocaleToggle}>
+            {SUPPORTED_LOCALES.map((locale, i, arr) => (
+              <React.Fragment key={locale}>
+                <a
+                  role="button"
+                  className={className(
+                    styles.headerModalLocaleOption,
+                    locale === currentLocale ? styles.headerModalLocaleOptionActive : "",
+                  )}
+                  onClick={() => setLocale(locale)}
+                >
+                  {locale.toUpperCase()}
+                </a>
+                {i < arr.length - 1 && (
+                  <span className={styles.headerModalLocaleDivider}>|</span>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
         </div>
       </div>
       <div className={styles.headerModalTitle}>

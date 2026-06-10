@@ -101,6 +101,7 @@ export interface LocaleData {
   profilePublicLabel: string;
   profileDarkModeLabel: string;
   profileBackgroundLabel: string;
+  profileLanguageLabel: string;
 
   createTitle: string;
   editTitle: string;

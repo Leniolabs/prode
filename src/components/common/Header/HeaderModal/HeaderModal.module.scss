@@ -121,6 +121,38 @@
   flex: 0 0 44px;
 }
 
+.headerModalLocaleToggle {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  user-select: none;
+}
+
+.headerModalLocaleOption {
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 14px;
+  font-family: Poppins, sans-serif;
+  font-weight: 400;
+  color: t.$color-dark-navy;
+  border-radius: 2px;
+
+  &:hover {
+    background: rgba(0, 25, 44, 0.08);
+  }
+}
+
+.headerModalLocaleOptionActive {
+  font-weight: 600;
+  background: rgba(0, 25, 44, 0.12);
+}
+
+.headerModalLocaleDivider {
+  color: t.$color-dark-navy;
+  padding: 0 2px;
+  font-size: 14px;
+}
+
 .headerModalTitle {
   display: flex;
   padding: 24px;

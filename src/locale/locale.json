@@ -102,6 +102,7 @@
     "profileDarkModeLabel": "Modo oscuro",
     "profilePublicLabel": "Mi prode es público",
     "profileBackgroundLabel": "Fondo",
+    "profileLanguageLabel": "Idioma",
 
     "createTitle": "Crear nuevo prode",
     "editTitle": "EDITANDO PRODE - ",
@@ -228,6 +229,7 @@
     "profilePublicLabel": "My predictions are public",
     "profileDarkModeLabel": "Dark Mode",
     "profileBackgroundLabel": "Background",
+    "profileLanguageLabel": "Language",
 
     "createTitle": "CREATE NEW ROOM",
     "editTitle": "EDITING ROOM - ",
