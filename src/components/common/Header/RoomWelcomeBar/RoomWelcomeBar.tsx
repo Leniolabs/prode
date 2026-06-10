@@ -86,35 +86,59 @@ export function RoomWelcomeBar(
             </div>
           )}
           {hasIndicators && (
-            <div className="flex shrink-0 items-center gap-2 rounded-full bg-white/10 px-2.5 py-1 text-white max-[640px]:gap-1.5 max-[640px]:px-2 max-[640px]:py-0.5">
-              {/* Position: medal icon + value */}
-              <span className="flex items-center gap-1 leading-none">
-                <svg
+            <>
+              {/* Desktop: labeled values, e.g. "Posición: 1   Puntos: 2" */}
+              <div className="flex shrink-0 items-center gap-3 text-white max-lg:hidden">
+                <span className="flex items-baseline gap-1.5">
+                  <span className="text-sm font-medium text-white/80">
+                    {i18n.headerRankingLabel}:
+                  </span>
+                  <span className="text-[18px] font-bold tabular-nums">
+                    {props.userRanking?.ranking}
+                  </span>
+                </span>
+                <span
                   aria-hidden="true"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="h-4 w-4 text-[#FFCA30] max-[640px]:h-3.5 max-[640px]:w-3.5"
-                >
-                  <path d="M7.5 2h9a1 1 0 0 1 .92 1.39l-1.7 4A5 5 0 1 1 8.28 7.4l-1.7-4A1 1 0 0 1 7.5 2Zm4.5 6.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5Zm0 1.6 .73 1.48 1.63.24-1.18 1.15.28 1.62L12 13.83l-1.46.76.28-1.62-1.18-1.15 1.63-.24Z" />
-                </svg>
-                <span className="text-[17px] font-bold tabular-nums max-[640px]:text-[15px]">
-                  {props.userRanking?.ranking}
+                  className="h-5 w-px shrink-0 bg-white/30"
+                />
+                <span className="flex items-baseline gap-1.5">
+                  <span className="text-sm font-medium text-white/80">
+                    {i18n.headerPointsLabel}:
+                  </span>
+                  <span className="text-[18px] font-bold tabular-nums">
+                    {props.userRanking?.points}
+                  </span>
                 </span>
-              </span>
-              <span
-                aria-hidden="true"
-                className="h-5 w-px shrink-0 bg-white/30 max-[640px]:h-4"
-              />
-              {/* Points: value + "pts" label */}
-              <span className="flex items-baseline gap-1 leading-none">
-                <span className="text-[17px] font-bold tabular-nums max-[640px]:text-[15px]">
-                  {props.userRanking?.points}
+              </div>
+              {/* Mobile: compact pill — medal + position | points + pts (no labels) */}
+              <div className="flex shrink-0 items-center gap-1.5 rounded-full bg-white/10 px-2 py-0.5 text-white lg:hidden">
+                <span className="flex items-center gap-1 leading-none">
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="h-3.5 w-3.5 text-[#FFCA30]"
+                  >
+                    <path d="M7.5 2h9a1 1 0 0 1 .92 1.39l-1.7 4A5 5 0 1 1 8.28 7.4l-1.7-4A1 1 0 0 1 7.5 2Zm4.5 6.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5Zm0 1.6 .73 1.48 1.63.24-1.18 1.15.28 1.62L12 13.83l-1.46.76.28-1.62-1.18-1.15 1.63-.24Z" />
+                  </svg>
+                  <span className="text-[15px] font-bold tabular-nums">
+                    {props.userRanking?.ranking}
+                  </span>
                 </span>
-                <span className="text-[11px] font-semibold uppercase tracking-wide text-white/70 max-[640px]:text-[10px]">
-                  pts
+                <span
+                  aria-hidden="true"
+                  className="h-4 w-px shrink-0 bg-white/30"
+                />
+                <span className="flex items-baseline gap-1 leading-none">
+                  <span className="text-[15px] font-bold tabular-nums">
+                    {props.userRanking?.points}
+                  </span>
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-white/70">
+                    pts
+                  </span>
                 </span>
-              </span>
-            </div>
+              </div>
+            </>
           )}
           <div className="shrink-0 [&_div:has(>img)]:!h-[46px] [&_div:has(>img)]:!w-[46px] [&_div:has(>img)_img]:!h-[46px] [&_div:has(>img)_img]:!w-[46px] max-[640px]:[&_div:has(>img)]:!h-[40px] max-[640px]:[&_div:has(>img)]:!w-[40px] max-[640px]:[&_div:has(>img)_img]:!h-[40px] max-[640px]:[&_div:has(>img)_img]:!w-[40px]">
             <HeaderMenu

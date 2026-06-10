@@ -20,23 +20,23 @@ function variantClasses(
 ): string {
   if (invert) {
     if (variant === "primary")
-      return "bg-transparent border border-accent-yellow text-accent-yellow rounded-button px-5 py-[10px] gap-[10px]";
+      return "!bg-transparent border !border-accent-yellow !text-accent-yellow rounded-button px-5 py-[10px] gap-[10px]";
     if (variant === "secondary")
-      return "bg-transparent border border-brand-blue text-brand-blue rounded-button px-5 py-[10px] gap-[10px]";
+      return "!bg-transparent border !border-brand-blue !text-brand-blue rounded-button px-5 py-[10px] gap-[10px]";
     if (variant === "danger")
-      return "bg-transparent border border-[#e02045] text-dark-navy rounded-button px-5 py-[10px] gap-[10px]";
+      return "!bg-transparent border !border-[#e02045] !text-[#e02045] rounded-button px-5 py-[10px] gap-[10px]";
     // default invert
-    return "bg-transparent border border-white text-white rounded-button px-5 py-[10px] gap-[10px]";
+    return "!bg-transparent border !border-white !text-white rounded-button px-5 py-[10px] gap-[10px]";
   }
 
-  if (variant === "primary") return "bg-accent-yellow";
-  if (variant === "secondary") return "bg-brand-light-blue text-white border-none";
+  if (variant === "primary") return "";
+  if (variant === "secondary") return "!bg-brand-light-blue !text-white !border-none";
   if (variant === "danger")
-    return "bg-[#e02045] text-white [&>svg]:stroke-white [&>svg]:mr-[5px]";
+    return "!bg-[#e02045] !text-white !border-[#e02045] [&>svg]:stroke-white [&>svg]:mr-[5px]";
   if (variant === "transparent")
-    return "bg-transparent border border-white text-white rounded-button px-5 py-[10px] gap-[10px]";
+    return "!bg-transparent border !border-white !text-white rounded-button px-5 py-[10px] gap-[10px]";
   if (variant === "outline")
-    return "bg-white text-brand-light-blue border-[1.5px] border-brand-light-blue text-xl";
+    return "!bg-white !text-brand-light-blue border-[1.5px] !border-brand-light-blue text-xl";
   return "";
 }
 
