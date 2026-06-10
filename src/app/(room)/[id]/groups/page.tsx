@@ -21,7 +21,6 @@ import {
 } from "@/layout";
 import { useBodyRedirect, useCountries, useRequireSession } from "@/hooks";
 import { useInterval } from "@/hooks/useInterval";
-import commonStyles from "@/styles/CommonStyles.module.scss";
 import axios from "axios";
 import {
   CardsContainer,
@@ -40,7 +39,6 @@ import { GapIcon } from "@/components/common/Icons";
 import { useQuery } from "@tanstack/react-query";
 import { isGroupMatchLocked, groupMatchLockTime } from "@/utils/date";
 import { GROUP_MATCHDAY_DEADLINES } from "@/config/matchdays";
-import styles from "./page.module.scss";
 
 type UIMatch = Pick<
   Match,
@@ -278,6 +276,11 @@ export default function RoomGroupsPage() {
 
   if (redirected) return null;
 
+  // sectionCard: dark-navy title bar (rounded top only). Overrides the Card's
+  // default brand-green title via first-child child selectors.
+  const sectionCardClass =
+    "self-start [&>div:first-child]:!bg-dark-navy [&>div:first-child]:!text-white [&>div:first-child]:!text-[20px] [&>div:first-child]:!font-semibold [&>div:first-child]:!leading-[1.15] [&>div:first-child]:!min-h-[40px] [&>div:first-child]:!py-0 [&>div:first-child]:!pt-[11px] [&>div:first-child]:!pb-[13px] [&>div:first-child]:!px-5 [&>div:first-child]:!rounded-b-none [&>div:first-child]:!rounded-t-card";
+
   return (
     <Layout>
       <Meta />
@@ -297,11 +300,16 @@ export default function RoomGroupsPage() {
       </RoomWelcomeBar>
       <Container full>
         <GroupsContainer>
-          <div className={styles.groupsHeaderStack}>
-            <div className={styles.groupsHeaderTitle}>{formattedGroupsTitle}</div>
+          <div
+            className="flex flex-wrap h-full items-stretch gap-3 min-w-0 m-0 max-[640px]:flex-col max-[640px]:items-stretch"
+            style={{ gridArea: "matches-header" }}
+          >
+            <div className="bg-dark-navy text-white rounded-card text-[20px] font-semibold leading-[1.15] min-h-[50px] px-5 flex items-center flex-auto min-w-0">
+              {formattedGroupsTitle}
+            </div>
             {props?.room && (
               <GroupsResultsWarning
-                className={styles.headerResultsWarning}
+                className="h-full m-0 rounded-card flex-none min-h-[50px] bg-white/75 items-center px-4 max-[640px]:h-auto max-[640px]:min-h-0 max-[640px]:py-[10px] [&>:nth-child(2)]:min-[1024px]:flex-nowrap [&>:nth-child(2)]:min-[1024px]:justify-between [&>:nth-child(2)]:min-[1024px]:gap-4"
                 roomConfig={{
                   pointsGoals: props.room.pointsGoals,
                   pointsWinner: props.room.pointsWinner,
@@ -309,11 +317,11 @@ export default function RoomGroupsPage() {
                 }}
               />
             )}
-            <div className={styles.headerSaveAction}>
+            <div className="flex flex-none min-h-[50px] max-[640px]:min-h-0">
               <Button
                 variant="transparent"
                 disabled={!hasEditableChanges}
-                className={`${commonStyles.marginLeftAuto} ${styles.saveButton}`}
+                className="ml-auto !bg-accent-cta !text-dark-navy !border-accent-cta !text-[20px] min-h-[50px] justify-center disabled:!bg-accent-cta disabled:!text-dark-navy disabled:!border-accent-cta max-[640px]:w-full"
                 onClick={handleSave}
               >
                 {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}
@@ -327,7 +335,7 @@ export default function RoomGroupsPage() {
             ].map((group) => (
               <Card
                 key={group}
-                className={styles.groupCard}
+                className="rounded-card overflow-hidden [&>div:first-child]:!bg-white [&>div:first-child]:!text-brand-blue [&>div:first-child]:!text-[16px] [&>div:first-child]:!font-bold [&>div:first-child]:!leading-none [&>div:first-child]:!min-h-[28px] [&>div:first-child]:!py-0 [&>div:first-child]:!pt-[7px] [&>div:first-child]:!pb-[5px] [&>div:first-child]:!px-3 [&>div:first-child]:!justify-start [&>div:first-child]:uppercase [&>div:first-child]:!rounded-none"
                 title={i18n[group as keyof typeof i18n]}
               >
                 <CardContent>
@@ -336,7 +344,11 @@ export default function RoomGroupsPage() {
                     .map((match, index) => (
                       <MatchInput
                         key={match.id}
-                        className={styles[`matchPair${Math.floor(index / 2)}` as keyof typeof styles]}
+                        className={
+                          ["bg-[#f6f5f5]", "bg-[#ededed]", "bg-[#e1e1e1]"][
+                            Math.floor(index / 2)
+                          ]
+                        }
                         disabled={match.disabled || isGroupMatchLocked(new Date(match.date), GROUP_MATCHDAY_DEADLINES, new Date(now))}
                         date={new Date(match.date)}
                         countryLeftId={match.countryLeftId}
@@ -356,9 +368,12 @@ export default function RoomGroupsPage() {
               </Card>
             ))}
           </CardsContainer>
-          <div className={styles.sidebar}>
+          <div
+            className="min-[1300px]:flex min-[1300px]:flex-col min-[1300px]:min-h-full"
+            style={{ gridArea: "sidebar" }}
+          >
             <Card
-              className={styles.sectionCard}
+              className={sectionCardClass}
               title={
                 <>
                   {todayMatches ? i18n.todayMatchesLabel : i18n.upcomingMatchesLabel}
@@ -396,15 +411,18 @@ export default function RoomGroupsPage() {
                 )}
               </CardContent>
             </Card>
-            <Card className={`${styles.sectionCard} ${styles.rankingCard}`} title={i18n.rankingTitle}>
+            <Card
+              className={`${sectionCardClass} min-[1300px]:flex-1 min-[1300px]:min-h-0 [&>:nth-child(2)]:flex-1 [&>:nth-child(3)]:mt-auto`}
+              title={i18n.rankingTitle}
+            >
               <CardContent>
                 <Table
-                  className={styles.rankingTable}
+                  className="table-fixed w-full [&_td]:overflow-hidden [&_thead]:bg-transparent [&_thead_th]:!text-brand-blue [&_thead_th]:!text-[20px] [&_thead_th]:!font-medium"
                   columns={[
                     {
-                      header: "Posicion",
+                      header: "Pos",
                       accesor: (row) => !row.gap && <UserPositionDisplay position={row.ranking} />,
-                      width: "50px",
+                      width: "48px",
                     },
                     {
                       header: "Jugador",
@@ -416,10 +434,10 @@ export default function RoomGroupsPage() {
                         ),
                     },
                     {
-                      header: "Puntos",
+                      header: "Pts",
                       accesor: (row) => (!row.gap ? row.points : ""),
                       align: "RIGHT",
-                      width: "50px",
+                      width: "52px",
                     },
                   ]}
                   onRowClick={handleUserClick}
@@ -431,7 +449,7 @@ export default function RoomGroupsPage() {
               <Button
                 href={`/${id}/ranking`}
                 variant="secondary"
-                className={styles.completeRankingButton}
+                className="!text-brand-light-blue !border-2 !border-brand-light-blue !bg-transparent !text-[20px] !font-semibold"
               >
                 {i18n.buttonCompleteRanking}
               </Button>
@@ -445,19 +463,19 @@ export default function RoomGroupsPage() {
           title={editingMatch.filled ? "Update result" : "Set result"}
           onClose={closeResultEditor}
         >
-          <div className={styles.resultEditor}>
-            <div className={styles.resultEditorTeams}>
-              <div className={styles.resultEditorTeam}>
+          <div className="grid gap-[14px] min-w-[min(100%,280px)]">
+            <div className="flex items-center justify-center gap-[10px]">
+              <div className="inline-flex items-center gap-2 min-w-0 text-[16px] font-bold">
                 <CountryFlag code={editingLeftCountry?.code} />
                 <span>{editingLeftCountry?.shortName ?? editingLeftCountry?.name ?? ""}</span>
               </div>
-              <span className={styles.resultEditorVersus}>vs</span>
-              <div className={styles.resultEditorTeam}>
+              <span className="text-white/70 text-[12px] font-bold tracking-[0.12em] uppercase">vs</span>
+              <div className="inline-flex items-center gap-2 min-w-0 text-[16px] font-bold">
                 <CountryFlag code={editingRightCountry?.code} />
                 <span>{editingRightCountry?.shortName ?? editingRightCountry?.name ?? ""}</span>
               </div>
             </div>
-            <div className={styles.resultEditorInputs}>
+            <div className="grid grid-cols-[1fr_auto_1fr] gap-3 items-center [&_input]:w-full [&_input]:min-w-0 [&_input]:py-2 [&_input]:px-[10px] [&_input]:border [&_input]:border-white/15 [&_input]:rounded-[10px] [&_input]:bg-white/[0.04] [&_input]:text-inherit [&_input]:text-center [&_input]:text-[16px] [&_input]:font-bold">
               <input
                 min={0}
                 max={99}
@@ -476,7 +494,7 @@ export default function RoomGroupsPage() {
                 onChange={(event) => setAdminGoalsRight(event.target.value)}
               />
             </div>
-            <div className={styles.resultEditorActions}>
+            <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={closeResultEditor} disabled={savingResult}>
                 Cancel
               </Button>

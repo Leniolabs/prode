@@ -38,7 +38,7 @@ import { getMatchOrder } from "@/utils/finals";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useBodyRedirect } from "@/hooks";
-import styles from "../groups/page.module.scss";
+import styles from "./page.module.scss";
 
 type UIMatch = Pick<
   Match,
