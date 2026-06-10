@@ -133,10 +133,10 @@ export default function RankingPage() {
           className={styles.rankingHeader}
           title={
             <>
-              {i18n.rankingTitle}
-              <div style={{ marginLeft: "auto", textAlign: "right" }}>
+              <span className={styles.rankingTitle}>{i18n.rankingTitle}</span>
+              <span className={styles.rankingPlayerCount}>
                 {i18n.rankingTotalPlayersLabel} {props?.totalPlayers}
-              </div>
+              </span>
             </>
           }
         >
@@ -152,7 +152,7 @@ export default function RankingPage() {
           </Button>
         </ContainerHeader>
         <Card>
-          <CardContent>
+          <CardContent className={styles.rankingCardContent}>
             <Table
               onRowClick={handleUserClick}
               columns={[

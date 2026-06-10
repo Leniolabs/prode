@@ -1,17 +1,95 @@
 @use 'styles/tokens' as t;
 
-.rankingHeader {
-  margin: 24px 0 12px;
+// ── ContainerHeader overrides ──────────────────────────────────────────────
 
-  > :first-child:first-child {
+.rankingHeader {
+  // On desktop: title row + buttons sit side by side (default ContainerHeader flex)
+  // On mobile: everything stacks cleanly via flex-wrap in ContainerHeader
+
+  // Style the .title inner div (ContainerHeader's first child div)
+  > :first-child {
     background: #00192c;
-    color: white;
-    border-radius: 8px;
+    border-radius: 8px 8px 0 0;
     font-size: 20px;
     font-weight: 600;
     line-height: 1.15;
     min-height: 50px;
     padding: 0 20px;
     text-transform: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: nowrap;
+  }
+}
+
+.rankingTitle {
+  flex: 1 1 auto;
+  white-space: nowrap;
+}
+
+.rankingPlayerCount {
+  flex: 0 0 auto;
+  font-size: 14px;
+  font-weight: 400;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+// ── Ranking table ──────────────────────────────────────────────────────────
+
+// CardContent wrapper: allow table to use fixed layout so the name column
+// can ellipsize rather than expand the cell.
+.rankingCardContent {
+  overflow: hidden;
+
+  // Target the table rendered inside CardContent
+  table {
+    table-layout: fixed;
+
+    // Admin-action column (first): fixed narrow
+    td:first-child,
+    th:first-child {
+      width: 36px;
+      padding: 6px 4px;
+    }
+
+    // Position column (second): fixed narrow
+    td:nth-child(2),
+    th:nth-child(2) {
+      width: 60px;
+    }
+
+    // Name column (third): grows, overflow hidden so ellipsis works
+    td:nth-child(3),
+    th:nth-child(3) {
+      overflow: hidden;
+    }
+
+    // Total points column (last): fixed narrow, right-aligned
+    td:last-child,
+    th:last-child {
+      width: 60px;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    table {
+      td:first-child,
+      th:first-child {
+        width: 28px;
+        padding: 6px 2px;
+      }
+
+      td:nth-child(2),
+      th:nth-child(2) {
+        width: 48px;
+      }
+
+      td:last-child,
+      th:last-child {
+        width: 48px;
+      }
+    }
   }
 }

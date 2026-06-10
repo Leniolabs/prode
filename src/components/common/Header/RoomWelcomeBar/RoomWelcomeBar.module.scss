@@ -25,6 +25,7 @@
 .controls {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
 
   // Shrink the nav buttons (rendered as <a>/<button>) so they fit the bar

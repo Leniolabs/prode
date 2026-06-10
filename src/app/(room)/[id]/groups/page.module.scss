@@ -114,6 +114,31 @@
   }
 }
 
+// On phones the three-up toolbar (title | legend | save) can't fit on one row,
+// and wrapping left the save button landing in arbitrary spots. Stack them so
+// each gets its own full-width row, and let the legend size to its content
+// instead of being padded out to the 50px row height.
+@media screen and (max-width: 640px) {
+  .groupsHeaderStack {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .headerResultsWarning {
+    height: auto;
+    min-height: 0;
+    padding: 10px 16px;
+  }
+
+  .headerSaveAction {
+    min-height: 0;
+  }
+
+  .saveButton {
+    width: 100%;
+  }
+}
+
 .sectionCard {
   align-self: start;
 

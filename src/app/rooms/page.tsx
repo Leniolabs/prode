@@ -209,44 +209,46 @@ export default function RoomsPage() {
                   data-locked={locked}
                 >
                   <div className={styles.roomName}>{row.name}</div>
-                  <div className={styles.roomPlayers}>
-                    <PlayersIcon />
-                    <span>{row.playerCount}</span>
-                  </div>
-                  <div className={styles.roomActions}>
-                    {locked && (
-                      <span className={styles.lockIcon}>
-                        <LockGlyph />
-                      </span>
-                    )}
-                    {row.isCreator && row.room && (
+                  <div className={styles.roomRight}>
+                    <div className={styles.roomPlayers}>
+                      <PlayersIcon />
+                      <span>{row.playerCount}</span>
+                    </div>
+                    <div className={styles.roomActions}>
+                      {locked && (
+                        <span className={styles.lockIcon}>
+                          <LockGlyph />
+                        </span>
+                      )}
+                      {row.isCreator && row.room && (
+                        <button
+                          type="button"
+                          className={styles.editIcon}
+                          aria-label={i18n.headerMobileRoomSettings}
+                          data-testid={`room-edit-${row.id}`}
+                          onClick={() => setEditRoom(row.room)}
+                        >
+                          <Image
+                            src="/pencil-edit.png"
+                            alt=""
+                            width={22}
+                            height={22}
+                          />
+                        </button>
+                      )}
                       <button
                         type="button"
-                        className={styles.editIcon}
-                        aria-label={i18n.headerMobileRoomSettings}
-                        data-testid={`room-edit-${row.id}`}
-                        onClick={() => setEditRoom(row.room)}
+                        className={styles.enterButton}
+                        data-testid={`room-enter-${row.id}`}
+                        disabled={locked}
+                        onClick={onRoomClick(
+                          row.id,
+                          row.open ? false : row.hasPassword,
+                        )}
                       >
-                        <Image
-                          src="/pencil-edit.png"
-                          alt=""
-                          width={22}
-                          height={22}
-                        />
+                        {label}
                       </button>
-                    )}
-                    <button
-                      type="button"
-                      className={styles.enterButton}
-                      data-testid={`room-enter-${row.id}`}
-                      disabled={locked}
-                      onClick={onRoomClick(
-                        row.id,
-                        row.open ? false : row.hasPassword,
-                      )}
-                    >
-                      {label}
-                    </button>
+                    </div>
                   </div>
                 </div>
               );

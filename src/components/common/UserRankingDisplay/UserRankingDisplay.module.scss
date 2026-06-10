@@ -2,14 +2,16 @@
   display: flex;
   align-items: center;
   min-width: 0;
+  overflow: hidden;
 
   .userName {
-    flex: 1;
+    flex: 1 1 0;
     min-width: 0;
     font-weight: normal;
     font-size: 20px;
     margin-left: 12px;
-    white-space: normal;
-    overflow-wrap: anywhere;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }

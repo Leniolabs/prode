@@ -109,9 +109,9 @@
 
 .roomRow {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 110px 220px;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 18px;
+  gap: 12px 18px;
   min-height: 64px;
   padding: 12px 24px;
   border-radius: 6px;
@@ -125,15 +125,27 @@
 .roomName {
   font-size: 18px;
   line-height: 1.2;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.roomRight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
 }
 
 .roomPlayers {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
   font-size: 16px;
   color: t.$color-dark-navy;
+  flex-shrink: 0;
 
   svg {
     display: block;
@@ -144,7 +156,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 18px;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 .lockIcon,
@@ -194,9 +207,8 @@
   }
 
   .roomRow {
-    grid-template-columns: minmax(0, 1fr) 88px 180px;
     padding: 12px 18px;
-    gap: 12px;
+    gap: 10px 14px;
   }
 }
 
@@ -241,17 +253,32 @@
   }
 
   .roomRow {
-    grid-template-columns: 1fr;
-    justify-items: start;
-    gap: 12px;
+    padding: 10px 14px;
+    gap: 8px 10px;
+    min-height: 54px;
+  }
+
+  .roomName {
+    font-size: 16px;
   }
 
   .roomPlayers {
-    justify-content: flex-start;
+    font-size: 15px;
+    gap: 6px;
+  }
+
+  .roomRight {
+    gap: 10px;
   }
 
   .roomActions {
-    width: 100%;
-    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .enterButton {
+    min-width: 76px;
+    height: 36px;
+    font-size: 17px;
+    padding: 0 10px;
   }
 }
