@@ -110,7 +110,7 @@ export default function ViewPage() {
         />
       )}
       <Container full>
-        <GroupsContainer full admin>
+        <GroupsContainer full admin className={styles.viewAdminContainer}>
           <ContainerHeader
             gridArea="matches-header"
             className={`${styles.groupsStageHeader} ${styles.viewTitleHeader}`}
@@ -129,12 +129,13 @@ export default function ViewPage() {
             }
           />
         </GroupsContainer>
-        <GroupsContainer full admin>
+        <GroupsContainer full admin className={styles.viewAdminContainer}>
           <ContainerHeader
             gridArea="matches-header"
             sticky
             noMarginTop
-            className={styles.groupsStageHeader}
+            noMarginBottom
+            className={`${styles.groupsStageHeader} ${styles.viewPageHeader}`}
             title={i18n.groupsTitle}
           />
           <CardsContainer gridArea="matches">
@@ -181,7 +182,7 @@ export default function ViewPage() {
               noMarginTop
               noMarginBottom
               sticky
-              className={styles.stageHeader}
+              className={`${styles.stageHeader} ${styles.viewPageHeader}`}
               title={i18n.finalsTitle}
             />
             <BracketsContainer gridArea="matches">

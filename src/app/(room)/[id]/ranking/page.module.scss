@@ -1,0 +1,17 @@
+@use 'styles/tokens' as t;
+
+.rankingHeader {
+  margin: 24px 0 12px;
+
+  > :first-child:first-child {
+    background: #00192c;
+    color: white;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.15;
+    min-height: 50px;
+    padding: 0 20px;
+    text-transform: none;
+  }
+}
