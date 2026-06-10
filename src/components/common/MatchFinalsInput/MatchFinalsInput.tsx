@@ -5,7 +5,19 @@ import { className } from "../../../utils/classname";
 import { formatDate } from "../../../utils/date";
 import { CountryFlag } from "../CountryFlag";
 import { CountrySelect } from "../CountrySelect";
-import styles from "./MatchFinalsInput.module.scss";
+
+// Suppress webkit/firefox number-input spinners (idempotent).
+const INPUT_STYLE_ID = "match-input-no-spinner";
+if (typeof document !== "undefined" && !document.getElementById(INPUT_STYLE_ID)) {
+  const s = document.createElement("style");
+  s.id = INPUT_STYLE_ID;
+  s.textContent = `
+    .match-input-number::-webkit-outer-spin-button,
+    .match-input-number::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .match-input-number[type=number] { -moz-appearance: textfield; }
+  `;
+  document.head.appendChild(s);
+}
 
 interface MatchFinalsInputProps {
   className?: string;
@@ -56,6 +68,13 @@ const parseResults = (value: {
     };
   return value;
 };
+
+// Shared input classes for goal/penalty inputs in the finals card
+const GOALS_INPUT_CLS =
+  "match-input-number ml-[6px] w-[34px] h-full border border-[#233042] bg-transparent outline-none text-center text-[#233042] p-[6px] disabled:opacity-80";
+
+const PENALTIS_INPUT_CLS =
+  "match-input-number text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#233042] bg-transparent outline-none text-center text-[#233042] disabled:opacity-80";
 
 export function MatchFinalsInput(
   props: React.PropsWithChildren<MatchFinalsInputProps>
@@ -333,10 +352,11 @@ export function MatchFinalsInput(
 
   return (
     <div
-      className={className(props.className, styles.matchFinalsInput)}
+      className={className(props.className, "flex flex-col relative text-[16px]")}
       style={{ order: props.order }}
     >
-      <div className={styles.countryRow}>
+      {/* Left country row */}
+      <div className="flex mb-[6px] relative">
         {props.countryInput && (
           <CountrySelect
             id={props.countryLeftId}
@@ -344,14 +364,14 @@ export function MatchFinalsInput(
           />
         )}
         {!props.countryInput && (
-          <div className={className(styles.countryInput)}>
+          <div className="p-[2px] w-full h-[34px] flex items-center border border-[#233042]">
             {countryLeft?.code && (
               <CountryFlag
-                className={styles.countryFlag}
+                className="[&_img]:w-[27px] [&_img]:h-[27px]"
                 code={countryLeft?.code}
               />
             )}
-            <label>{countryLeft?.name}</label>
+            <label className="ml-1">{countryLeft?.name}</label>
           </div>
         )}
         <input
@@ -359,7 +379,7 @@ export function MatchFinalsInput(
           inputMode={"decimal"}
           tabIndex={props.order * 4}
           data-testid="finals-match-goals-left"
-          className={className(styles.goalsLeft)}
+          className={GOALS_INPUT_CLS}
           defaultValue={props.goalsLeft}
           onChange={handleGoalsLeftChange}
           disabled={props.disabled}
@@ -371,7 +391,7 @@ export function MatchFinalsInput(
             inputMode={"decimal"}
             tabIndex={props.order * 4 + 2}
             data-testid="finals-match-penalties-left"
-            className={className(styles.penaltisLeft)}
+            className={PENALTIS_INPUT_CLS}
             defaultValue={props.penaltisLeft ?? ""}
             onChange={handlePenaltisLeftChange}
             disabled={props.disabled}
@@ -379,7 +399,9 @@ export function MatchFinalsInput(
           />
         )}
       </div>
-      <div className={styles.countryRow}>
+
+      {/* Right country row */}
+      <div className="flex mb-[6px] relative">
         {props.countryInput && (
           <CountrySelect
             id={props.countryRightId}
@@ -387,14 +409,14 @@ export function MatchFinalsInput(
           />
         )}
         {!props.countryInput && (
-          <div className={className(styles.countryInput)}>
+          <div className="p-[2px] w-full h-[34px] flex items-center border border-[#233042]">
             {countryRight?.code && (
               <CountryFlag
-                className={styles.countryFlag}
+                className="[&_img]:w-[27px] [&_img]:h-[27px]"
                 code={countryRight?.code}
               />
             )}
-            <label>{countryRight?.name}</label>
+            <label className="ml-1">{countryRight?.name}</label>
           </div>
         )}
         <input
@@ -402,7 +424,7 @@ export function MatchFinalsInput(
           inputMode={"decimal"}
           tabIndex={props.order * 4 + 1}
           data-testid="finals-match-goals-right"
-          className={className(styles.goalsRight)}
+          className={GOALS_INPUT_CLS}
           defaultValue={props.goalsRight}
           onChange={handleGoalsRightChange}
           disabled={props.disabled}
@@ -414,7 +436,7 @@ export function MatchFinalsInput(
             inputMode={"decimal"}
             tabIndex={props.order * 4 + 3}
             data-testid="finals-match-penalties-right"
-            className={className(styles.penaltisRight)}
+            className={PENALTIS_INPUT_CLS}
             defaultValue={props.penaltisRight ?? ""}
             onChange={handlePenaltisRightChange}
             disabled={props.disabled}
@@ -422,7 +444,8 @@ export function MatchFinalsInput(
           />
         )}
       </div>
-      <div className={styles.date}>{date}</div>
+
+      <div className="text-[14px] text-[#233042]">{date}</div>
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "@/utils/classname";
-import styles from "./ContainerHeader.module.scss";
 
 interface ContainerHeaderProps {
   className?: string;
@@ -16,20 +15,40 @@ interface ContainerHeaderProps {
 export function ContainerHeader(
   props: React.PropsWithChildren<ContainerHeaderProps>
 ) {
+  const isSecondary = props.variant === "SECONDARY";
+
   return (
     <div
       className={className(
-        props.className,
-        styles.containerHeader,
-        props.noMarginTop && styles.noMarginTop,
-        props.noMarginBottom && styles.noMarginBottom,
-        props.sticky && styles.sticky,
-        props.variant && styles[props.variant]
+        "flex w-full mb-4",
+        "max-lg:flex-wrap max-lg:-mt-8 max-lg:top-0 max-lg:z-[998]",
+        props.sticky && "max-lg:sticky",
+        props.noMarginTop && "mt-0",
+        props.noMarginBottom && "mb-0",
+        props.className
       )}
       style={{ gridArea: props.gridArea }}
     >
-      <div className={styles.title}>{props.title}</div>
-      <div>{props.children}</div>
+      <div
+        className={className(
+          "w-full flex items-center font-bold text-xl px-3 py-[7px] text-white",
+          isSecondary
+            ? "bg-container-header-secondary uppercase"
+            : "bg-brand-blue",
+          "lg:[&:has(+*:not(:empty))]:mr-4",
+          "max-lg:m-0"
+        )}
+      >
+        {props.title}
+      </div>
+      <div
+        className={className(
+          "flex [&>*:not(:first-child)]:ml-[5px]",
+          "max-lg:ml-auto max-lg:w-full max-lg:[&_button]:w-full"
+        )}
+      >
+        {props.children}
+      </div>
     </div>
   );
 }

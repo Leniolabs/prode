@@ -1,7 +1,6 @@
 import Link from "next/link";
 import React from "react";
 import { className } from "../../../utils/classname";
-import styles from "./Table.module.scss";
 
 interface PaginationProps {
   totalPages: number;
@@ -50,12 +49,28 @@ export function Pagination(props: PaginationProps) {
   }, [props.page, props.totalPages]);
 
   return (
-    <div className={styles.pagination}>
-      <Link href={prevPageLink || window.location.href} className={className(!prevPageLink && styles.disabled)}>{"‹"}</Link>
-      <div className={styles.paginationNumber}>
+    <div className="flex text-[24px]">
+      <Link
+        href={prevPageLink || window.location.href}
+        className={className(
+          "p-1 rounded text-[40px] leading-[24px]",
+          !prevPageLink && "pointer-events-none opacity-0"
+        )}
+      >
+        {"‹"}
+      </Link>
+      <div className="p-1 text-white">
         {props.page + 1} / {props.totalPages}
       </div>
-      <Link href={nextPageLink || window.location.href} className={className(!nextPageLink && styles.disabled)}>{"›"}</Link>
+      <Link
+        href={nextPageLink || window.location.href}
+        className={className(
+          "p-1 rounded text-[40px] leading-[24px]",
+          !nextPageLink && "pointer-events-none opacity-0"
+        )}
+      >
+        {"›"}
+      </Link>
     </div>
   );
 }

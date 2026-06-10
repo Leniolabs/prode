@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "@/utils/classname";
-import styles from "./Header.module.scss";
 
 interface HeaderProps {
   className?: string;
@@ -8,7 +7,13 @@ interface HeaderProps {
 
 export function Header(props: React.PropsWithChildren<HeaderProps>) {
   return (
-    <header className={className(props.className, styles.header)}>
+    <header
+      data-layout-header
+      className={className(
+        "bg-header-translucent px-[42px] mx-0 flex items-center",
+        props.className
+      )}
+    >
       {props.children}
     </header>
   );

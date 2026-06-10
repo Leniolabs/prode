@@ -7,7 +7,6 @@ import { formatDate, formatHour } from "../../../utils/date";
 import { matchResultStatus } from "../../../utils/points";
 import { CountryFlag } from "../CountryFlag";
 import { LockIcon } from "../Icons";
-import styles from "./DailyMatches.module.scss";
 
 export function getResultStatus(userMatch: {
   goalsLeft: number;
@@ -228,6 +227,18 @@ const parseResults = (value: {
       penaltisRight: null,
     };
   return value;
+};
+
+const scoreInputClass =
+  "text-[20px] bg-transparent w-10 h-10 outline-none text-black text-center border border-[#767676] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:opacity-80";
+
+const penaltisInputClass =
+  "mt-auto w-[18px] h-[18px] text-[12px] border border-[#767676] border-l-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:opacity-80 max-lg:text-[20px] max-lg:border-0 max-lg:w-10 max-lg:h-10";
+
+const scoreInputStatusClass: Record<string, string> = {
+  GOALS_MATCH: "!bg-[#309e3a] !border-[#309e3a]",
+  WINNER_MATCH: "!bg-[#0093dd] !border-[#0093dd]",
+  WRONG: "!bg-[#f9aa51] !border-[#f9aa51]",
 };
 
 export function DailyMatchFinalInput(
@@ -578,14 +589,34 @@ export function DailyMatchFinalInput(
   useInterval(updateMatchStatus, 60000);
 
   return (
-    <div className={className(props.className, styles.dailyMatchFinalsInput)}>
-      <div className={styles.leftTeam}>
+    <div
+      className={className(
+        props.className,
+        "flex items-center relative px-4 pt-4 pb-[6px] gap-[6px]",
+        "[&:has([data-show='true'])]:pt-8",
+        "[&:has(.result)]:pb-6",
+        "[&_+_.dailyMatchInput]:border-t [&_+_.dailyMatchInput]:border-[#767676]"
+      )}
+    >
+      {/* Left team */}
+      <div className="flex items-center flex-1 min-w-0 gap-[6px]">
         {countryLeft && <CountryFlag code={countryLeft.code} />}
-        <label data-tooltip={countryLeft?.name}>{countryLeft?.shortName}</label>
+        <label
+          className="text-[14px] font-bold whitespace-nowrap relative cursor-default group"
+          data-tooltip={countryLeft?.name}
+        >
+          {countryLeft?.shortName}
+          <span className="absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2 bg-black/85 text-white text-[11px] font-normal whitespace-nowrap px-[7px] py-[3px] rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-10">
+            {countryLeft?.name}
+          </span>
+        </label>
       </div>
-      <div className={styles.centerContainer}>
-        <div className={styles.inputsContainer}>
-          <div className={styles.leftInput}>
+
+      {/* Center */}
+      <div className="shrink-0 flex flex-col items-center">
+        <div className="flex">
+          {/* Left input group */}
+          <div className="flex relative">
             <input
               type="number"
               min={0}
@@ -593,8 +624,8 @@ export function DailyMatchFinalInput(
               inputMode={"decimal"}
               tabIndex={props.order * 4}
               className={className(
-                styles.leftGoals,
-                resultStatus && styles[resultStatus]
+                scoreInputClass,
+                resultStatus ? scoreInputStatusClass[resultStatus] : ""
               )}
               defaultValue={props.userGoalsLeft ?? ""}
               onChange={handleGoalsLeftChange}
@@ -603,7 +634,7 @@ export function DailyMatchFinalInput(
             />
             {showPenaltis && (
               <>
-                <div className={styles.penaltisDivider} />
+                <div className="penaltis-divider" />
                 <input
                   min={0}
                   max={99}
@@ -611,8 +642,8 @@ export function DailyMatchFinalInput(
                   inputMode={"decimal"}
                   tabIndex={props.order * 4 + 2}
                   className={className(
-                    styles.penaltisLeft,
-                    penaltisStatus && styles[penaltisStatus]
+                    penaltisInputClass,
+                    penaltisStatus ? scoreInputStatusClass[penaltisStatus] : ""
                   )}
                   defaultValue={props.userPenaltisLeft ?? ""}
                   onChange={handlePenaltisLeftChange}
@@ -622,7 +653,8 @@ export function DailyMatchFinalInput(
               </>
             )}
           </div>
-          <div className={styles.rightInput}>
+          {/* Right input group */}
+          <div className="flex relative ml-[6px]">
             <input
               type="number"
               min={0}
@@ -630,8 +662,8 @@ export function DailyMatchFinalInput(
               inputMode={"decimal"}
               tabIndex={props.order * 4 + 1}
               className={className(
-                styles.rightGoals,
-                resultStatus && styles[resultStatus]
+                scoreInputClass,
+                resultStatus ? scoreInputStatusClass[resultStatus] : ""
               )}
               defaultValue={props.userGoalsRight ?? ""}
               onChange={handleGoalsRightChange}
@@ -640,7 +672,7 @@ export function DailyMatchFinalInput(
             />
             {showPenaltis && (
               <>
-                <div className={styles.penaltisDivider} />
+                <div className="penaltis-divider" />
                 <input
                   min={0}
                   max={99}
@@ -648,8 +680,8 @@ export function DailyMatchFinalInput(
                   inputMode={"decimal"}
                   tabIndex={props.order * 4 + 3}
                   className={className(
-                    styles.penaltisRight,
-                    penaltisStatus && styles[penaltisStatus]
+                    penaltisInputClass,
+                    penaltisStatus ? scoreInputStatusClass[penaltisStatus] : ""
                   )}
                   defaultValue={props.userPenaltisRight ?? ""}
                   onChange={handlePenaltisRightChange}
@@ -660,13 +692,12 @@ export function DailyMatchFinalInput(
             )}
           </div>
         </div>
-        <div className={styles.date}>
+        <div className="text-[14px] text-[#767676] whitespace-nowrap cursor-default text-center flex flex-col items-center gap-[3px]">
           {date}
           {props.filled && (
-            <div className={styles.result}>
-              <span>{i18n.matchResultLabel}:</span>
+            <div className="result flex items-center gap-[3px]">
+              <span className="mr-[5px] ml-[5px]">{i18n.matchResultLabel}:</span>
               <CountryFlag
-                className={styles.countryFlag}
                 code={countryLeft?.code}
                 tiny
                 disabled={(props.goalsLeft || 0) < (props.goalsRight || 0)}
@@ -684,7 +715,6 @@ export function DailyMatchFinalInput(
                 </>
               )}
               <CountryFlag
-                className={styles.countryFlag}
                 code={countryRight?.code}
                 tiny
                 disabled={(props.goalsLeft || 0) > (props.goalsRight || 0)}
@@ -693,16 +723,28 @@ export function DailyMatchFinalInput(
           )}
         </div>
       </div>
-      <div className={styles.rightTeam}>
-        <label data-tooltip={countryRight?.name}>{countryRight?.shortName}</label>
+
+      {/* Right team */}
+      <div className="flex items-center flex-1 min-w-0 gap-[6px] justify-end">
+        <label
+          className="text-[14px] font-bold whitespace-nowrap relative cursor-default group"
+          data-tooltip={countryRight?.name}
+        >
+          {countryRight?.shortName}
+          <span className="absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2 bg-black/85 text-white text-[11px] font-normal whitespace-nowrap px-[7px] py-[3px] rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-10">
+            {countryRight?.name}
+          </span>
+        </label>
         {countryRight && <CountryFlag code={countryRight?.code} />}
       </div>
+
+      {/* Timer strip */}
       <div
         ref={counterRef}
         data-show="false"
         data-timer=""
         data-status=""
-        className={styles.dailyMatchTimer}
+        className="daily-match-timer"
       >
         <LockIcon />
       </div>

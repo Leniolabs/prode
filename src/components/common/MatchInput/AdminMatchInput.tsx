@@ -5,7 +5,6 @@ import { className } from "../../../utils/classname";
 import { formatDate } from "../../../utils/date";
 import { matchResultStatus } from "../../../utils/points";
 import { CountryFlag } from "../CountryFlag";
-import styles from "./MatchInput.module.scss";
 
 interface AdminMatchInputProps {
   className?: string;
@@ -72,15 +71,20 @@ export function AdminMatchInput(
   }, [props.date, i18n.locale]);
 
   return (
-    <div className={className(props.className, styles.matchInput)}>
+    <div
+      className={className(
+        props.className,
+        "flex items-center h-[52px] px-2 gap-1"
+      )}
+    >
       <CountryFlag code={leftCountry?.code} />
-      <label>{leftCountry?.name}</label>
-      <div className={styles.centerContainer}>
-        <div className={styles.inputsContainer}>
+      <label className="text-[14px] whitespace-nowrap">{leftCountry?.name}</label>
+      <div className="flex-none flex flex-col items-center">
+        <div className="flex">
           <input
             type="number"
             inputMode={"decimal"}
-            className={className(styles.leftGoals)}
+            className="match-input-number text-[17px] bg-transparent max-w-[30px] outline-none text-black text-center border border-neutral-gray disabled:opacity-80"
             defaultValue={props.goalsLeft ?? ""}
             onChange={handleLeftGoalsChange}
             disabled={props.disabled}
@@ -89,16 +93,16 @@ export function AdminMatchInput(
           <input
             type="number"
             inputMode={"decimal"}
-            className={className(styles.rightGoals)}
+            className="match-input-number text-[17px] bg-transparent max-w-[30px] outline-none text-black text-center border border-neutral-gray ml-[6px] disabled:opacity-80"
             defaultValue={props.goalsRight ?? ""}
             onChange={handleRightGoalsChange}
             disabled={props.disabled}
             onBlur={handleRightInputBlur}
           />
         </div>
-        <div className={styles.date}>{date}</div>
+        <div className="text-[13px] text-neutral-gray whitespace-nowrap cursor-default">{date}</div>
       </div>
-      <label>{rightCountry?.name}</label>
+      <label className="text-[14px] whitespace-nowrap">{rightCountry?.name}</label>
       <CountryFlag code={rightCountry?.code} />
     </div>
   );

@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../utils/classname";
-import styles from "./Table.module.scss";
 
 type TableColumn<T> = {
   header?: string;
@@ -21,6 +20,12 @@ interface TableProps<T> {
   clickable?: boolean | ((row: T) => boolean);
 }
 
+const alignClass = {
+  LEFT: "text-left",
+  CENTER: "text-center",
+  RIGHT: "text-right",
+} as const;
+
 export function Table<T>(props: React.PropsWithChildren<TableProps<T>>) {
   const hasHeaders = props.columns.some((col) => col.header);
   const isRowClickable = React.useCallback(
@@ -34,12 +39,11 @@ export function Table<T>(props: React.PropsWithChildren<TableProps<T>>) {
     <table
       className={className(
         props.className,
-        styles.table,
-        props.stripped && styles.stripped
+        "w-full border-collapse"
       )}
     >
       {hasHeaders && (
-        <thead>
+        <thead className="bg-table-header-bg">
           <tr>
             {props.columns.map((col, index) => (
               <th
@@ -47,9 +51,10 @@ export function Table<T>(props: React.PropsWithChildren<TableProps<T>>) {
                 scope="col"
                 style={{ width: col.width }}
                 className={className(
-                  col.align ? styles[col.align] : "",
-                  col.bold && styles.bold,
-                  col.hideInMobile && styles.hideInMobile
+                  "h-[55px] text-[20px] text-dark-navy font-semibold text-left px-3 py-[6px]",
+                  col.align ? alignClass[col.align] : "",
+                  col.bold && "font-bold",
+                  col.hideInMobile && "max-lg:hidden"
                 )}
               >
                 {col.header}
@@ -77,16 +82,20 @@ export function Table<T>(props: React.PropsWithChildren<TableProps<T>>) {
             tabIndex={isRowClickable(row) ? 0 : undefined}
             role={isRowClickable(row) ? "button" : undefined}
             className={className(
-              isRowClickable(row) && styles.clickable
+              "h-[55px] text-[20px]",
+              props.stripped && index % 2 === 0 && "bg-[rgba(0,0,0,0.04)]",
+              isRowClickable(row) &&
+                "hover:bg-[rgba(0,0,0,0.04)] [&:hover_*]:cursor-pointer"
             )}
           >
             {props.columns.map((col, colIndex) => (
               <td
                 key={colIndex}
                 className={className(
-                  col.align ? styles[col.align] : "",
-                  col.bold && styles.bold,
-                  col.hideInMobile && styles.hideInMobile
+                  "px-3 py-[6px] text-[20px] max-[600px]:text-[14px]",
+                  col.align ? alignClass[col.align] : "",
+                  col.bold && "font-bold",
+                  col.hideInMobile && "max-lg:hidden"
                 )}
               >
                 {col.accesor(row, index, arr)}

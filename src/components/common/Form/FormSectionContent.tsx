@@ -1,14 +1,15 @@
 import React from "react";
 import { className } from "../../../utils/classname";
-import styles from "./Form.module.scss";
 
 interface FormSectionContentProps {
   className?: string;
 }
 
-export function FormSectionContent(props: React.PropsWithChildren<FormSectionContentProps>) {
+export function FormSectionContent(
+  props: React.PropsWithChildren<FormSectionContentProps>
+) {
   return (
-    <div className={className(props.className, styles.formSectionContent)}>
+    <div className={className(props.className, "p-[12px_16px] w-full")}>
       {props.children}
     </div>
   );

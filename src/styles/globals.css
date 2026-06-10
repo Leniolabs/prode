@@ -72,6 +72,83 @@
   animation: spin-ease 1s ease-in-out infinite;
 }
 
+/*
+ * Layout sibling rule: Container that directly follows the layout Header gets top margin.
+ * Originally expressed as `header + .container` in Container.module.scss.
+ * Scoped via data attribute to avoid matching other header+section pairs.
+ */
+[data-layout-header] + section {
+  margin-top: 32px;
+}
+
+/*
+ * DailyMatches timer strip — data-attribute–driven styles that cannot be
+ * expressed as inline Tailwind utilities.  Used by DailyMatchInput and
+ * DailyMatchFinalInput via the `daily-match-timer` utility class.
+ */
+@utility daily-match-timer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 24px;
+  background: #1f274030;
+  display: none;
+  align-items: center;
+  place-content: center;
+
+  & svg {
+    display: none;
+    width: 18px;
+  }
+
+  &[data-timer=""] svg {
+    display: block;
+  }
+
+  &[data-show="true"] {
+    display: flex;
+  }
+
+  &::after {
+    content: attr(data-timer);
+    font-size: 12px;
+    height: 12px;
+    color: #767676;
+    font-weight: bold;
+    position: relative;
+  }
+
+  &[data-status="success"] { background: #69b29a30; }
+  &[data-status="danger"]  { background: #fa375730; }
+  &[data-status="warning"] { background: #ffca3030; }
+}
+
+/*
+ * DailyMatches penaltis divider — only visible on mobile (≤1024px).
+ * The divider itself is hidden on desktop; on mobile it becomes a vertical
+ * rule and the adjacent penalty input switches to full size.
+ */
+@utility penaltis-divider {
+  display: none;
+
+  @media screen and (max-width: 1024px) {
+    display: block;
+    position: absolute;
+    left: 50%;
+    height: 60%;
+    margin-top: 10%;
+    border-left: 1px solid #767676;
+
+    & + input {
+      font-size: 20px;
+      border: none;
+      width: 40px;
+      height: 40px;
+    }
+  }
+}
+
 /* Global resets (carried over unchanged) */
 html,
 body {

@@ -8,7 +8,6 @@ import { matchResultStatus } from "../../../utils/points";
 import { ButtonIcon } from "../ButtonIcon";
 import { CountryFlag } from "../CountryFlag";
 import { EditIcon, LockIcon } from "../Icons";
-import styles from "./DailyMatches.module.scss";
 
 interface DailyMatchInputProps {
   className?: string;
@@ -33,6 +32,15 @@ interface DailyMatchInputProps {
 
   onChange?: (goalsLeft: number | null, goalsRight: number | null) => void;
 }
+
+const scoreInputClass =
+  "text-[20px] bg-transparent w-10 h-10 outline-none text-black text-center border border-[#767676] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:opacity-80";
+
+const scoreInputStatusClass: Record<string, string> = {
+  GOALS_MATCH: "!bg-[#309e3a] !border-[#309e3a]",
+  WINNER_MATCH: "!bg-[#0093dd] !border-[#0093dd]",
+  WRONG: "!bg-[#f9aa51] !border-[#f9aa51]",
+};
 
 export function DailyMatchInput(
   props: React.PropsWithChildren<DailyMatchInputProps>
@@ -167,58 +175,89 @@ export function DailyMatchInput(
   useInterval(updateMatchStatus, 60000);
 
   return (
-    <div className={className(props.className, styles.dailyMatchInput)}>
-      <div className={styles.leftTeam}>
+    <div
+      className={className(
+        props.className,
+        "flex items-center relative px-4 pt-4 pb-[6px] gap-[6px]",
+        "[&:has([data-show='true'])]:pt-8",
+        "[&:has(.result)]:pb-6",
+        "[&_+_&]:border-t [&_+_&]:border-[#767676]"
+      )}
+    >
+      {/* Left team */}
+      <div className="flex items-center flex-1 min-w-0 gap-[6px]">
         <CountryFlag code={countryLeft?.code} />
-        <label data-tooltip={countryLeft?.name}>{countryLeft?.shortName}</label>
+        <label
+          className="text-[14px] font-bold whitespace-nowrap relative cursor-default group"
+          data-tooltip={countryLeft?.name}
+        >
+          {countryLeft?.shortName}
+          <span className="absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2 bg-black/85 text-white text-[11px] font-normal whitespace-nowrap px-[7px] py-[3px] rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-10">
+            {countryLeft?.name}
+          </span>
+        </label>
       </div>
-      <div className={styles.centerContainer}>
-        <div className={styles.inputsContainer}>
-          <div className={styles.leftInput}>
+
+      {/* Center */}
+      <div className="shrink-0 flex flex-col items-center">
+        <div className="flex">
+          <div>
             <input
               type="number"
               min={0}
               max={99}
               inputMode={"decimal"}
               className={className(
-                styles.leftGoals,
-                resultStatus && styles[resultStatus]
+                scoreInputClass,
+                resultStatus ? scoreInputStatusClass[resultStatus] : ""
               )}
-              defaultValue={props.userGoalsLeft != null && !Number.isNaN(props.userGoalsLeft) ? props.userGoalsLeft : ""}
+              defaultValue={
+                props.userGoalsLeft != null &&
+                !Number.isNaN(props.userGoalsLeft)
+                  ? props.userGoalsLeft
+                  : ""
+              }
               onChange={handleLeftGoalsChange}
               disabled={props.disabled}
               onBlur={handleLeftInputBlur}
             />
           </div>
-          <div className={styles.rightInput}>
+          <div className="ml-[6px]">
             <input
               type="number"
               min={0}
               max={99}
               inputMode={"decimal"}
               className={className(
-                styles.rightGoals,
-                resultStatus && styles[resultStatus]
+                scoreInputClass,
+                resultStatus ? scoreInputStatusClass[resultStatus] : ""
               )}
-              defaultValue={props.userGoalsRight != null && !Number.isNaN(props.userGoalsRight) ? props.userGoalsRight : ""}
+              defaultValue={
+                props.userGoalsRight != null &&
+                !Number.isNaN(props.userGoalsRight)
+                  ? props.userGoalsRight
+                  : ""
+              }
               onChange={handleRightGoalsChange}
               disabled={props.disabled}
               onBlur={handleRightInputBlur}
             />
           </div>
         </div>
-        <div className={styles.date}>
+        <div className="text-[14px] text-[#767676] whitespace-nowrap cursor-default text-center flex flex-col items-center gap-[3px]">
           {date}
           {props.onEditResult && !props.filled && (
-            <ButtonIcon className={styles.editResultButton} onClick={props.onEditResult}>
+            <ButtonIcon
+              className="w-[18px] h-[18px] min-w-[18px] min-h-[18px] max-w-[18px] max-h-[18px] ml-1 p-0 text-[#767676] hover:bg-black/[0.08] [&_svg]:w-[14px] [&_svg]:h-[14px] [&_path]:stroke-current"
+              onClick={props.onEditResult}
+            >
               <EditIcon />
             </ButtonIcon>
           )}
           {props.filled && (
-            <div className={styles.result}>
-              <span>{i18n.matchResultLabel}:</span>
+            <div className="result flex items-center gap-[3px]">
+              <span className="mr-[5px] ml-[5px]">{i18n.matchResultLabel}:</span>
               <CountryFlag
-                className={styles.countryFlag}
                 code={countryLeft?.code}
                 tiny
                 disabled={(props.goalsLeft || 0) < (props.goalsRight || 0)}
@@ -227,13 +266,15 @@ export function DailyMatchInput(
               {"-"}
               {props.goalsRight}{" "}
               <CountryFlag
-                className={styles.countryFlag}
                 code={countryRight?.code}
                 tiny
                 disabled={(props.goalsLeft || 0) > (props.goalsRight || 0)}
               />
               {props.onEditResult && (
-                <ButtonIcon className={styles.editResultButton} onClick={props.onEditResult}>
+                <ButtonIcon
+                  className="w-[18px] h-[18px] min-w-[18px] min-h-[18px] max-w-[18px] max-h-[18px] ml-1 p-0 text-[#767676] hover:bg-black/[0.08] [&_svg]:w-[14px] [&_svg]:h-[14px] [&_path]:stroke-current"
+                  onClick={props.onEditResult}
+                >
                   <EditIcon />
                 </ButtonIcon>
               )}
@@ -241,16 +282,28 @@ export function DailyMatchInput(
           )}
         </div>
       </div>
-      <div className={styles.rightTeam}>
-        <label data-tooltip={countryRight?.name}>{countryRight?.shortName}</label>
+
+      {/* Right team */}
+      <div className="flex items-center flex-1 min-w-0 gap-[6px] justify-end">
+        <label
+          className="text-[14px] font-bold whitespace-nowrap relative cursor-default group"
+          data-tooltip={countryRight?.name}
+        >
+          {countryRight?.shortName}
+          <span className="absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2 bg-black/85 text-white text-[11px] font-normal whitespace-nowrap px-[7px] py-[3px] rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-10">
+            {countryRight?.name}
+          </span>
+        </label>
         <CountryFlag code={countryRight?.code} />
       </div>
+
+      {/* Timer strip */}
       <div
         ref={counterRef}
         data-show="false"
         data-timer=""
         data-status=""
-        className={styles.dailyMatchTimer}
+        className="daily-match-timer"
       >
         <LockIcon />
       </div>

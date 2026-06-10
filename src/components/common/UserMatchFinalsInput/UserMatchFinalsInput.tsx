@@ -5,7 +5,26 @@ import { className } from "../../../utils/classname";
 import { formatDate } from "../../../utils/date";
 import { getAdminFinalsMatchWinner } from "../../../utils/points";
 import { CountryFlag } from "../CountryFlag";
-import styles from "./UserMatchFinalsInput.module.scss";
+
+// Suppress webkit/firefox number-input spinners (idempotent).
+const INPUT_STYLE_ID = "match-input-no-spinner";
+if (typeof document !== "undefined" && !document.getElementById(INPUT_STYLE_ID)) {
+  const s = document.createElement("style");
+  s.id = INPUT_STYLE_ID;
+  s.textContent = `
+    .match-input-number::-webkit-outer-spin-button,
+    .match-input-number::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .match-input-number[type=number] { -moz-appearance: textfield; }
+  `;
+  document.head.appendChild(s);
+}
+
+/** Map resultStatus → Tailwind bg classes (border kept at default for penaltis) */
+const STATUS_BG: Record<string, string> = {
+  GOALS_MATCH: "bg-correct",
+  WINNER_MATCH: "bg-winner",
+  WRONG: "bg-wrong",
+};
 
 export function getResultStatus(userMatch: {
   goalsLeft: number;
@@ -565,38 +584,60 @@ export function UserMatchFinalsInput(
     return formatDate(props.date, i18n.locale);
   }, [props.date, i18n.locale]);
 
+  const goalStatusCls = resultStatus ? STATUS_BG[resultStatus] ?? "" : "";
+  const penaltisStatusCls = penaltisStatus ? STATUS_BG[penaltisStatus] ?? "" : "";
+
+  // highlight border/bg override: when highlight, inputs and countryInput use teal border + teal bg
+  const highlightInputCls = props.highlight
+    ? "!border-[#4db4b2] !bg-[#4db4b230]"
+    : "";
+  const highlightCountryCls = props.highlight
+    ? "!border-[#4db4b2] !bg-[#4db4b230]"
+    : "";
+
   return (
     <div
       className={className(
         props.className,
-        styles.matchFinalsInput,
-        props.highlight && styles.highlight
+        "flex flex-col relative text-[16px]",
+        "bg-[var(--finals-card-bg,#f6f5f5)] rounded-[8px] p-[6px_8px]",
+        // on mobile/tablet add bottom margin
+        "max-[1024px]:mb-6"
       )}
       style={{ order: props.order }}
     >
-      <div className={styles.countryRow}>
+      {/* Left country row */}
+      <div className="flex relative mb-[6px]">
         <div
           className={className(
-            styles.countryInput,
-            // countryStatus && styles[countryStatus]
+            "py-[5px] px-[2px] w-full h-[34px] flex items-center rounded-[4px]",
+            highlightCountryCls
           )}
         >
           {userCountryLeft?.code && (
             <CountryFlag
-              className={styles.countryFlag}
+              className="[&_img]:w-[28px] [&_img]:h-[20px]"
               code={userCountryLeft?.code}
             />
           )}
-          <label>{userCountryLeft?.name}</label>
+          <label className="ml-[6px] text-[14px] whitespace-nowrap overflow-hidden text-ellipsis">
+            {userCountryLeft?.name}
+          </label>
         </div>
+        {/* Goals input */}
         <input
           type="number"
           inputMode={"decimal"}
           tabIndex={props.order * 4}
           data-testid="finals-match-goals-left"
           className={className(
-            styles.goalsLeft,
-            resultStatus && styles[resultStatus]
+            "match-input-number",
+            "ml-[6px] w-[30px] h-[30px] border border-[#a7a8a9] bg-transparent outline-none text-center text-[#233042] text-[17px] p-[6px]",
+            "disabled:opacity-80",
+            goalStatusCls,
+            highlightInputCls,
+            // when penalties shown: remove right border (joined look) on desktop; on <=1024 text-center
+            showPenaltis && "max-[1024px]:text-center max-[1024px]:border-r-0"
           )}
           defaultValue={props.userGoalsLeft ?? ""}
           onChange={handleGoalsLeftChange}
@@ -605,15 +646,22 @@ export function UserMatchFinalsInput(
         />
         {showPenaltis && (
           <>
-            <div className={styles.penaltisDivider} />
+            {/* Divider: hidden on desktop, visible on <=1024 */}
+            <div className="hidden max-[1024px]:block relative border-l border-[#233042cc] mt-[7px] h-[20px] z-[1] -left-[0.5px]" />
+            {/* Penalties input */}
             <input
               type="number"
               inputMode={"decimal"}
               tabIndex={props.order * 4 + 2}
               data-testid="finals-match-penalties-left"
               className={className(
-                styles.penaltisLeft,
-                penaltisStatus && styles[penaltisStatus]
+                "match-input-number",
+                // desktop: absolutely positioned small corner input
+                "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#a7a8a9] bg-transparent outline-none text-center text-[#233042] disabled:opacity-80",
+                // on <=1024: relative, larger, no left border (joined with goal input)
+                "max-[1024px]:relative max-[1024px]:text-[14px] max-[1024px]:h-[34px] max-[1024px]:w-[34px] max-[1024px]:-ml-[1px] max-[1024px]:border-l-0 max-[1024px]:bottom-auto max-[1024px]:right-auto",
+                penaltisStatusCls,
+                highlightInputCls
               )}
               defaultValue={props.userPenaltisLeft ?? ""}
               onChange={handlePenaltisLeftChange}
@@ -623,29 +671,38 @@ export function UserMatchFinalsInput(
           </>
         )}
       </div>
-      <div className={styles.countryRow}>
+
+      {/* Right country row */}
+      <div className="flex relative mb-[6px]">
         <div
           className={className(
-            styles.countryInput,
-            // countryStatus && styles[countryStatus]
+            "py-[5px] px-[2px] w-full h-[34px] flex items-center rounded-[4px]",
+            highlightCountryCls
           )}
         >
           {userCountryRight?.code && (
             <CountryFlag
-              className={styles.countryFlag}
+              className="[&_img]:w-[28px] [&_img]:h-[20px]"
               code={userCountryRight?.code}
             />
           )}
-          <label>{userCountryRight?.name}</label>
+          <label className="ml-[6px] text-[14px] whitespace-nowrap overflow-hidden text-ellipsis">
+            {userCountryRight?.name}
+          </label>
         </div>
+        {/* Goals input */}
         <input
           type="number"
           inputMode={"decimal"}
           tabIndex={props.order * 4 + 1}
           data-testid="finals-match-goals-right"
           className={className(
-            styles.goalsRight,
-            resultStatus && styles[resultStatus]
+            "match-input-number",
+            "ml-[6px] w-[30px] h-[30px] border border-[#a7a8a9] bg-transparent outline-none text-center text-[#233042] text-[17px] p-[6px]",
+            "disabled:opacity-80",
+            goalStatusCls,
+            highlightInputCls,
+            showPenaltis && "max-[1024px]:text-center max-[1024px]:border-r-0"
           )}
           defaultValue={props.userGoalsRight ?? ""}
           onChange={handleGoalsRightChange}
@@ -654,15 +711,18 @@ export function UserMatchFinalsInput(
         />
         {showPenaltis && (
           <>
-            <div className={styles.penaltisDivider} />
+            <div className="hidden max-[1024px]:block relative border-l border-[#233042cc] mt-[7px] h-[20px] z-[1] -left-[0.5px]" />
             <input
               type="number"
               inputMode={"decimal"}
               tabIndex={props.order * 4 + 3}
               data-testid="finals-match-penalties-right"
               className={className(
-                styles.penaltisRight,
-                penaltisStatus && styles[penaltisStatus]
+                "match-input-number",
+                "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#a7a8a9] bg-transparent outline-none text-center text-[#233042] disabled:opacity-80",
+                "max-[1024px]:relative max-[1024px]:text-[14px] max-[1024px]:h-[34px] max-[1024px]:w-[34px] max-[1024px]:-ml-[1px] max-[1024px]:border-l-0 max-[1024px]:bottom-auto max-[1024px]:right-auto",
+                penaltisStatusCls,
+                highlightInputCls
               )}
               defaultValue={props.userPenaltisRight ?? ""}
               onChange={handlePenaltisRightChange}
@@ -672,38 +732,38 @@ export function UserMatchFinalsInput(
           </>
         )}
       </div>
+
+      {/* Date / result row */}
       {filled ? (
-        <>
-          <div className={styles.date}>
-            <span>Resultado:</span>
-            <CountryFlag
-              className={styles.countryFlag}
-              code={countryLeft?.code}
-              tiny
-              disabled={getAdminFinalsMatchWinner(props) !== countryLeft?.id}
-            />
-            {goalsLeft}
-            {"-"}
-            {goalsRight}{" "}
-            {goalsRight === goalsLeft && (
-              <>
-                {"("}
-                {penaltisLeft}
-                {"-"}
-                {penaltisRight}
-                {")"}
-              </>
-            )}
-            <CountryFlag
-              className={styles.countryFlag}
-              code={countryRight?.code}
-              tiny
-              disabled={getAdminFinalsMatchWinner(props) !== countryRight?.id}
-            />
-          </div>
-        </>
+        <div className="text-[14px] text-[#767676] flex items-center">
+          <span className="mr-[5px]">Resultado:</span>
+          <CountryFlag
+            className="mr-[3px]"
+            code={countryLeft?.code}
+            tiny
+            disabled={getAdminFinalsMatchWinner(props) !== countryLeft?.id}
+          />
+          {goalsLeft}
+          {"-"}
+          {goalsRight}{" "}
+          {goalsRight === goalsLeft && (
+            <>
+              {"("}
+              {penaltisLeft}
+              {"-"}
+              {penaltisRight}
+              {")"}
+            </>
+          )}
+          <CountryFlag
+            className="ml-[3px]"
+            code={countryRight?.code}
+            tiny
+            disabled={getAdminFinalsMatchWinner(props) !== countryRight?.id}
+          />
+        </div>
       ) : (
-        <div className={styles.date}>{date}</div>
+        <div className="text-[14px] text-[#767676] flex items-center">{date}</div>
       )}
     </div>
   );

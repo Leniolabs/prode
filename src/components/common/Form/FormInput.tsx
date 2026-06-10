@@ -1,7 +1,6 @@
 import React from "react";
 import { className } from "../../../utils/classname";
 import { Toggle } from "../Toggle";
-import styles from "./Form.module.scss";
 
 type FormInputProps = {
   className?: string;
@@ -59,16 +58,27 @@ export function FormInput(props: React.PropsWithChildren<FormInputProps>) {
     <div
       className={className(
         props.className,
-        styles.formInput,
-        props.inline && styles.inline
+        "mb-[2.5em] w-full relative",
+        props.inline && "flex flex-wrap"
       )}
     >
       {props.label && (
-        <label className={styles.formInputLabel} htmlFor={inputId}>
+        <label
+          className={className(
+            "text-[18px] mb-[6px] flex text-brand-blue",
+            props.inline && "flex mb-0 items-center"
+          )}
+          htmlFor={inputId}
+        >
           {props.label}
         </label>
       )}
-      <div className={styles.formInputValue}>
+      <div
+        className={className(
+          "w-full",
+          props.inline && "w-max ml-auto flex"
+        )}
+      >
         {props.type === "boolean" && (
           <Toggle
             id={inputId}
@@ -86,6 +96,7 @@ export function FormInput(props: React.PropsWithChildren<FormInputProps>) {
             onChange={handleChange}
             aria-invalid={!!props.error}
             aria-describedby={errorId}
+            className="w-full border border-neutral-gray rounded-input outline-none bg-white text-dark-navy text-[15px] px-[10px] py-[8px]"
           />
         )}
         {props.type === "number" && (
@@ -96,16 +107,23 @@ export function FormInput(props: React.PropsWithChildren<FormInputProps>) {
             onChange={handleChange}
             aria-invalid={!!props.error}
             aria-describedby={errorId}
+            className="border border-neutral-gray rounded-input outline-none bg-white text-dark-navy text-[15px] px-[10px] py-[8px] max-w-[60px] text-right"
           />
         )}
         {props.error && (
-          <div id={errorId} role="alert" className={styles.formInputError}>
+          <div
+            id={errorId}
+            role="alert"
+            className="text-red-600 absolute top-full text-[12px]"
+          >
             {props.error}
           </div>
         )}
       </div>
       {props.legend && (
-        <div className={styles.formInputLegend}>{props.legend}</div>
+        <div className="w-4/5 flex-[100%] text-[14px] text-form-legend lg:absolute lg:top-[90%]">
+          {props.legend}
+        </div>
       )}
     </div>
   );
