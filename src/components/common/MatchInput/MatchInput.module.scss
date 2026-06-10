@@ -47,6 +47,16 @@
     justify-content: flex-end;
   }
 
+  // The hover tooltip (full country name) is an absolutely-positioned ::after
+  // that spills past the viewport edge on the outermost labels, adding phantom
+  // horizontal scroll. It's hover-only and useless on touch — drop it there.
+  @media (hover: none), (max-width: 640px) {
+    .leftTeam label::after,
+    .rightTeam label::after {
+      content: none;
+    }
+  }
+
   .centerContainer {
     flex-shrink: 0;
     display: flex;

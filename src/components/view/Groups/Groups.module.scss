@@ -3,7 +3,7 @@
   width: 100%;
 
   gap: 12px;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: max-content max-content max-content;
 
   grid-template-areas:
@@ -12,7 +12,7 @@
     "sidebar";
 
   @media screen and (min-width: 1300px) {
-    grid-template-columns: 1fr minmax(420px, 440px);
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 440px);
     align-items: start;
 
     grid-template-areas:
@@ -27,7 +27,7 @@
   &.admin {
     width: 100%;
 
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "matches-header"
       "matches";
@@ -42,6 +42,13 @@
   gap: 12px;
   align-items: start;
   align-content: start;
+
+  // Grid items default to min-width:auto (min-content), which lets a wide child
+  // (MatchInput) force the track — and the whole page — past 100vw. Allow the
+  // cards to shrink to the track instead.
+  & > * {
+    min-width: 0;
+  }
 }
 
 .groupsRankingContainer {

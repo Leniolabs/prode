@@ -12,6 +12,7 @@ import {
   FormSectionTitle,
 } from "../../common/Form";
 import { Modal } from "../../common/Modal";
+import styles from "./EditRoomModal.module.scss";
 
 interface EditRoomModalProps {
   room: Pick<
@@ -70,9 +71,10 @@ export function EditRoomModal(props: EditRoomModalProps) {
     >
       <Form>
         <FormSection>
-          <FormSectionTitle>{i18n.createGeneralTitle}</FormSectionTitle>
+          <FormSectionTitle className={styles.sectionTitle}>{i18n.createGeneralTitle}</FormSectionTitle>
           <FormSectionContent>
             <FormInput
+              className={styles.compactInput}
               label={i18n.createNameLabel}
               type="string"
               inline
@@ -80,6 +82,7 @@ export function EditRoomModal(props: EditRoomModalProps) {
               onChange={handleChange("name")}
             />
             <FormInput
+              className={styles.compactInput}
               label={i18n.createPasswordLabel}
               legend={i18n.createPasswordLegend}
               type="string"
@@ -88,6 +91,7 @@ export function EditRoomModal(props: EditRoomModalProps) {
               onChange={handleChange("password")}
             />
             <FormInput
+              className={styles.compactInput}
               label={i18n.createDomainLabel}
               legend={i18n.createDomainLegend}
               type="string"
@@ -97,6 +101,7 @@ export function EditRoomModal(props: EditRoomModalProps) {
               onChange={handleChange("emailDomain")}
             />
             <FormInput
+              className={styles.compactInput}
               label={i18n.createPublicLabel}
               legend={i18n.createPublicLegend}
               type="boolean"
@@ -105,9 +110,10 @@ export function EditRoomModal(props: EditRoomModalProps) {
               onChange={handleChange("public")}
             />
           </FormSectionContent>
-          <FormSectionTitle>{i18n.createPointsTitle}</FormSectionTitle>
+          <FormSectionTitle className={styles.sectionTitle}>{i18n.createPointsTitle}</FormSectionTitle>
           <FormSectionContent>
             <FormInput
+              className={styles.compactInput}
               label={i18n.createPointsResultLabel}
               legend={i18n.createPointsResultLegend}
               type="number"
@@ -116,6 +122,7 @@ export function EditRoomModal(props: EditRoomModalProps) {
               onChange={handleChange("pointsWinner")}
             />
             <FormInput
+              className={styles.compactInput}
               label={i18n.createPointsGoalsLabel}
               legend={i18n.createPointsGoalsLegend}
               type="number"
@@ -124,6 +131,7 @@ export function EditRoomModal(props: EditRoomModalProps) {
               onChange={handleChange("pointsGoals")}
             />
             <FormInput
+              className={styles.compactInput}
               label={i18n.createPointsPenaltisLabel}
               legend={i18n.createPointsPenaltisLegend}
               type="number"

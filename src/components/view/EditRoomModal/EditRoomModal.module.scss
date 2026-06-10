@@ -1,0 +1,15 @@
+@use 'styles/tokens' as t;
+
+// Tighter row spacing inside the modal — default FormInput margin-bottom (2.5em) is
+// too generous in this compact overlay. Passed as className to each FormInput.
+.compactInput {
+  margin-bottom: 0.8em !important;
+}
+
+// Section header: stronger background + white text so "General" / "Points"
+// read clearly against the modal body. Passed as className to each FormSectionTitle.
+.sectionTitle {
+  background: t.$color-brand-blue !important;
+  color: white !important;
+  font-weight: 700;
+}
