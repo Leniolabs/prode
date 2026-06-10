@@ -31,12 +31,23 @@
   }
 }
 
+// ContainerHeader applies a mobile `-mt-8` (negative top margin) so a single
+// header tucks under the room bar. The view page stacks several headers, so
+// that negative margin made them overlap — cancel it on mobile here.
 .viewTitleHeader {
   margin-bottom: 9px !important;
+
+  @media screen and (max-width: 1024px) {
+    margin-top: 0 !important;
+  }
 }
 
 .viewPageHeader {
   margin-bottom: 12px !important;
+
+  @media screen and (max-width: 1024px) {
+    margin-top: 0 !important;
+  }
 }
 
 .viewAdminContainer {
