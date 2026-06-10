@@ -8,7 +8,6 @@ import { HeaderDivider } from "../HeaderDivider";
 import { HeaderIndicator } from "../HeaderIndicator";
 import { HeaderMenu } from "../HeaderMenu";
 import { WelcomeBar } from "../WelcomeBar";
-import styles from "./RoomWelcomeBar.module.scss";
 
 interface RoomWelcomeBarProps {
   id?: string;
@@ -58,7 +57,7 @@ export function RoomWelcomeBar(
   // from WelcomeBar is a /rooms concept and must never appear here, so we pass
   // an explicit subtitle (an empty fragment when there is no room name).
   const subtitle = props.name ? (
-    <span className={styles.roomName}>
+    <span className="inline-flex items-center gap-2 [&_span]:font-bold [&_div]:h-[26px] [&_div]:max-h-[26px] [&_div]:w-[26px] [&_div]:max-w-[26px] [&_div_svg]:h-4 [&_div_svg]:w-4">
       {i18n.headerRoom}
       <span>{props.name}</span>
       {props.room && props.roomAdmin ? (
@@ -74,7 +73,7 @@ export function RoomWelcomeBar(
   return (
     <>
       <WelcomeBar title={i18n.headerTitle} subtitle={subtitle}>
-        <div className={styles.controls}>
+        <div className="flex flex-wrap items-center gap-3 [&_a]:h-auto [&_a]:px-[14px] [&_a]:py-1.5 [&_a]:text-sm [&_button]:h-auto [&_button]:px-[14px] [&_button]:py-1.5 [&_button]:text-sm [&_div:has(>img)]:!h-[46px] [&_div:has(>img)]:!w-[46px] [&_div:has(>img)_img]:!h-[46px] [&_div:has(>img)_img]:!w-[46px]">
           {props.children}
           {hasIndicators && (
             <>

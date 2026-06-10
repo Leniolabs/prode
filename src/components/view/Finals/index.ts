@@ -1,5 +1,3 @@
-import styles from "./Finals.module.scss";
-
 export { FinalsContainer } from "./FinalsContainer";
 export { BracketsContainer } from "./BracketsContainer";
 export { BracketIcon } from "./BracketIcon";
@@ -8,8 +6,10 @@ export { BracketRound } from "./BracketRound";
 export { FinalsBracket } from "./FinalsBracket";
 export { FinalsRankingContainer } from "./FinalsRankingContainer";
 
-const bracketOffsetHalf = styles["bracketOffsetHalf"];
-const bracketOffsetQuarter = styles["bracketOffsetQuarter"];
+// Bracket horizontal offsets (margin-left). Used by admin/view finals pages to
+// nudge the lone semifinal/final match into the centered tree position.
+const bracketOffsetHalf = "ml-[50%]";
+const bracketOffsetQuarter = "ml-[25%]";
 
 export { bracketOffsetHalf, bracketOffsetQuarter };
 export { BracketsMobileContainer } from "./BracketsMobileContainer";

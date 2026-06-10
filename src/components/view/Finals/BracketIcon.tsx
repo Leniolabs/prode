@@ -1,5 +1,3 @@
-import styles from "./Finals.module.scss";
-
 interface BracketIconProps {
   className?: string;
   order?: number;

@@ -6,7 +6,6 @@ import { Button } from "../../Button";
 import { Modal } from "../../Modal";
 import { Toggle } from "../../Toggle";
 import { UserImage } from "../../UserImage";
-import styles from "./HeaderModal.module.scss";
 
 interface HeaderModalProps {
   className?: string;
@@ -83,16 +82,16 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
     <Modal
       title={i18n.profileTitle}
       onClose={props.onCancel}
-      headerClassName={styles.headerModalHeader}
+      headerClassName="bg-[#00192c]"
     >
-      <div className={styles.headerModalProfile}>
+      <div className="flex bg-[#edededcc] p-6">
         <UserImage
           editable
-          className={styles.headerModalUserImage}
+          className="[&_img]:border-2 [&_img]:border-solid [&_img]:border-white"
           image={image || props.image}
           onChange={setImage}
         />
-        <div className={styles.headerModalInfo}>
+        <div className="ml-3 flex flex-col overflow-hidden text-[18px] font-normal [&>div]:flex [&>div]:max-w-full [&>div]:items-center [&>div]:whitespace-nowrap [&_label]:mr-1.5 [&_label]:text-[20px] [&_label]:font-semibold [&_label]:text-dark-navy [&_svg]:mr-1.5">
           {props.position && (
             <div>
               <label>{i18n.profilePositionLabel}</label>
@@ -110,70 +109,82 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
               {props.position}
             </div>
           )}
-          <div className={styles.headerModalInfoLine}>
+          <div className="relative flex">
             <label>{i18n.profileMailLabel}</label>
             {props.email}
           </div>
-          <div className={styles.headerModalInfoLine}>
+          <div className="relative flex">
             <label>{i18n.profileNameLabel}</label>
             <input
               data-testid="profile-name-input"
+              className="w-full max-w-full border border-solid border-neutral-gray bg-white text-[16px] text-dark-navy shadow-none outline-none"
               value={name}
               onChange={handleNameChange}
             />
           </div>
         </div>
       </div>
-      <div className={styles.headerModalSettings}>
-        <div className={styles.headerModalSettingsTitle}>
+      <div className="p-6">
+        <div className="mb-6 text-2xl font-bold">
           {i18n.profileSettingsLabel}
         </div>
-        <div className={styles.headerModalSetting}>
-          <div className={styles.headerModalSettingText}>
-            <label>{i18n.profilePublicLabel}</label>
-            <p>Si aparecerá en la lista de Prodes o no</p>
+        <div className="mb-3 flex w-full items-center">
+          <div className="mr-auto">
+            <label className="block font-sans text-[16px] font-normal leading-[1.2] text-[#00192c]">
+              {i18n.profilePublicLabel}
+            </label>
+            <p className="mb-0 mt-1 font-sans text-[14px] font-normal leading-[1.2] text-[#717171]">
+              Si aparecerá en la lista de Prodes o no
+            </p>
           </div>
           <Toggle
-            className={styles.headerModalToggle}
+            className="ml-auto h-6 min-h-6 w-11 min-w-11 flex-[0_0_44px] p-0.5"
             ariaLabel={i18n.profilePublicLabel}
             value={prodePublic}
             onChange={handleProdePublicChange}
           />
         </div>
-        <div className={styles.headerModalSetting}>
-          <div className={styles.headerModalSettingText}>
-            <label>{i18n.profileLanguageLabel}</label>
+        <div className="mb-3 flex w-full items-center">
+          <div className="mr-auto">
+            <label className="block font-sans text-[16px] font-normal leading-[1.2] text-[#00192c]">
+              {i18n.profileLanguageLabel}
+            </label>
           </div>
-          <div className={styles.headerModalLocaleToggle}>
+          <div className="ml-auto flex select-none items-center">
             {SUPPORTED_LOCALES.map((locale, i, arr) => (
               <React.Fragment key={locale}>
                 <a
                   role="button"
                   className={className(
-                    styles.headerModalLocaleOption,
-                    locale === currentLocale ? styles.headerModalLocaleOptionActive : "",
+                    "cursor-pointer rounded-sm px-1.5 py-0.5 font-sans text-[14px] font-normal text-dark-navy hover:bg-[rgba(0,25,44,0.08)]",
+                    locale === currentLocale
+                      ? "bg-[rgba(0,25,44,0.12)] font-semibold"
+                      : "",
                   )}
                   onClick={() => setLocale(locale)}
                 >
                   {locale.toUpperCase()}
                 </a>
                 {i < arr.length - 1 && (
-                  <span className={styles.headerModalLocaleDivider}>|</span>
+                  <span className="px-0.5 text-[14px] text-dark-navy">|</span>
                 )}
               </React.Fragment>
             ))}
           </div>
         </div>
       </div>
-      <div className={styles.headerModalTitle}>
+      <div className="flex justify-between p-6 pt-0">
         <Button
           variant="danger"
-          className={styles.headerModalActionButton}
+          className="!border-none !px-5 !py-2.5 !text-[20px]"
           onClick={handleLogout}
         >
           {i18n.buttonLabelExit}
         </Button>
-        <Button className={styles.headerModalActionButton} onClick={handleSave}>
+        <Button
+          className="!border-none !px-5 !py-2.5 !text-[20px]"
+          onClick={handleSave}
+        >
           {i18n.buttonLabelSave}
         </Button>
       </div>

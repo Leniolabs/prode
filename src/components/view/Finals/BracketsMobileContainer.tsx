@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../utils/classname";
-import styles from "./Finals.module.scss";
 
 interface BracketsMobileContainerProps {
   className?: string;
@@ -12,7 +11,11 @@ export function BracketsMobileContainer(
 ) {
   return (
     <section
-      className={className(props.className, styles.bracketsMobileContainer)}
+      className={className(
+        props.className,
+        // Mobile-only bracket list (hidden >= 1024px; desktop uses BracketsContainer).
+        "bg-warning-bg w-full my-3 px-3 min-[1024px]:hidden"
+      )}
       style={{ gridArea: props.gridArea }}
     >
       {props.children}

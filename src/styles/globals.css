@@ -59,6 +59,68 @@
 }
 
 /*
+ * Groups page named-area grid (Migration H, Wave D).
+ * grid-template-areas with named areas + a responsive breakpoint cannot be
+ * expressed cleanly as inline Tailwind utilities, so the full template lives
+ * here. The minmax(0, ...) tracks (NOT plain 1fr) are part of the overflow fix
+ * that keeps the page within 100vw — do not replace with 1fr.
+ */
+@utility groups-grid {
+  display: grid;
+  width: 100%;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: max-content max-content max-content;
+  grid-template-areas: "matches-header" "matches" "sidebar";
+
+  @media screen and (min-width: 1300px) {
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 440px);
+    align-items: start;
+    grid-template-areas: "matches-header sidebar" "matches sidebar";
+  }
+}
+
+@utility groups-grid-admin {
+  display: grid;
+  width: 100%;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: max-content max-content max-content;
+  grid-template-areas: "matches-header" "matches";
+}
+
+/*
+ * Finals page named-area grid (Migration H, Wave D).
+ * Same named-area + breakpoint constraint as groups-grid. Admin renders a
+ * single matches column.
+ */
+@utility finals-grid {
+  display: grid;
+  margin-bottom: 12px;
+  width: 100%;
+  gap: 0px 12px;
+  grid-template-columns: 1fr;
+  grid-template-rows: max-content max-content max-content max-content;
+  grid-template-areas: "matches-header" "following" "matches" "ranking";
+
+  @media screen and (min-width: 1300px) {
+    margin-right: 12px;
+    grid-template-columns: 70% 1fr;
+    grid-template-areas: "matches-header following" "matches following" "matches ranking" "matches -";
+  }
+}
+
+@utility finals-grid-admin {
+  display: grid;
+  margin-bottom: 12px;
+  width: 100%;
+  gap: 0px 12px;
+  grid-template-rows: max-content max-content max-content max-content;
+  grid-template-columns: 1fr;
+  grid-template-areas: "matches-header" "matches";
+}
+
+/*
  * Animation keyframes used by LoadingOverlay (Migration H).
  * spin-ease: same duration/iteration as Tailwind's animate-spin but with
  * ease-in-out timing to match the original SCSS behaviour.

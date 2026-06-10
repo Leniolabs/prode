@@ -1,9 +1,11 @@
-import styles from "./Groups.module.scss";
 import { Card, CardContent } from "@/layout";
 
 export function LeniCard() {
   return (
-    <Card className={styles.leniCard} title=" ">
+    <Card
+      className="max-[1024px]:hidden [&>*:nth-child(2)]:flex [&_svg]:min-h-[312px] [&_svg]:max-h-[312px] [&_svg]:m-auto [&_svg]:overflow-visible"
+      title=" "
+    >
       <CardContent>
         <svg
           viewBox="122 0 400 361"

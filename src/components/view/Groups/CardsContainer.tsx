@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../utils/classname";
-import styles from "./Groups.module.scss";
 
 interface CardsContainerProps {
   className?: string;
@@ -12,7 +11,13 @@ export function CardsContainer(
 ) {
   return (
     <section
-      className={className(styles.cardsContainer, props.className)}
+      className={className(
+        // Grid items default to min-width:auto (min-content), which lets a wide
+        // child (MatchInput) force the track — and the whole page — past 100vw.
+        // [&>*]:min-w-0 allows the cards to shrink to the track instead.
+        "grid w-full grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-3 items-start content-start [&>*]:min-w-0",
+        props.className
+      )}
       style={{ gridArea: props.gridArea }}
     >
       {props.children}

@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../utils/classname";
-import styles from "./Groups.module.scss";
 
 interface GroupsContainerProps {
   className?: string;
@@ -11,13 +10,14 @@ interface GroupsContainerProps {
 export function GroupsContainer(
   props: React.PropsWithChildren<GroupsContainerProps>
 ) {
+  // The named-area grid (incl. the minmax(0, 1fr) overflow fix and the
+  // 1300px breakpoint) lives in the `groups-grid` / `groups-grid-admin`
+  // utilities in globals.css. Admin renders a single matches column.
   return (
     <section
       className={className(
         props.className,
-        styles.groupsContainer,
-        props.full && styles.full,
-        props.admin && styles.admin,
+        props.admin ? "groups-grid-admin" : "groups-grid"
       )}
     >
       {props.children}

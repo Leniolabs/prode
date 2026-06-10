@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../utils/classname";
-import bracketStyles from "./Finals.module.scss";
 
 interface BracketTitleProps {
   className?: string;
@@ -15,8 +14,8 @@ export function BracketTitle(
     <section
       className={className(
         props.className,
-        bracketStyles.bracketTitle,
-        props.full && bracketStyles.full
+        "flex font-bold text-base items-center mb-[6px]",
+        props.full && "min-w-[calc(100%-12px)]"
       )}
       style={{ order: props.order }}
     >
