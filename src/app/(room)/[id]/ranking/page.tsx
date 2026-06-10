@@ -23,6 +23,7 @@ import { CloseIcon, CrownIcon, ExitIcon } from "@/components/common/Icons";
 import axios from "axios";
 import { useLocalizedText } from "@/locale";
 import { useQuery } from "@tanstack/react-query";
+import styles from "./page.module.scss";
 
 interface RankingData {
   id: string;
@@ -129,6 +130,7 @@ export default function RankingPage() {
       <Container full direction="COL">
         <ContainerHeader
           sticky
+          className={styles.rankingHeader}
           title={
             <>
               {i18n.rankingTitle}

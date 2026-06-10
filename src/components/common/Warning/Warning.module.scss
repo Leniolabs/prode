@@ -3,14 +3,14 @@
 .warning {
   background: t.$color-warning-bg;
   color: t.$color-warning-text;
-  margin: 24px auto 12px auto;
+  margin: 0;
   display: flex;
   padding: 12px;
 }
 
 .offset {
   @media screen and (max-width: 1024px) {
-    margin-bottom: 48px;
+    margin: 0;
   }
 }
 
