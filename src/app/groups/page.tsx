@@ -305,7 +305,7 @@ export default function GroupsPage() {
                   : i18n.upcomingMatchesLabel}
               </>
             }
-            gridArea="following"
+            gridArea="sidebar"
           >
             <CardContent>
               {(todayMatches || nextMatches)?.length ? (

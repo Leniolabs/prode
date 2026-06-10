@@ -50,6 +50,7 @@
   .bar {
     padding: 12px 14px;
     align-items: flex-start;
+    flex-wrap: wrap;
   }
 
   .trophy {
@@ -62,5 +63,13 @@
 
   .subtitle {
     font-size: 13px;
+  }
+
+  .actions {
+    // On narrow screens the nav row overflows because margin-left:auto pushes
+    // it off-canvas. Instead, break it onto its own full-width row so nothing
+    // goes beyond the viewport.
+    width: 100%;
+    margin-left: 0;
   }
 }

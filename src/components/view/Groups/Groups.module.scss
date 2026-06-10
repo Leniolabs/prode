@@ -1,6 +1,5 @@
 .groupsContainer {
   display: grid;
-  flex-wrap: wrap;
   width: 100%;
 
   gap: 12px;
@@ -13,14 +12,12 @@
     "sidebar";
 
   @media screen and (min-width: 1300px) {
-    margin-right: 12px;
-
-    grid-template-columns: minmax(0, 60%) auto minmax(420px, 1fr);
+    grid-template-columns: 1fr minmax(420px, 440px);
     align-items: start;
 
     grid-template-areas:
-      "matches-header matches-header sidebar"
-      "matches matches sidebar";
+      "matches-header sidebar"
+      "matches sidebar";
   }
 
   &.full {
@@ -38,50 +35,19 @@
 }
 
 .cardsContainer {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   width: 100%;
 
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
   align-items: start;
-  align-content: baseline;
-
-  @media screen and (min-width: 1024px) {
-    & > * {
-      flex: calc(33.3% - calc(24px / 3));
-      max-width: calc(33.3% - calc(24px / 3));
-      min-width: calc(33.3% - calc(24px / 3));
-      margin-left: 12px;
-      margin-bottom: 12px;
-
-      &:nth-child(3n + 1) {
-        margin-left: 0;
-      }
-    }
-  }
-
-  @media screen and (min-width: 800px) and (max-width: 1024px) {
-    & > * {
-      flex: calc(50% - calc(12px / 2));
-      max-width: calc(50% - calc(12px / 2));
-      min-width: calc(50% - calc(12px / 2));
-      margin-left: 12px;
-      margin-bottom: 12px;
-
-      &:nth-child(2n + 1) {
-        margin-left: 0;
-      }
-    }
-  }
+  align-content: start;
 }
 
 .groupsRankingContainer {
-  min-width: 30%;
-  max-width: 30%;
-
-  @media screen and (max-width: 1300px) {
-    min-width: 100%;
-    max-width: 100%;
-  }
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 
   & > section > div:nth-child(2) {
     display: flex;
