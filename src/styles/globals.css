@@ -71,7 +71,9 @@
   gap: 12px;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: max-content max-content max-content;
-  grid-template-areas: "matches-header" "matches" "sidebar";
+  /* Mobile: surface the Today's/Upcoming Matches + ranking sidebar BEFORE the
+     group cards so the actionable matches aren't buried below all 12 groups. */
+  grid-template-areas: "matches-header" "sidebar" "matches";
 
   @media screen and (min-width: 1300px) {
     grid-template-columns: minmax(0, 1fr) minmax(420px, 440px);
