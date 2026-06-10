@@ -13,7 +13,7 @@ export function Container(props: React.PropsWithChildren<ContainerProps>) {
   return (
     <section
       className={className(
-        "flex flex-wrap p-0 min-[600px]:p-4 w-[90%] min-w-[80%] mx-auto mt-0 [&>*]:mx-auto",
+        "flex flex-wrap flex-1 p-0 min-[600px]:p-4 w-[90%] min-w-[80%] mx-auto mt-0 [&>*]:mx-auto",
         props.direction === "COL" && "flex-col",
         props.full && "min-w-full w-full",
         props.noPadding && "p-0 min-[600px]:p-0",
