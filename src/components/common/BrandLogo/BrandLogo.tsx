@@ -1,5 +1,4 @@
 import Image from "next/image";
-import styles from "./BrandLogo.module.scss";
 
 export function BrandLogo() {
   return (
@@ -8,7 +7,7 @@ export function BrandLogo() {
       alt="Improving"
       width={120}
       height={40}
-      className={styles.brandLogo}
+      className="h-10 w-auto block"
     />
   );
 }

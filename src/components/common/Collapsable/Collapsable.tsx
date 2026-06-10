@@ -1,7 +1,6 @@
 import React from "react";
 import { className } from "../../../utils/classname";
 import { ChevronIcon } from "../Icons";
-import styles from "./Collapsable.module.scss";
 
 interface CollapsableProps {
   className?: string;
@@ -16,20 +15,19 @@ export function Collapsable(props: React.PropsWithChildren<CollapsableProps>) {
   }, []);
 
   return (
-    <div
-      className={className(
-        styles.collapsable,
-        open && styles.open,
-        props.className
-      )}
-    >
-      <div className={styles.collapsableTitle} onClick={handleToggle}>
+    <div className={className("collapsable-item", props.className)}>
+      <div
+        className="cursor-pointer flex text-[18px] font-bold h-[44px] items-center [.collapsable-item+.collapsable-item_&]:border-t [.collapsable-item+.collapsable-item_&]:border-[#1f274050]"
+        onClick={handleToggle}
+      >
         {props.title}
-        <div>
+        <div className="flex ml-auto items-center">
           <ChevronIcon orientation={open ? "DOWN" : "RIGHT"} />
         </div>
       </div>
-      <div className={styles.collapsableContent}>{props.children}</div>
+      <div className={className("mb-3", open ? "block" : "hidden")}>
+        {props.children}
+      </div>
     </div>
   );
 }

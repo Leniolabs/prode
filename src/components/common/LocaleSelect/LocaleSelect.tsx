@@ -3,7 +3,6 @@
 import { useLocale, useSetLocale } from "@/locale";
 import { SUPPORTED_LOCALES } from "@/locale/shared";
 import { className } from "@/utils/classname";
-import styles from "./LocaleSelect.module.scss";
 
 interface LocaleSelectProps {}
 
@@ -14,17 +13,20 @@ export function LocaleSelect(props: LocaleSelectProps) {
   const setLocale = useSetLocale();
 
   return (
-    <div className={styles.localeSelect}>
+    <div className="flex text-white select-none">
       {SUPPORTED_LOCALES.map((locale, i, arr) => (
         <div key={locale}>
           <a
             role="button"
-            className={className(locale === current ? styles.active : "")}
+            className={className(
+              "text-white p-1 cursor-pointer",
+              locale === current ? "bg-[#00000033]" : "hover:bg-[#00000033]"
+            )}
             onClick={() => setLocale(locale)}
           >
             {locale.toLocaleUpperCase()}
           </a>
-          <span>{arr.length > i + 1 ? "|" : ""}</span>
+          <span className="text-white p-1">{arr.length > i + 1 ? "|" : ""}</span>
         </div>
       ))}
     </div>

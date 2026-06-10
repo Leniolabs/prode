@@ -1,8 +1,9 @@
+"use client";
+
 import React from "react";
+import * as Select from "@radix-ui/react-select";
 import { useCountries } from "../../../hooks";
-import { className } from "../../../utils/classname";
 import { CountryFlag } from "../CountryFlag";
-import styles from "./CountrySelect.module.scss";
 
 interface CountrySelectProps {
   id?: string;
@@ -12,52 +13,71 @@ interface CountrySelectProps {
 export function CountrySelect(props: CountrySelectProps) {
   const countries = useCountries();
 
-  const [open, setOpen] = React.useState(false);
+  const handleValueChange = React.useCallback(
+    (value: string) => {
+      props.onChange?.(value === "__none__" ? undefined : value);
+    },
+    [props.onChange]
+  );
 
   const selectedCountry = React.useMemo(() => {
     return countries?.find((row) => row.id === props.id);
   }, [countries, props.id]);
 
-  const handleClick = React.useCallback(() => {
-    setOpen((open) => !open);
-  }, []);
-
-  const handleCountryClick = React.useCallback(
-    (id?: string) => {
-      return (e: React.MouseEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        props.onChange?.(id);
-        setOpen(false);
-      };
-    },
-    [props.onChange]
-  );
+  const currentValue = props.id ?? "__none__";
 
   return (
-    <div
-      className={className(styles.countrySelect, open && styles.open)}
-      onClick={handleClick}
-    >
-      <div className={styles.countryLabel}>
-        <CountryFlag code={selectedCountry?.code} />
-        <label>{selectedCountry?.name}</label>
-      </div>
-      <div className={styles.countrySelectDropdown}>
-        {[{ code: null, id: undefined, name: "None" }, ...(countries || [])].map(
-          (country) => (
-            <div
-              key={country.id}
-              className={styles.countryLabel}
-              onClick={handleCountryClick(country.id)}
+    <Select.Root value={currentValue} onValueChange={handleValueChange}>
+      <Select.Trigger
+        className="cursor-pointer w-full h-[34px] flex items-center gap-1 px-[2px] border border-[#233042] rounded-input bg-card-body text-dark-navy text-sm outline-none focus:ring-1 focus:ring-[#233042] data-[placeholder]:text-neutral-gray"
+      >
+        <Select.Value asChild>
+          <span className="flex items-center gap-1 overflow-hidden">
+            {selectedCountry ? (
+              <>
+                <CountryFlag code={selectedCountry.code} />
+                <span className="truncate">{selectedCountry.name}</span>
+              </>
+            ) : (
+              <span className="ml-1 text-neutral-gray">None</span>
+            )}
+          </span>
+        </Select.Value>
+      </Select.Trigger>
+
+      <Select.Portal>
+        <Select.Content
+          position="popper"
+          sideOffset={0}
+          className="z-[100000] w-[var(--radix-select-trigger-width)] max-h-[300px] overflow-y-auto bg-[#f6f5f5cc] rounded-card shadow-card border border-neutral-gray/20"
+        >
+          <Select.Viewport>
+            <Select.Item
+              value="__none__"
+              className="flex items-center gap-1 px-[2px] py-[2px] cursor-pointer text-sm text-dark-navy outline-none data-[highlighted]:bg-[rgba(0,0,0,0.04)]"
             >
-              {country.code && <CountryFlag code={country.code} />}
-              <label>{country.name}</label>
-            </div>
-          )
-        )}
-      </div>
-    </div>
+              <Select.ItemText>
+                <span className="ml-1">None</span>
+              </Select.ItemText>
+            </Select.Item>
+
+            {(countries ?? []).map((country) => (
+              <Select.Item
+                key={country.id}
+                value={country.id}
+                className="flex items-center gap-1 px-[2px] py-[2px] cursor-pointer text-sm text-dark-navy outline-none data-[highlighted]:bg-[rgba(0,0,0,0.04)]"
+              >
+                <Select.ItemText>
+                  <span className="flex items-center gap-1">
+                    <CountryFlag code={country.code} />
+                    <span>{country.name}</span>
+                  </span>
+                </Select.ItemText>
+              </Select.Item>
+            ))}
+          </Select.Viewport>
+        </Select.Content>
+      </Select.Portal>
+    </Select.Root>
   );
 }

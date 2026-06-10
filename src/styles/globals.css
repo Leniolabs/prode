@@ -1,3 +1,78 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — canonical mirror of src/styles/_tokens.scss.
+ * Mapped into Tailwind's theme so every token becomes a utility class.
+ * DO NOT change any value here without changing _tokens.scss (and vice versa)
+ * until Migration H fully retires the SCSS tokens.
+ */
+@theme {
+  /* Brand colors → bg-*, text-*, border-* */
+  --color-brand-blue: #005596;
+  --color-brand-light-blue: #4597D3;
+  --color-brand-green: #5BC2A7;
+  --color-accent-yellow: #FFCA30;
+  --color-accent-cta: #F5BB41;
+  --color-dark-navy: #00192C;
+  --color-neutral-gray: #A7A8A9;
+
+  /* Surface / component colors */
+  --color-card-body: #ffffff;
+  --color-table-header-bg: #E8F4F1;
+  --color-section-title-bg: #E8F4F1;
+  --color-warning-bg: #f6f5f5;
+  --color-container-header-secondary: #343f52;
+  --color-modal-overlay: rgba(0, 25, 44, 0.5);
+  --color-form-legend: rgba(0, 25, 44, 0.6);
+
+  /* Gameplay semantics — DO NOT CHANGE these values, ever */
+  --color-correct: #309e3a;
+  --color-winner: #0093dd;
+  --color-wrong: #f9aa51;
+
+  /* Radii → rounded-* */
+  --radius-card: 8px;
+  --radius-input: 8px;
+  --radius-button: 8px;
+
+  /* Shadow → shadow-card */
+  --shadow-card: 0px 9px 28px rgba(0, 0, 0, 0.05);
+
+  /* Font → font-sans (Poppins via next/font CSS var) */
+  --font-sans: var(--font-poppins), sans-serif;
+}
+
+/*
+ * Gradient / translucent backgrounds — cannot be single-color tokens.
+ * Tailwind v4 custom utilities give conversion agents clean class names.
+ */
+@utility bg-app-gradient {
+  background-image: linear-gradient(180deg, #005596 0%, #4597D3 100%);
+}
+
+@utility bg-footer-gradient {
+  background-image: linear-gradient(90deg, #5BC2A7 0%, #4597D3 100%);
+}
+
+@utility bg-header-translucent {
+  background-color: #005596CC;
+}
+
+/*
+ * Animation keyframes used by LoadingOverlay (Migration H).
+ * spin-ease: same duration/iteration as Tailwind's animate-spin but with
+ * ease-in-out timing to match the original SCSS behaviour.
+ */
+@keyframes spin-ease {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@utility animate-spin-ease {
+  animation: spin-ease 1s ease-in-out infinite;
+}
+
+/* Global resets (carried over unchanged) */
 html,
 body {
   padding: 0;

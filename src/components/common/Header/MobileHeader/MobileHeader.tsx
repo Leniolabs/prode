@@ -10,7 +10,6 @@ import { HeaderIndicator } from "../HeaderIndicator";
 import { HeaderMenu } from "../HeaderMenu";
 import { HeaderMessage } from "../HeaderMessage";
 import { LeniBall } from "../LeniBall";
-import styles from "./MobileHeader.module.scss";
 import { MobileHeaderMenu } from "./MobileHeaderMenu";
 
 interface MobileHeaderProps {
@@ -69,15 +68,16 @@ export function MobileHeader(
   }, []);
 
   return (
-    <Header className={styles.mobileHeader}>
+    <Header className="flex p-3 lg:hidden">
       <div
-        className={styles.mobileHeaderMenuToggle}
+        className="mr-auto cursor-pointer"
         onClick={handleToggleShowMobileMenu}
       >
         <ToggleIcon />
       </div>
       {showMobileMenu && (
         <MobileHeaderMenu
+          open={showMobileMenu}
           id={props.id}
           finalsStarted={props.finalsStarted || false}
           title={i18n.headerTitle}

@@ -1,6 +1,6 @@
-import React from "react";
-import { className } from "../../../utils/classname";
-import styles from "./Toggle.module.scss";
+"use client";
+
+import * as Switch from "@radix-ui/react-switch";
 
 interface ToggleProps {
   id?: string;
@@ -12,28 +12,36 @@ interface ToggleProps {
 }
 
 export function Toggle(props: React.PropsWithChildren<ToggleProps>) {
-  const { onChange, value } = props;
-  const handleClick = React.useCallback(() => {
-    onChange?.(!value);
-  }, [onChange, value]);
-
   return (
-    <button
+    <Switch.Root
       id={props.id}
-      type="button"
-      role="switch"
-      aria-checked={!!props.value}
-      aria-label={props.ariaLabel}
+      checked={!!props.value}
+      onCheckedChange={props.onChange}
       disabled={props.disabled}
-      className={className(
-        styles.toggle,
-        props.className,
-        props.disabled && styles.disabled,
-        props.value && styles.toggled
-      )}
-      onClick={handleClick}
+      aria-label={props.ariaLabel}
+      className={[
+        "relative block box-border",
+        "w-[44px] h-[24px] min-w-[44px] min-h-[24px]",
+        "p-[2px] rounded-[15px] border-0 overflow-hidden",
+        "bg-[#CD5367]",
+        "data-[state=checked]:bg-brand-green",
+        "cursor-pointer",
+        "transition-colors duration-100 ease-in-out",
+        "focus-visible:outline-2 focus-visible:outline-brand-blue focus-visible:outline-offset-2",
+        props.disabled ? "cursor-not-allowed opacity-60" : "",
+        props.className ?? "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
-      <div className={styles.innerToggle} />
-    </button>
+      <Switch.Thumb
+        className={[
+          "absolute top-1/2 -translate-y-1/2",
+          "left-[2px] data-[state=checked]:left-[22px]",
+          "block w-[20px] h-[20px] rounded-full bg-white",
+          "transition-[left] duration-100 ease-in-out",
+        ].join(" ")}
+      />
+    </Switch.Root>
   );
 }

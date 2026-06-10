@@ -7,7 +7,6 @@ import { ButtonIcon } from "../ButtonIcon";
 import { ShareIcon } from "../Icons";
 import { InstagramReelIcon } from "../Icons/InstagramReelIcon";
 import { LoadingOverlay } from "../LoadingOverlay";
-import styles from "./ShareButton.module.scss";
 
 interface ShareProdeStoryButtonProps {
   big?: boolean;
@@ -72,7 +71,7 @@ export function ShareProdeStoryButton(props: ShareProdeStoryButtonProps) {
   const handleCancel = React.useCallback(() => {
     setFile(undefined);
     setSharing(false);
-    
+
     videoFetchRef.current?.finally(() => {
       setFile(undefined);
     });
@@ -81,16 +80,14 @@ export function ShareProdeStoryButton(props: ShareProdeStoryButtonProps) {
   return (
     <ButtonIcon
       className={className(
-        styles.mobile,
-        styles.marginRightAuto,
-        styles.instagramButton
+        "lg:hidden mr-3 p-0 ml-3 [&_svg]:w-full"
       )}
       // big={props.big}
       onClick={sharing ? undefined : handleInstagramShare}
     >
       <InstagramReelIcon
         loading={sharing}
-        className={className(sharing && !file && styles.loading)}
+        className={className(sharing && !file && "[&_circle]:animate-spin [&_circle]:[animation-timing-function:ease-in-out]")}
       />
       {sharing && (
         <LoadingOverlay

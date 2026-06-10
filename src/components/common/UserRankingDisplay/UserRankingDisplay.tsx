@@ -1,7 +1,6 @@
 import React from "react";
 import { className } from "../../../utils/classname";
 import { UserImage } from "../UserImage";
-import styles from "./UserRankingDisplay.module.scss";
 
 interface UserRankingDisplayProps {
   className?: string;
@@ -13,9 +12,11 @@ export function UserRankingDisplay(
   props: React.PropsWithChildren<UserRankingDisplayProps>
 ) {
   return (
-    <div className={className(props.className, styles.userRankingDisplay)}>
+    <div className={className("flex items-center min-w-0 overflow-hidden", props.className)}>
       <UserImage small image={props.image} />
-      <label className={styles.userName}>{props.name}</label>
+      <label className="flex-1 min-w-0 font-normal text-[20px] ml-[12px] whitespace-nowrap overflow-hidden text-ellipsis">
+        {props.name}
+      </label>
     </div>
   );
 }

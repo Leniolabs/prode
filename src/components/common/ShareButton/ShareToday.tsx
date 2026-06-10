@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useCanShareFiles } from "@/hooks";
-import styles from "./ShareButton.module.scss";
 import { ShareTodayMatchesVideoButton } from "./ShareTodayMatchesVideoButton";
 import { ShareTodayMatchesImageButton } from "./ShareTodayMatchesImageButton";
 
@@ -18,7 +17,7 @@ export function ShareToday(props: ShareTodayProps) {
   if (!canShareFiles) return null;
 
   return (
-    <div className={styles.shareToday}>
+    <div className="right-[6px] absolute flex [&_svg]:w-full">
       <ShareTodayMatchesImageButton userProdeId={props.userProdeId} />
       <ShareTodayMatchesVideoButton userProdeId={props.userProdeId} />
     </div>

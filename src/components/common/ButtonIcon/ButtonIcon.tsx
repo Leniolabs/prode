@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../utils/classname";
-import styles from "./ButtonIcon.module.scss";
 
 interface ButtonIconProps {
   className?: string;
@@ -22,10 +21,10 @@ export function ButtonIcon(props: React.PropsWithChildren<ButtonIconProps>) {
   return (
     <div
       className={className(
-        styles.buttonIcon,
-        props.className,
-        props.big && styles.big,
-        props.onClick && styles.clickable
+        "block w-10 h-10 max-w-10 max-h-10 rounded-full p-[3px] flex items-center place-content-center",
+        props.onClick && "hover:bg-[#00000033]",
+        props.big && "[&>svg]:w-4/5 [&>svg]:h-4/5 w-[60px] h-[60px] max-w-[60px] max-h-[60px]",
+        props.className
       )}
       onClick={handleClick}
       data-share="device facebook twitter linkedin"

@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../utils/classname";
-import styles from "./HomeTitle.module.scss";
 
 interface HomeTitleProps {
   className?: string;
@@ -8,7 +7,12 @@ interface HomeTitleProps {
 
 export function HomeTitle(props: React.PropsWithChildren<HomeTitleProps>) {
   return (
-    <div className={className(props.className, styles.homeTitle)}>
+    <div
+      className={className(
+        "text-white font-bold text-[80px] text-center leading-none break-words max-w-[90vw]",
+        props.className
+      )}
+    >
       {props.children}
     </div>
   );

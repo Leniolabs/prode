@@ -1,6 +1,5 @@
 import React from "react";
 import { className } from "../../../../utils/classname";
-import styles from "./HeaderDivider.module.scss";
 
 interface HeaderDividerProps {
   className?: string;
@@ -13,9 +12,9 @@ export function HeaderDivider(
   return (
     <div
       className={className(
-        props.className,
-        styles.headerDivider,
-        props.compact && styles.compact
+        "border-r-2 border-white",
+        props.compact ? "h-[34px]" : "h-[70px]",
+        props.className
       )}
     />
   );

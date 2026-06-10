@@ -1,10 +1,9 @@
+"use client";
+
 import React from "react";
 import { useLocalizedText } from "../../../locale";
-import { className } from "../../../utils/classname";
 import { Button } from "../Button";
 import { Modal } from "../Modal";
-import { UserImage } from "../UserImage";
-import styles from "./PasswordModal.module.scss";
 
 interface PasswordModalProps {
   className?: string;
@@ -31,16 +30,19 @@ export function PasswordModal(
   }, [password, props.onClose]);
 
   return (
-    <Modal title={i18n.passwordCheckTitle} className={styles.passwordModal}>
+    <Modal
+      title={i18n.passwordCheckTitle}
+      className="flex !min-h-max flex-col place-content-center p-3"
+    >
       <input
         placeholder={i18n.passwordCheckLabel}
-        className={styles.password}
+        className="mb-3 rounded-input border border-neutral-gray bg-transparent p-3 text-dark-navy shadow-none outline-none"
         data-testid="password-modal-input"
         value={password}
         onChange={onChange}
       />
       {props.error ? <div role="alert">{props.error}</div> : null}
-      <Button onClick={handleClose} className={styles.passwordModalSubmit}>
+      <Button onClick={handleClose} className="border-none">
         {i18n.passwordCheckButtonLabel}
       </Button>
     </Modal>

@@ -1,10 +1,9 @@
 import Link from "next/link";
 import React from "react";
-import styles from "./PageLogo.module.scss";
 
 export function PageLogo() {
   return (
-    <Link href="/rooms" className={styles.pageLogo}>
+    <Link href="/rooms" className="w-10 block">
         <svg
           width="21"
           height="54"
