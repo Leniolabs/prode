@@ -1,20 +1,15 @@
 name: Sync match results
 
 on:
-  # Automatic schedule is DISABLED: the app is not deployed, so there is no
-  # endpoint (secrets.APP_URL) for the runner to call. Re-enable by uncommenting
-  # the block below once the service is deployed.
-  #
   # GitHub Actions enforces a 5-minute minimum cron interval and runs are
   # best-effort (often delayed several minutes), so */5 is the practical floor.
-  #
-  # schedule:
-  #   # WC 2026 match windows (all times UTC):
-  #   #   Window A — 12:00–01:00 UTC: daytime/evening kickoffs
-  #   #   Window B — 03:00–05:00 UTC: midnight Argentina kickoffs
-  #   - cron: "*/5 12-23 * * *"   # Window A part 1: 12:00–23:59 UTC
-  #   - cron: "*/5 0-1 * * *"     # Window A part 2: 00:00–01:59 UTC
-  #   - cron: "*/5 3-5 * * *"     # Window B:        03:00–05:59 UTC
+  schedule:
+    # WC 2026 match windows (all times UTC):
+    #   Window A — 12:00–01:00 UTC: daytime/evening kickoffs
+    #   Window B — 03:00–05:00 UTC: midnight Argentina kickoffs
+    - cron: "*/5 12-23 * * *"   # Window A part 1: 12:00–23:59 UTC
+    - cron: "*/5 0-1 * * *"     # Window A part 2: 00:00–01:59 UTC
+    - cron: "*/5 3-5 * * *"     # Window B:        03:00–05:59 UTC
   workflow_dispatch:
 
 jobs:
