@@ -253,6 +253,7 @@ export default function RoomFinalsPage() {
         roomAdmin={props?.roomAdmin}
       >
         <Button invert href={`/rooms`}>{i18n.buttonLabelProdeList}</Button>
+        <Button invert href={`/${id}/ranking`}>{i18n.buttonLabelRanking}</Button>
         <Button invert href={`/${id}/groups`}>{i18n.buttonLabelGroupPhase}</Button>
       </RoomWelcomeBar>
       {props?.room && <FinalsResultsWarning roomConfig={props.room} />}

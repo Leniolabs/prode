@@ -220,6 +220,9 @@ export default function RoomGroupsPage() {
         <Button invert href={`/rooms`}>
           {i18n.buttonLabelProdeList}
         </Button>
+        <Button invert href={`/${id}/ranking`}>
+          {i18n.buttonLabelRanking}
+        </Button>
         <Button disabled={!props?.finalsStarted} invert href={`/${id}/finals`}>
           {i18n.buttonLabelFinalsPhase}
         </Button>
