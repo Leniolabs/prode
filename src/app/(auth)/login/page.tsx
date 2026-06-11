@@ -7,7 +7,6 @@ import Image from "next/image";
 import { Register } from "@/components/view/Index";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import styles from "./page.module.scss";
 
 export default function LoginPage() {
   const session = useSession();
@@ -24,8 +23,8 @@ export default function LoginPage() {
 
   return (
     <Layout>
-      <Container direction="COL" className={styles.loginContainer}>
-        <div className={styles.hero}>
+      <Container direction="COL" className="justify-center !pb-0 min-h-0">
+        <div className="flex justify-center mb-4">
           <Image
             src="/mundial_2026.png"
             alt="FIFA World Cup 2026"
@@ -34,8 +33,12 @@ export default function LoginPage() {
             style={{ height: 'min(280px, 32vh)', width: 'auto', borderRadius: '20px' }}
           />
         </div>
-        <h1 className={styles.title}>Prode</h1>
-        <p className={styles.subtitle}>(SPORTS LOTTERY)</p>
+        <h1 className="text-white font-extrabold text-[clamp(48px,9vh,80px)] text-center leading-none m-0 mb-[0.25em] break-words max-w-[90vw]">
+          Prode
+        </h1>
+        <p className="text-white text-[20px] tracking-[0.12em] text-center m-0 mb-[1.5em] opacity-[0.85] font-medium">
+          (SPORTS LOTTERY)
+        </p>
         {session.status === "unauthenticated" && (
           <Register authError={error ?? undefined} />
         )}
@@ -43,7 +46,7 @@ export default function LoginPage() {
           <Button href="/rooms">Entrar</Button>
         )}
       </Container>
-      <Footer dark className={styles.footer}>
+      <Footer dark className="!bg-brand-blue">
         <BrandLogo />
       </Footer>
     </Layout>
