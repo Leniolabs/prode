@@ -16,6 +16,7 @@ import {
   ContainerHeader,
 } from "@/layout";
 import { useRequireSession } from "@/hooks";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import {
   getAdminFinalsMatchLooser,
@@ -64,9 +65,23 @@ const getMatchOrder = (matchStage: Stage) => {
 
 export default function AdminFinalsPage() {
   const session = useRequireSession();
+  const router = useRouter();
   const i18n = useLocalizedText();
 
-  const { data } = useQuery<AdminFinalsData>({ queryKey: ["admin-finals-data"], queryFn: () => fetch("/api/admin-finals-data").then((r) => r.json()), enabled: session.status === "authenticated" });
+  // Admin-only: admin-finals-data returns 403 for non-admins — bounce them.
+  const { data } = useQuery<AdminFinalsData | null>({
+    queryKey: ["admin-finals-data"],
+    queryFn: async () => {
+      const res = await fetch("/api/admin-finals-data");
+      if (res.status === 401 || res.status === 403) {
+        router.replace("/rooms");
+        return null;
+      }
+      return res.json();
+    },
+    enabled: session.status === "authenticated",
+    retry: false,
+  });
 
   const [updating, setUpdating] = React.useState(false);
   const [originalMatches, setOriginalMatches] = React.useState<UIMatch[]>([]);

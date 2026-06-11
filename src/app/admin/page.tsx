@@ -3,25 +3,18 @@ import React from "react";
 import { ProdeRoom, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
-import {
-  HeaderIndicator,
-  DesktopHeader,
-} from "@/components/common/Header";
-import {
-  Layout,
-  Footer,
-  Container,
-  Card,
-  ContainerHeader,
-  CardContent,
-} from "@/layout";
+import { WelcomeBar } from "@/components/common/Header/WelcomeBar";
+import { HeaderMenu } from "@/components/common/Header/HeaderMenu";
+import { Layout, Footer, Card, CardContent } from "@/layout";
 import { useRequireSession } from "@/hooks";
+import { useRouter } from "next/navigation";
 import axios from "axios";
-import { CardsContainer, GroupsContainer } from "@/components/view/Groups";
 import { Table } from "@/components/common/Table";
 import { CloseIcon } from "@/components/common/Icons";
 import { ButtonIcon } from "@/components/common/ButtonIcon";
 import { LocaleSelect } from "@/components/common/LocaleSelect";
+import { Meta } from "@/components/common/Meta";
+import { useLocalizedText } from "@/locale";
 import { useQuery } from "@tanstack/react-query";
 
 interface AdminData {
@@ -34,8 +27,23 @@ interface AdminData {
 
 export default function AdminPage() {
   const session = useRequireSession();
+  const router = useRouter();
+  const i18n = useLocalizedText();
 
-  const { data: props } = useQuery<AdminData>({ queryKey: ["admin-page-data"], queryFn: () => fetch("/api/admin-page-data").then((r) => r.json()), enabled: session.status === "authenticated" });
+  // Admin-only: admin-page-data returns 403 for non-admins — bounce them.
+  const { data: props } = useQuery<AdminData | null>({
+    queryKey: ["admin-page-data"],
+    queryFn: async () => {
+      const res = await fetch("/api/admin-page-data");
+      if (res.status === 401 || res.status === 403) {
+        router.replace("/rooms");
+        return null;
+      }
+      return res.json();
+    },
+    enabled: session.status === "authenticated",
+    retry: false,
+  });
 
   const handleResetMatches = React.useCallback(() => {
     if (confirm("Are you sure")) {
@@ -70,29 +78,46 @@ export default function AdminPage() {
   }, []);
 
   return (
-    <Layout>
-      <DesktopHeader>
-        <HeaderIndicator text="Rooms" value={props?.roomCount ?? 0} />
-        <HeaderIndicator text="Users" value={props?.userCount ?? 0} />
-        <HeaderIndicator text="Prodes" value={props?.prodeCount ?? 0} />
-      </DesktopHeader>
-      <Container>
-        <GroupsContainer full>
-          <ContainerHeader sticky title="ADMIN DASHBOARD"></ContainerHeader>
-        </GroupsContainer>
-        <Button onClick={handleResetMatches}>RESET MATCHES</Button>
-        <Button onClick={handlePruneDB}>PRUNE DB</Button>
+    <Layout dark className="relative overflow-hidden before:hidden">
+      <Meta />
+      <WelcomeBar
+        title={i18n.headerTitle}
+        deadlinePre={i18n.headerWelcomeLine1}
+        deadlinePost={i18n.headerWelcomeLine2}
+      >
+        <div className="shrink-0 [&_div:has(>img)]:!h-[46px] [&_div:has(>img)]:!w-[46px] [&_div:has(>img)_img]:!h-[46px] [&_div:has(>img)_img]:!w-[46px] max-[640px]:[&_div:has(>img)]:!h-[40px] max-[640px]:[&_div:has(>img)]:!w-[40px] max-[640px]:[&_div:has(>img)_img]:!h-[40px] max-[640px]:[&_div:has(>img)_img]:!w-[40px]">
+          <HeaderMenu compact />
+        </div>
+      </WelcomeBar>
 
-        <Card title="LISTA DE PRODES">
+      <main className="relative z-[1] flex-1 w-full max-w-[1100px] mx-auto px-4 py-[clamp(12px,3vh,36px)] flex flex-col gap-6">
+        <div className="flex flex-wrap gap-3">
+          <Button variant="secondary" href="/groups">
+            CARGAR GRUPOS
+          </Button>
+          <Button variant="secondary" href="/finals">
+            CARGAR FINALES
+          </Button>
+          <Button variant="danger" onClick={handleResetMatches}>
+            RESET MATCHES
+          </Button>
+          <Button variant="danger" onClick={handlePruneDB}>
+            PRUNE DB
+          </Button>
+        </div>
+
+        <Card>
           <CardContent>
+            <div className="overflow-x-auto">
             <Table
+              dark
               stripped
               columns={[
                 {
                   header: "Delete",
                   accesor: (row) => (
                     <ButtonIcon onClick={handleDeleteRoom(row.id)}>
-                      <CloseIcon />
+                      <CloseIcon color="#e02045" />
                     </ButtonIcon>
                   ),
                 },
@@ -128,19 +153,22 @@ export default function AdminPage() {
               ]}
               data={props?.rooms || []}
             />
+            </div>
           </CardContent>
         </Card>
 
-        <Card title="USERS">
+        <Card>
           <CardContent>
+            <div className="overflow-x-auto">
             <Table
+              dark
               stripped
               columns={[
                 {
                   header: "Block",
                   accesor: (row) => (
                     <ButtonIcon onClick={handleBlockPlayer(row.id)}>
-                      <CloseIcon />
+                      <CloseIcon color="#e02045" />
                     </ButtonIcon>
                   ),
                 },
@@ -158,9 +186,10 @@ export default function AdminPage() {
               ]}
               data={props?.users || []}
             />
+            </div>
           </CardContent>
         </Card>
-      </Container>
+      </main>
       <Footer>
         <BrandLogo />
         <LocaleSelect />
