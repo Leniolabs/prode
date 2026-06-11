@@ -18,7 +18,6 @@ import {
 } from "@/layout";
 import { useCountries, useRequireSession } from "@/hooks";
 import { useInterval } from "@/hooks/useInterval";
-import commonStyles from "@/styles/CommonStyles.module.scss";
 import axios from "axios";
 import {
   CardsContainer,
@@ -35,7 +34,14 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { isGroupMatchLocked, groupMatchLockTime } from "@/utils/date";
 import { GROUP_MATCHDAY_DEADLINES } from "@/config/matchdays";
-import styles from "./page.module.scss";
+
+const stageHeaderClass =
+  "mb-[18px] [&>:first-child]:bg-brand-green [&>:first-child]:text-white [&>:first-child]:rounded-card [&>:first-child]:text-[25px] [&>:first-child]:font-bold [&>:first-child]:leading-[1.15] [&>:first-child]:pt-[11px] [&>:first-child]:px-5 [&>:first-child]:pb-[13px] [&>:first-child]:normal-case";
+const sectionCardClass =
+  "[&>:first-child]:bg-brand-green [&>:first-child]:text-white [&>:first-child]:rounded-t-[8px] [&>:first-child]:text-[25px] [&>:first-child]:font-bold [&>:first-child]:leading-[1.15] [&>:first-child]:min-h-[40px] [&>:first-child]:pt-[11px] [&>:first-child]:px-5 [&>:first-child]:pb-[13px] [&>:first-child]:normal-case";
+const groupCardClass =
+  "rounded-card overflow-hidden [&>:first-child]:bg-white [&>:first-child]:text-brand-blue [&>:first-child]:text-[16px] [&>:first-child]:font-bold [&>:first-child]:leading-none [&>:first-child]:min-h-[28px] [&>:first-child]:px-3 [&>:first-child]:pt-[7px] [&>:first-child]:pb-[5px] [&>:first-child]:uppercase";
+const matchPairBg = ["bg-[#f6f5f5]", "bg-[#ededed]", "bg-[#e1e1e1]"];
 
 type UIMatch = Pick<
   Match,
@@ -246,14 +252,14 @@ export default function GroupsPage() {
         <GroupsContainer full>
           <ContainerHeader
             sticky
-            className={styles.stageHeader}
+            className={stageHeaderClass}
             title={formattedGroupsTitle}
             gridArea="matches-header"
           >
             <Button
               variant="transparent"
               disabled={!hasEditableChanges}
-              className={commonStyles.marginLeftAuto}
+              className="ml-auto"
               onClick={handleSave}
             >
               {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}
@@ -266,7 +272,7 @@ export default function GroupsPage() {
             ].map((group) => (
               <Card
                 key={group}
-                className={styles.groupCard}
+                className={groupCardClass}
                 title={i18n[group as keyof typeof i18n]}
               >
                 <CardContent>
@@ -275,7 +281,7 @@ export default function GroupsPage() {
                     .map((match, index) => (
                       <MatchInput
                         key={match.id}
-                        className={styles[`matchPair${Math.floor(index / 2)}` as keyof typeof styles]}
+                        className={matchPairBg[Math.floor(index / 2)]}
                         disabled={match.disabled || isGroupMatchLocked(new Date(match.date), GROUP_MATCHDAY_DEADLINES, new Date(now))}
                         date={new Date(match.date)}
                         countryLeftId={match.countryLeftId}
@@ -297,7 +303,7 @@ export default function GroupsPage() {
           </CardsContainer>
 
           <Card
-            className={styles.sectionCard}
+            className={sectionCardClass}
             title={
               <>
                 {todayMatches
@@ -345,19 +351,19 @@ export default function GroupsPage() {
           title={editingMatch.filled ? "Update result" : "Set result"}
           onClose={closeResultEditor}
         >
-          <div className={styles.resultEditor}>
-            <div className={styles.resultEditorTeams}>
-              <div className={styles.resultEditorTeam}>
+          <div className="grid gap-[14px] min-w-[min(100%,280px)]">
+            <div className="flex items-center justify-center gap-2.5">
+              <div className="inline-flex items-center gap-2 min-w-0 text-[16px] font-bold">
                 <CountryFlag code={editingLeftCountry?.code} />
                 <span>{editingLeftCountry?.shortName ?? editingLeftCountry?.name ?? ""}</span>
               </div>
-              <span className={styles.resultEditorVersus}>vs</span>
-              <div className={styles.resultEditorTeam}>
+              <span className="text-white/[0.72] text-[12px] font-bold tracking-[0.12em] uppercase">vs</span>
+              <div className="inline-flex items-center gap-2 min-w-0 text-[16px] font-bold">
                 <CountryFlag code={editingRightCountry?.code} />
                 <span>{editingRightCountry?.shortName ?? editingRightCountry?.name ?? ""}</span>
               </div>
             </div>
-            <div className={styles.resultEditorInputs}>
+            <div className="grid grid-cols-[1fr_auto_1fr] gap-3 items-center [&_input]:w-full [&_input]:min-w-0 [&_input]:py-2 [&_input]:px-2.5 [&_input]:border [&_input]:border-white/15 [&_input]:rounded-[10px] [&_input]:bg-white/[0.04] [&_input]:text-inherit [&_input]:text-center [&_input]:text-[16px] [&_input]:font-bold">
               <input
                 min={0}
                 max={99}
@@ -376,7 +382,7 @@ export default function GroupsPage() {
                 onChange={(event) => setAdminGoalsRight(event.target.value)}
               />
             </div>
-            <div className={styles.resultEditorActions}>
+            <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={closeResultEditor} disabled={savingResult}>
                 Cancel
               </Button>

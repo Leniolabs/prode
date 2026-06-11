@@ -17,7 +17,6 @@ import {
 } from "@/layout";
 import { useRequireSession } from "@/hooks";
 import axios from "axios";
-import commonStyles from "@/styles/CommonStyles.module.scss";
 import {
   getAdminFinalsMatchLooser,
   getAdminFinalsMatchWinner,
@@ -189,7 +188,7 @@ export default function AdminFinalsPage() {
             <Button
               variant="transparent"
               disabled={!isModified}
-              className={commonStyles.marginLeftAuto}
+              className="ml-auto"
               onClick={handleSave}
             >
               {i18n.buttonLabelSave}
