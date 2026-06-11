@@ -2,21 +2,14 @@
 import React from "react";
 import { User } from "@/generated/prisma";
 import { WelcomeBar } from "@/components/common/Header/WelcomeBar";
-import {
-  Layout,
-  Container,
-  Card,
-  CardContent,
-} from "@/layout";
+import { HeaderMenu } from "@/components/common/Header/HeaderMenu";
+import { LocaleSelect } from "@/components/common/LocaleSelect";
+import { BrandLogo } from "@/components/common/BrandLogo";
+import { Layout, Card, CardContent, Footer } from "@/layout";
 import { useRequireSession } from "@/hooks";
 import { Button } from "@/components/common/Button";
 import { Toggle } from "@/components/common/Toggle";
-import {
-  Form,
-  FormInput,
-  FormSectionContent,
-  FormFooter,
-} from "@/components/common/Form";
+import { Form, FormInput, FormSectionContent } from "@/components/common/Form";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { FormError } from "@/components/common/Form/FormError";
@@ -112,7 +105,7 @@ export default function NewProdePage() {
     return null;
 
   return (
-    <Layout dark>
+    <Layout dark className="relative overflow-hidden before:hidden">
       <Meta />
       <WelcomeBar
         title={i18n.headerTitle}
@@ -123,11 +116,17 @@ export default function NewProdePage() {
         <Button variant="secondary" href="/rooms">
           {i18n.buttonLabelGoToMyProde}
         </Button>
+        <div className="shrink-0 [&_div:has(>img)]:!h-[46px] [&_div:has(>img)]:!w-[46px] [&_div:has(>img)_img]:!h-[46px] [&_div:has(>img)_img]:!w-[46px] max-[640px]:[&_div:has(>img)]:!h-[40px] max-[640px]:[&_div:has(>img)]:!w-[40px] max-[640px]:[&_div:has(>img)_img]:!h-[40px] max-[640px]:[&_div:has(>img)_img]:!w-[40px]">
+          <HeaderMenu
+            compact
+            prodePublic={props?.userRanking?.prodePublic}
+            dark={props?.userRanking?.dark}
+            background={props?.userRanking?.background}
+          />
+        </div>
       </WelcomeBar>
-      <Container
-        narrow
-        className="mt-[clamp(8px,1.5vh,24px)] mb-[clamp(8px,1.5vh,24px)]"
-      >
+
+      <main className="relative z-[1] flex-1 w-full max-w-[620px] mx-auto px-4 py-[clamp(12px,3vh,36px)]">
         <Card title={i18n.createTitle} className="self-start [&>:first-child]:text-white">
           <CardContent>
             <Form>
@@ -213,19 +212,34 @@ export default function NewProdePage() {
                 </div>
               </div>
 
-              <FormFooter className="place-content-[center_space-between]">
-                {error && <FormError>{formError(error)}</FormError>}
-                <Button variant="outline" href="/rooms">
-                  {i18n.buttonLabelCancel}
-                </Button>
-                <Button variant="secondary" onClick={handleCreate} disabled={!form.name.trim() || roomNameError === true}>
-                  {i18n.locale === "es" ? "Crear" : "Create"}
-                </Button>
-              </FormFooter>
+              <div className="w-full p-4">
+                {error && (
+                  <div className="mb-2">
+                    <FormError>{formError(error)}</FormError>
+                  </div>
+                )}
+                <div className="flex items-center justify-between gap-3">
+                  <Button variant="outline" href="/rooms">
+                    {i18n.buttonLabelCancel}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={handleCreate}
+                    disabled={!form.name.trim() || roomNameError === true}
+                  >
+                    {i18n.locale === "es" ? "Crear" : "Create"}
+                  </Button>
+                </div>
+              </div>
             </Form>
           </CardContent>
         </Card>
-      </Container>
+      </main>
+
+      <Footer>
+        <BrandLogo />
+        <LocaleSelect />
+      </Footer>
     </Layout>
   );
 }
