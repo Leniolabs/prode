@@ -377,7 +377,6 @@ function MatchFinalsInputComponent(
         <input
           type="number"
           inputMode={"decimal"}
-          tabIndex={props.order * 4}
           data-testid="finals-match-goals-left"
           className={GOALS_INPUT_CLS}
           defaultValue={props.goalsLeft}
@@ -389,7 +388,6 @@ function MatchFinalsInputComponent(
           <input
             type="number"
             inputMode={"decimal"}
-            tabIndex={props.order * 4 + 2}
             data-testid="finals-match-penalties-left"
             className={PENALTIS_INPUT_CLS}
             defaultValue={props.penaltisLeft ?? ""}
@@ -422,7 +420,6 @@ function MatchFinalsInputComponent(
         <input
           type="number"
           inputMode={"decimal"}
-          tabIndex={props.order * 4 + 1}
           data-testid="finals-match-goals-right"
           className={GOALS_INPUT_CLS}
           defaultValue={props.goalsRight}
@@ -434,7 +431,6 @@ function MatchFinalsInputComponent(
           <input
             type="number"
             inputMode={"decimal"}
-            tabIndex={props.order * 4 + 3}
             data-testid="finals-match-penalties-right"
             className={PENALTIS_INPUT_CLS}
             defaultValue={props.penaltisRight ?? ""}

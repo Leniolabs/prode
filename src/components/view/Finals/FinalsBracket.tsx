@@ -71,8 +71,11 @@ export function FinalsBracket({
     match: FinalsBracketMatch,
     index: number,
     advanced: boolean
-  ) =>
-    admin ? (
+  ) => {
+    // CSS flex order within the round (visual sequence). Tab order is handled by
+    // natural DOM order — MatchFinalsInput no longer sets explicit tabindex.
+    const order = index + 1;
+    return admin ? (
       <MatchFinalsInput
         key={match.id}
         date={new Date(match.date)}
@@ -93,7 +96,7 @@ export function FinalsBracket({
           })
         }
         countryInput
-        order={index + 1}
+        order={order}
       />
     ) : (
     <UserMatchFinalsInput
@@ -116,10 +119,11 @@ export function FinalsBracket({
       countryLeftId={match.countryLeftId}
       countryRightId={match.countryRightId}
       onChange={onChange(match.id)}
-      order={index + 1}
+      order={order}
       filled={match.filled}
     />
   );
+  };
 
   const finalPair = matches
     .filter((m) => m.stage === "FINALS" || m.stage === "THIRD_PLACE")
