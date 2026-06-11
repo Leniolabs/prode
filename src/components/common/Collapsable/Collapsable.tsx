@@ -25,9 +25,10 @@ export function Collapsable(props: React.PropsWithChildren<CollapsableProps>) {
           <ChevronIcon orientation={open ? "DOWN" : "RIGHT"} />
         </div>
       </div>
-      <div className={className("mb-3", open ? "block" : "hidden")}>
-        {props.children}
-      </div>
+      {/* Lazy: only mount children once opened. Avoids rendering heavy inputs
+          (e.g. dozens of country selects) for collapsed sections — and the
+          hidden mobile accordion never mounts on desktop. */}
+      {open && <div className="mb-3">{props.children}</div>}
     </div>
   );
 }

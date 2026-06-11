@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocalizedText } from "@/locale";
 import { UserMatchFinalsInput } from "@/components/common/UserMatchFinalsInput";
+import { MatchFinalsInput } from "@/components/common/MatchFinalsInput";
 import { getFinalsStageGroup } from "@/utils/finals";
 import { finalsTierLockTime, isFinalsMatchLocked } from "@/utils/date";
 import { FINALS_TIER_DEADLINES } from "@/config/matchdays";
@@ -12,7 +13,7 @@ export interface FinalsBracketMatch {
   date: Date | string;
   stage: string;
   filled?: boolean;
-  disabled: boolean;
+  disabled?: boolean;
   goalsLeft: number | null;
   goalsRight: number | null;
   penaltisLeft?: number | null;
@@ -40,6 +41,8 @@ interface FinalsBracketProps {
   matches: FinalsBracketMatch[];
   now: number;
   onChange: (id: string) => (value: MatchChangeValue) => void;
+  /** Admin mode: editable country pickers + result inputs (sets references). */
+  admin?: boolean;
 }
 
 const stageNum = (stage: string) =>
@@ -49,6 +52,7 @@ export function FinalsBracket({
   matches,
   now,
   onChange,
+  admin,
 }: FinalsBracketProps) {
   const i18n = useLocalizedText();
 
@@ -67,7 +71,31 @@ export function FinalsBracket({
     match: FinalsBracketMatch,
     index: number,
     advanced: boolean
-  ) => (
+  ) =>
+    admin ? (
+      <MatchFinalsInput
+        key={match.id}
+        date={new Date(match.date)}
+        countryLeftId={match.countryLeftId}
+        goalsLeft={match.goalsLeft ?? undefined}
+        countryRightId={match.countryRightId}
+        goalsRight={match.goalsRight ?? undefined}
+        penaltisLeft={match.penaltisLeft ?? null}
+        penaltisRight={match.penaltisRight ?? null}
+        onChange={(value) =>
+          onChange(match.id)({
+            countryLeftId: value.countryLeftId,
+            goalsLeft: value.goalsLeft,
+            countryRightId: value.countryRightId,
+            goalsRight: value.goalsRight,
+            penaltisLeft: value.penaltisLeft ?? null,
+            penaltisRight: value.penaltisRight ?? null,
+          })
+        }
+        countryInput
+        order={index + 1}
+      />
+    ) : (
     <UserMatchFinalsInput
       key={match.id}
       showCountryStatus={advanced}

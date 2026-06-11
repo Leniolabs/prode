@@ -31,18 +31,16 @@ export function CountrySelect(props: CountrySelectProps) {
       <Select.Trigger
         className="cursor-pointer w-full h-[34px] flex items-center gap-1 px-[2px] border border-[#233042] rounded-input bg-card-body text-dark-navy text-sm outline-none focus:ring-1 focus:ring-[#233042] data-[placeholder]:text-neutral-gray"
       >
-        <Select.Value asChild>
-          <span className="flex items-center gap-1 overflow-hidden">
-            {selectedCountry ? (
-              <>
-                <CountryFlag code={selectedCountry.code} />
-                <span className="truncate">{selectedCountry.name}</span>
-              </>
-            ) : (
-              <span className="ml-1 text-neutral-gray">None</span>
-            )}
-          </span>
-        </Select.Value>
+        <span className="flex items-center gap-1 overflow-hidden">
+          {selectedCountry ? (
+            <>
+              <CountryFlag code={selectedCountry.code} />
+              <span className="truncate">{selectedCountry.name}</span>
+            </>
+          ) : (
+            <span className="ml-1 text-neutral-gray">None</span>
+          )}
+        </span>
       </Select.Trigger>
 
       <Select.Portal>
