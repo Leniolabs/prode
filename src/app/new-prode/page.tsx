@@ -113,16 +113,18 @@ export default function NewProdePage() {
         deadlinePost={i18n.headerWelcomeLine2}
         prodeEnd={props?.prodeEnd}
       >
-        <Button variant="secondary" href="/rooms">
-          {i18n.buttonLabelGoToMyProde}
-        </Button>
-        <div className="shrink-0 [&_div:has(>img)]:!h-[46px] [&_div:has(>img)]:!w-[46px] [&_div:has(>img)_img]:!h-[46px] [&_div:has(>img)_img]:!w-[46px] max-[640px]:[&_div:has(>img)]:!h-[40px] max-[640px]:[&_div:has(>img)]:!w-[40px] max-[640px]:[&_div:has(>img)_img]:!h-[40px] max-[640px]:[&_div:has(>img)_img]:!w-[40px]">
-          <HeaderMenu
-            compact
-            prodePublic={props?.userRanking?.prodePublic}
-            dark={props?.userRanking?.dark}
-            background={props?.userRanking?.background}
-          />
+        <div className="flex items-center gap-3 max-[640px]:gap-2">
+          <Button variant="secondary" href="/rooms">
+            {i18n.buttonLabelGoToMyProde}
+          </Button>
+          <div className="shrink-0 [&_div:has(>img)]:!h-[46px] [&_div:has(>img)]:!w-[46px] [&_div:has(>img)_img]:!h-[46px] [&_div:has(>img)_img]:!w-[46px] max-[640px]:[&_div:has(>img)]:!h-[40px] max-[640px]:[&_div:has(>img)]:!w-[40px] max-[640px]:[&_div:has(>img)_img]:!h-[40px] max-[640px]:[&_div:has(>img)_img]:!w-[40px]">
+            <HeaderMenu
+              compact
+              prodePublic={props?.userRanking?.prodePublic}
+              dark={props?.userRanking?.dark}
+              background={props?.userRanking?.background}
+            />
+          </div>
         </div>
       </WelcomeBar>
 
