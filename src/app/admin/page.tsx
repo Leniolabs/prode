@@ -92,10 +92,10 @@ export default function AdminPage() {
 
       <main className="relative z-[1] flex-1 w-full max-w-[1100px] mx-auto px-4 py-[clamp(12px,3vh,36px)] flex flex-col gap-6">
         <div className="flex flex-wrap gap-3">
-          <Button variant="secondary" href="/groups">
+          <Button variant="secondary" href="/admin/groups">
             CARGAR GRUPOS
           </Button>
-          <Button variant="secondary" href="/finals">
+          <Button variant="secondary" href="/admin/finals">
             CARGAR FINALES
           </Button>
           <Button variant="danger" onClick={handleResetMatches}>

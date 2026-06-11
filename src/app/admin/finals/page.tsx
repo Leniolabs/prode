@@ -3,15 +3,12 @@ import React from "react";
 import { Match, Stage } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
-import {
-  HeaderMessage,
-  LeniBall,
-  HeaderMenu,
-} from "@/components/common/Header";
+import { HeaderMenu } from "@/components/common/Header";
+import { WelcomeBar } from "@/components/common/Header/WelcomeBar";
+import { Meta } from "@/components/common/Meta";
 import {
   Layout,
   Footer,
-  Header,
   Container,
   ContainerHeader,
 } from "@/layout";
@@ -175,24 +172,22 @@ export default function AdminFinalsPage() {
   }, []);
 
   return (
-    <Layout>
-      <Header>
-        <HeaderMessage
-          title={i18n.headerTitle}
-          subtitle={
-            <>
-              {i18n.headerWelcomeLine}
-              <br />
-              {i18n.headerWelcomeLine1}
-              <br />
-              <span>{i18n.headerWelcomeLine2}</span>.
-            </>
-          }
-        />
-        <Button onClick={handleStartFinals}>Start Finals</Button>
-        <LeniBall />
-        <HeaderMenu />
-      </Header>
+    <Layout dark className="relative overflow-hidden before:hidden">
+      <Meta />
+      <WelcomeBar
+        title={i18n.headerTitle}
+        deadlinePre={i18n.headerWelcomeLine1}
+        deadlinePost={i18n.headerWelcomeLine2}
+      >
+        <div className="flex items-center gap-3 max-[640px]:gap-2">
+          <Button variant="secondary" onClick={handleStartFinals}>
+            Start Finals
+          </Button>
+          <div className="shrink-0 [&_div:has(>img)]:!h-[46px] [&_div:has(>img)]:!w-[46px] [&_div:has(>img)_img]:!h-[46px] [&_div:has(>img)_img]:!w-[46px] max-[640px]:[&_div:has(>img)]:!h-[40px] max-[640px]:[&_div:has(>img)]:!w-[40px] max-[640px]:[&_div:has(>img)_img]:!h-[40px] max-[640px]:[&_div:has(>img)_img]:!w-[40px]">
+            <HeaderMenu compact />
+          </div>
+        </div>
+      </WelcomeBar>
       <Container full>
         <FinalsContainer full admin>
           <ContainerHeader

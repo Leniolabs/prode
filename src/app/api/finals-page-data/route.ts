@@ -7,7 +7,7 @@ import {
   createTemplateUserProde,
   getUserTemplateFinalMatches,
 } from '@/utils/queries'
-import { getNextMatches, getTodayMatches } from '@/utils/date'
+import { getTodayMatches } from '@/utils/date'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
@@ -26,7 +26,6 @@ export async function GET(req: NextRequest) {
 
   const matches = await getUserTemplateFinalMatches(user)
   const prode = await prisma.prode.findFirst()
-  const nextMatches = getNextMatches(matches, timezone)
   const todayMatches = getTodayMatches(matches, timezone)
 
   return NextResponse.json({
@@ -42,6 +41,8 @@ export async function GET(req: NextRequest) {
     },
     matches,
     todayMatches: todayMatches.length ? todayMatches : null,
-    nextMatches: nextMatches.length ? nextMatches : null,
+    // On /finals only surface matches happening today (not every future
+    // bracket match) — there's no "next upcoming" fallback here.
+    nextMatches: null,
   })
 }
