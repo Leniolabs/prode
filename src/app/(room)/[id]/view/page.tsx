@@ -38,7 +38,15 @@ import { getMatchOrder } from "@/utils/finals";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useBodyRedirect } from "@/hooks";
-import styles from "./page.module.scss";
+
+// ContainerHeader title-bar styling (applied to the header's first child).
+const headerDarkTitle =
+  "[&>:first-child]:bg-[#00192c] [&>:first-child]:text-white [&>:first-child]:rounded-card [&>:first-child]:text-[20px] [&>:first-child]:font-semibold [&>:first-child]:leading-[1.15] [&>:first-child]:min-h-[50px] [&>:first-child]:px-5 [&>:first-child]:normal-case";
+const headerGreenTitle =
+  "[&>:first-child]:bg-brand-green [&>:first-child]:text-white [&>:first-child]:rounded-card [&>:first-child]:text-[25px] [&>:first-child]:font-bold [&>:first-child]:leading-[1.15] [&>:first-child]:pt-[11px] [&>:first-child]:px-5 [&>:first-child]:pb-[13px] [&>:first-child]:normal-case";
+const groupCardClass =
+  "rounded-card overflow-hidden [&>:first-child]:bg-white [&>:first-child]:text-brand-blue [&>:first-child]:text-[16px] [&>:first-child]:font-bold [&>:first-child]:leading-none [&>:first-child]:min-h-[28px] [&>:first-child]:px-3 [&>:first-child]:pt-[7px] [&>:first-child]:pb-[5px] [&>:first-child]:uppercase";
+const matchPairBg = ["bg-[#f6f5f5]", "bg-[#ededed]", "bg-[#e1e1e1]"];
 
 type UIMatch = Pick<
   Match,
@@ -110,17 +118,17 @@ export default function ViewPage() {
         />
       )}
       <Container full>
-        <GroupsContainer full admin className={styles.viewAdminContainer}>
+        <GroupsContainer full admin className="!gap-x-3 !gap-y-0">
           <ContainerHeader
             gridArea="matches-header"
-            className={`${styles.groupsStageHeader} ${styles.viewTitleHeader}`}
+            className={`${headerDarkTitle} !mb-[9px] max-lg:!mt-0`}
             noMarginTop={!props?.userRanking}
             title={
               <>
                 <UserImage
                   small
                   image={props?.viewUser?.image}
-                  className={styles.viewTitleAvatar}
+                  className="mr-2"
                 />
                 {i18n.viewTitle}
                 {props?.viewUser?.name}
@@ -129,13 +137,13 @@ export default function ViewPage() {
             }
           />
         </GroupsContainer>
-        <GroupsContainer full admin className={styles.viewAdminContainer}>
+        <GroupsContainer full admin className="!gap-x-3 !gap-y-0">
           <ContainerHeader
             gridArea="matches-header"
             sticky
             noMarginTop
             noMarginBottom
-            className={`${styles.groupsStageHeader} ${styles.viewPageHeader}`}
+            className={`${headerDarkTitle} !mb-[12px] max-lg:!mt-0`}
             title={i18n.groupsTitle}
           />
           <CardsContainer gridArea="matches">
@@ -145,7 +153,7 @@ export default function ViewPage() {
             ].map((group) => (
               <Card
                 key={group}
-                className={styles.groupCard}
+                className={groupCardClass}
                 title={i18n[group as keyof typeof i18n]}
               >
                 <CardContent>
@@ -154,11 +162,7 @@ export default function ViewPage() {
                     .map((match, index) => (
                       <MatchInput
                         key={match.id}
-                        className={
-                          styles[
-                            `matchPair${Math.floor(index / 2)}` as keyof typeof styles
-                          ]
-                        }
+                        className={matchPairBg[Math.floor(index / 2)]}
                         disabled={true}
                         date={new Date(match.date)}
                         countryLeftId={match.countryLeftId}
@@ -182,7 +186,7 @@ export default function ViewPage() {
               noMarginTop
               noMarginBottom
               sticky
-              className={`${styles.stageHeader} ${styles.viewPageHeader}`}
+              className={`${headerGreenTitle} !mb-[12px] max-lg:!mt-0`}
               title={i18n.finalsTitle}
             />
             <BracketsContainer gridArea="matches">
