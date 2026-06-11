@@ -8,7 +8,7 @@ import {
   getUserFinalMatches,
   registerUserToRoom,
 } from '@/utils/queries'
-import { getNextMatches, getTodayMatches } from '@/utils/date'
+import { getTodayMatches } from '@/utils/date'
 import { NextRequest, NextResponse } from 'next/server'
 
 function shouldPasswordCheck(room: { password: string | null }) {
@@ -48,7 +48,6 @@ export async function GET(req: NextRequest) {
   const matches = await getUserFinalMatches(room, user)
   const ranking = await getRanking(room, 0, 10)
   const userRanking = await getUserRanking(room, userProde)
-  const nextMatches = getNextMatches(matches, timezone)
   const todayMatches = getTodayMatches(matches, timezone)
 
   const filterUnique = <T>(arr: T[], eq: (a: T, b: T) => boolean) =>
@@ -87,6 +86,8 @@ export async function GET(req: NextRequest) {
     ranking: fullRanking,
     matches,
     todayMatches: todayMatches.length ? todayMatches : null,
-    nextMatches: nextMatches.length ? nextMatches : null,
+    // On /finals only surface matches happening today (not every future
+    // bracket match) — there's no "next upcoming" fallback here.
+    nextMatches: null,
   })
 }

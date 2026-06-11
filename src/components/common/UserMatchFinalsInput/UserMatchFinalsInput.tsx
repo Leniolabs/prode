@@ -624,52 +624,53 @@ export function UserMatchFinalsInput(
             {userCountryLeft?.name}
           </label>
         </div>
-        {/* Goals input */}
-        <input
-          type="number"
-          inputMode={"decimal"}
-          tabIndex={props.order * 4}
-          data-testid="finals-match-goals-left"
-          className={className(
-            "match-input-number",
-            "ml-[6px] w-[30px] h-[30px] border border-[#a7a8a9] bg-transparent outline-none text-center text-[#233042] text-[17px] p-[6px]",
-            "disabled:opacity-80",
-            goalStatusCls,
-            highlightInputCls,
-            // when penalties shown: remove right border (joined look) on desktop; on <=1024 text-center
-            showPenaltis && "max-[1024px]:text-center max-[1024px]:border-r-0"
+        {/* Goals (+ corner penalties) group — relative so the penalty input
+            anchors to the goals input's bottom-right corner on desktop. */}
+        <div className="relative ml-[6px] flex shrink-0 items-start">
+          <input
+            type="number"
+            inputMode={"decimal"}
+            tabIndex={props.order * 4}
+            data-testid="finals-match-goals-left"
+            className={className(
+              "match-input-number",
+              "w-[30px] h-[30px] border border-[#a7a8a9] bg-transparent outline-none text-center text-[#233042] text-[17px] p-[6px]",
+              "disabled:opacity-80",
+              goalStatusCls,
+              highlightInputCls,
+              showPenaltis && "max-[1024px]:text-center max-[1024px]:border-r-0"
+            )}
+            defaultValue={props.userGoalsLeft ?? ""}
+            onChange={handleGoalsLeftChange}
+            disabled={!userCountryLeft || !userCountryRight || props.disabled}
+            onBlur={handleLeftInputBlur}
+          />
+          {showPenaltis && (
+            <>
+              {/* Divider: hidden on desktop, visible on <=1024 */}
+              <div className="hidden max-[1024px]:block relative border-l border-[#233042cc] mt-[7px] h-[20px] z-[1] -left-[0.5px]" />
+              {/* Penalties input — desktop: badge in the goals bottom-right
+                  corner; <=1024: joined to the right of the goal input */}
+              <input
+                type="number"
+                inputMode={"decimal"}
+                tabIndex={props.order * 4 + 2}
+                data-testid="finals-match-penalties-left"
+                className={className(
+                  "match-input-number",
+                  "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#a7a8a9] bg-white outline-none text-center text-[#233042] disabled:opacity-80",
+                  "max-[1024px]:relative max-[1024px]:text-[14px] max-[1024px]:h-[34px] max-[1024px]:w-[34px] max-[1024px]:-ml-[1px] max-[1024px]:border-l-0 max-[1024px]:bottom-auto max-[1024px]:right-auto max-[1024px]:bg-transparent",
+                  penaltisStatusCls,
+                  highlightInputCls
+                )}
+                defaultValue={props.userPenaltisLeft ?? ""}
+                onChange={handlePenaltisLeftChange}
+                disabled={!userCountryLeft || !userCountryRight || props.disabled}
+                onBlur={handlePenaltisLeftInputBlur}
+              />
+            </>
           )}
-          defaultValue={props.userGoalsLeft ?? ""}
-          onChange={handleGoalsLeftChange}
-          disabled={!userCountryLeft || !userCountryRight || props.disabled}
-          onBlur={handleLeftInputBlur}
-        />
-        {showPenaltis && (
-          <>
-            {/* Divider: hidden on desktop, visible on <=1024 */}
-            <div className="hidden max-[1024px]:block relative border-l border-[#233042cc] mt-[7px] h-[20px] z-[1] -left-[0.5px]" />
-            {/* Penalties input */}
-            <input
-              type="number"
-              inputMode={"decimal"}
-              tabIndex={props.order * 4 + 2}
-              data-testid="finals-match-penalties-left"
-              className={className(
-                "match-input-number",
-                // desktop: absolutely positioned small corner input
-                "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#a7a8a9] bg-transparent outline-none text-center text-[#233042] disabled:opacity-80",
-                // on <=1024: relative, larger, no left border (joined with goal input)
-                "max-[1024px]:relative max-[1024px]:text-[14px] max-[1024px]:h-[34px] max-[1024px]:w-[34px] max-[1024px]:-ml-[1px] max-[1024px]:border-l-0 max-[1024px]:bottom-auto max-[1024px]:right-auto",
-                penaltisStatusCls,
-                highlightInputCls
-              )}
-              defaultValue={props.userPenaltisLeft ?? ""}
-              onChange={handlePenaltisLeftChange}
-              disabled={!userCountryLeft || !userCountryRight || props.disabled}
-              onBlur={handlePenaltisLeftInputBlur}
-            />
-          </>
-        )}
+        </div>
       </div>
 
       {/* Right country row */}
@@ -690,47 +691,49 @@ export function UserMatchFinalsInput(
             {userCountryRight?.name}
           </label>
         </div>
-        {/* Goals input */}
-        <input
-          type="number"
-          inputMode={"decimal"}
-          tabIndex={props.order * 4 + 1}
-          data-testid="finals-match-goals-right"
-          className={className(
-            "match-input-number",
-            "ml-[6px] w-[30px] h-[30px] border border-[#a7a8a9] bg-transparent outline-none text-center text-[#233042] text-[17px] p-[6px]",
-            "disabled:opacity-80",
-            goalStatusCls,
-            highlightInputCls,
-            showPenaltis && "max-[1024px]:text-center max-[1024px]:border-r-0"
+        {/* Goals (+ corner penalties) group */}
+        <div className="relative ml-[6px] flex shrink-0 items-start">
+          <input
+            type="number"
+            inputMode={"decimal"}
+            tabIndex={props.order * 4 + 1}
+            data-testid="finals-match-goals-right"
+            className={className(
+              "match-input-number",
+              "w-[30px] h-[30px] border border-[#a7a8a9] bg-transparent outline-none text-center text-[#233042] text-[17px] p-[6px]",
+              "disabled:opacity-80",
+              goalStatusCls,
+              highlightInputCls,
+              showPenaltis && "max-[1024px]:text-center max-[1024px]:border-r-0"
+            )}
+            defaultValue={props.userGoalsRight ?? ""}
+            onChange={handleGoalsRightChange}
+            disabled={!userCountryRight || props.disabled}
+            onBlur={handleRightInputBlur}
+          />
+          {showPenaltis && (
+            <>
+              <div className="hidden max-[1024px]:block relative border-l border-[#233042cc] mt-[7px] h-[20px] z-[1] -left-[0.5px]" />
+              <input
+                type="number"
+                inputMode={"decimal"}
+                tabIndex={props.order * 4 + 3}
+                data-testid="finals-match-penalties-right"
+                className={className(
+                  "match-input-number",
+                  "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#a7a8a9] bg-white outline-none text-center text-[#233042] disabled:opacity-80",
+                  "max-[1024px]:relative max-[1024px]:text-[14px] max-[1024px]:h-[34px] max-[1024px]:w-[34px] max-[1024px]:-ml-[1px] max-[1024px]:border-l-0 max-[1024px]:bottom-auto max-[1024px]:right-auto max-[1024px]:bg-transparent",
+                  penaltisStatusCls,
+                  highlightInputCls
+                )}
+                defaultValue={props.userPenaltisRight ?? ""}
+                onChange={handlePenaltisRightChange}
+                disabled={!userCountryRight || props.disabled}
+                onBlur={handlePenaltisRightInputBlur}
+              />
+            </>
           )}
-          defaultValue={props.userGoalsRight ?? ""}
-          onChange={handleGoalsRightChange}
-          disabled={!userCountryRight || props.disabled}
-          onBlur={handleRightInputBlur}
-        />
-        {showPenaltis && (
-          <>
-            <div className="hidden max-[1024px]:block relative border-l border-[#233042cc] mt-[7px] h-[20px] z-[1] -left-[0.5px]" />
-            <input
-              type="number"
-              inputMode={"decimal"}
-              tabIndex={props.order * 4 + 3}
-              data-testid="finals-match-penalties-right"
-              className={className(
-                "match-input-number",
-                "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#a7a8a9] bg-transparent outline-none text-center text-[#233042] disabled:opacity-80",
-                "max-[1024px]:relative max-[1024px]:text-[14px] max-[1024px]:h-[34px] max-[1024px]:w-[34px] max-[1024px]:-ml-[1px] max-[1024px]:border-l-0 max-[1024px]:bottom-auto max-[1024px]:right-auto",
-                penaltisStatusCls,
-                highlightInputCls
-              )}
-              defaultValue={props.userPenaltisRight ?? ""}
-              onChange={handlePenaltisRightChange}
-              disabled={!userCountryRight || props.disabled}
-              onBlur={handlePenaltisRightInputBlur}
-            />
-          </>
-        )}
+        </div>
       </div>
 
       {/* Date / result row */}
