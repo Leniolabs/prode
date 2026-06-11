@@ -76,7 +76,7 @@ const GOALS_INPUT_CLS =
 const PENALTIS_INPUT_CLS =
   "match-input-number text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#233042] bg-transparent outline-none text-center text-[#233042] disabled:opacity-80";
 
-export function MatchFinalsInput(
+function MatchFinalsInputComponent(
   props: React.PropsWithChildren<MatchFinalsInputProps>
 ) {
   const {
@@ -449,3 +449,24 @@ export function MatchFinalsInput(
     </div>
   );
 }
+
+// Memoized: a bracket renders dozens of these (each with a Radix country
+// select), so without this every keystroke re-renders the whole tree. onChange
+// is intentionally excluded from the comparison — callers use functional
+// setState, so a stable-by-value closure is safe and lets unchanged matches
+// skip re-render. Date is compared by time, not reference.
+export const MatchFinalsInput = React.memo(
+  MatchFinalsInputComponent,
+  (prev, next) =>
+    prev.className === next.className &&
+    prev.disabled === next.disabled &&
+    prev.countryLeftId === next.countryLeftId &&
+    prev.countryRightId === next.countryRightId &&
+    prev.goalsLeft === next.goalsLeft &&
+    prev.goalsRight === next.goalsRight &&
+    prev.penaltisLeft === next.penaltisLeft &&
+    prev.penaltisRight === next.penaltisRight &&
+    prev.order === next.order &&
+    prev.countryInput === next.countryInput &&
+    +prev.date === +next.date
+);

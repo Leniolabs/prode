@@ -110,6 +110,10 @@ export default function AdminFinalsPage() {
     );
   }, [data?.todayMatches, computedMatches]);
 
+  // Stable across renders (functional updater, no deps) so memoized
+  // MatchFinalsInputs keep a referentially-stable onChange and only the edited
+  // match re-renders. Winners are re-resolved from the previous state inside the
+  // updater rather than depending on the derived `computedMatches`.
   const handleMatchChange = React.useCallback(
     (id: string) =>
       (value: {
@@ -120,8 +124,12 @@ export default function AdminFinalsPage() {
         penaltisLeft?: number | null;
         penaltisRight?: number | null;
       }) => {
-        setMatches(
-          computedMatches.map((match) =>
+        setMatches((prev) =>
+          resolveFinalsMatches(
+            prev,
+            getAdminFinalsMatchWinner,
+            getAdminFinalsMatchLooser
+          ).map((match) =>
             match.id === id
               ? {
                   ...match,
@@ -136,7 +144,7 @@ export default function AdminFinalsPage() {
           )
         );
       },
-    [computedMatches]
+    []
   );
 
   const differentMatches = React.useMemo(() => {
