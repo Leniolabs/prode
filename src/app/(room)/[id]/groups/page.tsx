@@ -3,11 +3,9 @@ import React from "react";
 import { Match, ProdeRoom, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
-import { CountryFlag } from "@/components/common/CountryFlag";
 import { DesktopHeader, MobileHeader } from "@/components/common/Header";
 import { RoomWelcomeBar } from "@/components/common/Header";
 import { MatchInput } from "@/components/common/MatchInput";
-import { Modal } from "@/components/common/Modal";
 import { Table } from "@/components/common/Table";
 import { UserPositionDisplay } from "@/components/common/UserPositionDisplay";
 import { UserRankingDisplay } from "@/components/common/UserRankingDisplay";
@@ -19,7 +17,7 @@ import {
   CardFooter,
   CardContent,
 } from "@/layout";
-import { useBodyRedirect, useCountries, useRequireSession } from "@/hooks";
+import { useBodyRedirect, useRequireSession } from "@/hooks";
 import { useInterval } from "@/hooks/useInterval";
 import axios from "axios";
 import {
@@ -84,7 +82,6 @@ export default function RoomGroupsPage() {
   const params = useParams();
   const id = params?.id as string;
   const i18n = useLocalizedText();
-  const countries = useCountries();
   const timezone = React.useMemo(() => new Date().getTimezoneOffset().toString(), []);
 
   const { data: props } = useQuery<RoomGroupsResponse>({ queryKey: ["room-groups-data", id, timezone], queryFn: () => fetch(`/api/room-groups-data?id=${id}&timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
@@ -93,12 +90,8 @@ export default function RoomGroupsPage() {
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);
   const [updating, setUpdating] = React.useState(false);
-  const [savingResult, setSavingResult] = React.useState(false);
   const [originalMatches, setOriginalMatches] = React.useState<UIMatch[]>([]);
   const [matches, setMatches] = React.useState<UIMatch[]>([]);
-  const [editingMatchId, setEditingMatchId] = React.useState<string | null>(null);
-  const [adminGoalsLeft, setAdminGoalsLeft] = React.useState("");
-  const [adminGoalsRight, setAdminGoalsRight] = React.useState("");
 
   React.useEffect(() => {
     if (props?.matches) {
@@ -128,73 +121,6 @@ export default function RoomGroupsPage() {
     },
     []
   );
-
-  const editingMatch = React.useMemo(() => {
-    return editingMatchId
-      ? matches.find((match) => match.id === editingMatchId) ?? null
-      : null;
-  }, [editingMatchId, matches]);
-
-  const editingLeftCountry = React.useMemo(() => {
-    return countries?.find((country) => country.id === editingMatch?.countryLeftId);
-  }, [countries, editingMatch?.countryLeftId]);
-
-  const editingRightCountry = React.useMemo(() => {
-    return countries?.find((country) => country.id === editingMatch?.countryRightId);
-  }, [countries, editingMatch?.countryRightId]);
-
-  const openResultEditor = React.useCallback((match: UIMatch) => {
-    setEditingMatchId(match.id);
-    setAdminGoalsLeft(match.goalsLeft === null ? "" : String(match.goalsLeft));
-    setAdminGoalsRight(match.goalsRight === null ? "" : String(match.goalsRight));
-  }, []);
-
-  const closeResultEditor = React.useCallback(() => {
-    if (savingResult) return;
-    setEditingMatchId(null);
-    setAdminGoalsLeft("");
-    setAdminGoalsRight("");
-  }, [savingResult]);
-
-  const canSaveAdminResult = React.useMemo(() => {
-    return adminGoalsLeft !== "" && adminGoalsRight !== "";
-  }, [adminGoalsLeft, adminGoalsRight]);
-
-  const handleSaveResult = React.useCallback(() => {
-    if (!editingMatch) return;
-
-    const goalsLeft = Number(adminGoalsLeft);
-    const goalsRight = Number(adminGoalsRight);
-    if (!Number.isFinite(goalsLeft) || !Number.isFinite(goalsRight)) return;
-
-    setSavingResult(true);
-    axios
-      .post("/api/admin/groups", {
-        matches: [
-          {
-            id: editingMatch.id,
-            goalsLeft,
-            goalsRight,
-          },
-        ],
-      })
-      .then(() => {
-        setMatches((currentMatches) =>
-          currentMatches.map((match) =>
-            match.id === editingMatch.id
-              ? {
-                  ...match,
-                  goalsLeft,
-                  goalsRight,
-                  filled: true,
-                }
-              : match
-          )
-        );
-        closeResultEditor();
-      })
-      .finally(() => setSavingResult(false));
-  }, [adminGoalsLeft, adminGoalsRight, closeResultEditor, editingMatch]);
 
   const differentMatches = React.useMemo(() => {
     return matches.filter((match) => {
@@ -358,7 +284,6 @@ export default function RoomGroupsPage() {
                         onChange={(leftGoals, rightGoals) =>
                           handleGoalsChange(match.id, leftGoals, rightGoals)
                         }
-                        onEditResult={props?.canEditResults ? () => openResultEditor(match) : undefined}
                         filled={match.filled}
                         userGoalsLeft={match.userGoalsLeft}
                         userGoalsRight={match.userGoalsRight}
@@ -397,7 +322,6 @@ export default function RoomGroupsPage() {
                         onChange={(leftGoals, rightGoals) =>
                           handleGoalsChange(match.id, leftGoals, rightGoals)
                         }
-                        onEditResult={props?.canEditResults ? () => openResultEditor(match) : undefined}
                         filled={match.filled}
                         userGoalsLeft={match.userGoalsLeft}
                         userGoalsRight={match.userGoalsRight}
@@ -458,53 +382,6 @@ export default function RoomGroupsPage() {
           </div>
         </GroupsContainer>
       </Container>
-      {props?.canEditResults && editingMatch && (
-        <Modal
-          title={editingMatch.filled ? "Update result" : "Set result"}
-          onClose={closeResultEditor}
-        >
-          <div className="grid gap-[14px] min-w-[min(100%,280px)]">
-            <div className="flex items-center justify-center gap-[10px]">
-              <div className="inline-flex items-center gap-2 min-w-0 text-[16px] font-bold">
-                <CountryFlag code={editingLeftCountry?.code} />
-                <span>{editingLeftCountry?.shortName ?? editingLeftCountry?.name ?? ""}</span>
-              </div>
-              <span className="text-white/70 text-[12px] font-bold tracking-[0.12em] uppercase">vs</span>
-              <div className="inline-flex items-center gap-2 min-w-0 text-[16px] font-bold">
-                <CountryFlag code={editingRightCountry?.code} />
-                <span>{editingRightCountry?.shortName ?? editingRightCountry?.name ?? ""}</span>
-              </div>
-            </div>
-            <div className="grid grid-cols-[1fr_auto_1fr] gap-3 items-center [&_input]:w-full [&_input]:min-w-0 [&_input]:py-2 [&_input]:px-[10px] [&_input]:border [&_input]:border-white/15 [&_input]:rounded-[10px] [&_input]:bg-white/[0.04] [&_input]:text-inherit [&_input]:text-center [&_input]:text-[16px] [&_input]:font-bold">
-              <input
-                min={0}
-                max={99}
-                type="number"
-                inputMode="decimal"
-                value={adminGoalsLeft}
-                onChange={(event) => setAdminGoalsLeft(event.target.value)}
-              />
-              <span>-</span>
-              <input
-                min={0}
-                max={99}
-                type="number"
-                inputMode="decimal"
-                value={adminGoalsRight}
-                onChange={(event) => setAdminGoalsRight(event.target.value)}
-              />
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={closeResultEditor} disabled={savingResult}>
-                Cancel
-              </Button>
-              <Button onClick={handleSaveResult} disabled={!canSaveAdminResult || savingResult}>
-                {savingResult ? "Saving" : editingMatch.filled ? "Update result" : "Set result"}
-              </Button>
-            </div>
-          </div>
-        </Modal>
-      )}
       <Footer>
         <BrandLogo />
         <LocaleSelect />

@@ -10,7 +10,9 @@ import {
   Layout,
   Footer,
   Container,
+  Card,
   ContainerHeader,
+  CardContent,
 } from "@/layout";
 import { useRequireSession } from "@/hooks";
 import { useInterval } from "@/hooks/useInterval";
@@ -56,18 +58,20 @@ type UIMatch = Pick<
 
 interface AdminFinalsData {
   matches: UIMatch[];
+  todayMatches?: UIMatch[];
 }
 
 export default function AdminFinalsPage() {
   const session = useRequireSession();
   const router = useRouter();
   const i18n = useLocalizedText();
+  const timezone = React.useMemo(() => new Date().getTimezoneOffset().toString(), []);
 
   // Admin-only: admin-finals-data returns 403 for non-admins — bounce them.
   const { data } = useQuery<AdminFinalsData | null>({
-    queryKey: ["admin-finals-data"],
+    queryKey: ["admin-finals-data", timezone],
     queryFn: async () => {
-      const res = await fetch("/api/admin-finals-data");
+      const res = await fetch(`/api/admin-finals-data?timezone=${timezone}`);
       if (res.status === 401 || res.status === 403) {
         router.replace("/rooms");
         return null;
@@ -98,6 +102,13 @@ export default function AdminFinalsPage() {
       getAdminFinalsMatchLooser
     );
   }, [matches]);
+
+  // Today's knockout matches, reflecting in-progress edits from the bracket.
+  const todayMatches = React.useMemo(() => {
+    return data?.todayMatches?.map(
+      (match) => computedMatches.find((m) => m.id === match.id) || match
+    );
+  }, [data?.todayMatches, computedMatches]);
 
   const handleMatchChange = React.useCallback(
     (id: string) =>
@@ -249,6 +260,34 @@ export default function AdminFinalsPage() {
               ))}
             </CollapsableContainer>
           </BracketsMobileContainer>
+          <Card
+            title={todayMatches ? i18n.todayMatchesLabel : i18n.upcomingMatchesLabel}
+            gridArea="following"
+          >
+            <CardContent>
+              {todayMatches?.length ? (
+                todayMatches.map((match, index) => (
+                  <MatchFinalsInput
+                    key={match.id}
+                    date={new Date(match.date)}
+                    countryLeftId={match.countryLeftId}
+                    goalsLeft={match.goalsLeft ?? undefined}
+                    countryRightId={match.countryRightId}
+                    goalsRight={match.goalsRight ?? undefined}
+                    penaltisLeft={match.penaltisLeft ?? null}
+                    penaltisRight={match.penaltisRight ?? null}
+                    onChange={handleMatchChange(match.id)}
+                    countryInput
+                    order={index + 1}
+                  />
+                ))
+              ) : (
+                <div style={{ padding: "12px", textAlign: "center" }}>
+                  {i18n.noMoreMatches}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </FinalsContainer>
       </Container>
       <Footer>
