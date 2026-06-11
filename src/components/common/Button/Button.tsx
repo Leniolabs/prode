@@ -12,7 +12,7 @@ interface ButtonProps {
 }
 
 const baseClasses =
-  "inline-flex items-center gap-[10px] px-5 py-[10px] text-center font-bold text-xl cursor-pointer select-none w-max rounded-button h-full border border-dark-navy bg-accent-yellow text-dark-navy hover:not-disabled:contrast-110";
+  "inline-flex items-center gap-[10px] px-5 py-[10px] text-center font-bold text-xl cursor-pointer select-none w-max rounded-button h-full border border-dark-navy bg-accent-yellow text-dark-navy transition duration-150 hover:not-disabled:brightness-105 hover:not-disabled:shadow-md active:not-disabled:scale-[0.97]";
 
 function variantClasses(
   variant: ButtonProps["variant"],
@@ -26,7 +26,7 @@ function variantClasses(
     if (variant === "danger")
       return "!bg-transparent border !border-[#e02045] !text-[#e02045] rounded-button px-5 py-[10px] gap-[10px]";
     // default invert
-    return "!bg-transparent border !border-white !text-white rounded-button px-5 py-[10px] gap-[10px]";
+    return "!bg-transparent border !border-white !text-white rounded-button px-5 py-[10px] gap-[10px] hover:not-disabled:!bg-white/15";
   }
 
   if (variant === "primary") return "";
@@ -34,7 +34,7 @@ function variantClasses(
   if (variant === "danger")
     return "!bg-[#e02045] !text-white !border-[#e02045] [&>svg]:stroke-white [&>svg]:mr-[5px]";
   if (variant === "transparent")
-    return "!bg-transparent border !border-white !text-white rounded-button px-5 py-[10px] gap-[10px]";
+    return "!bg-transparent border !border-white !text-white rounded-button px-5 py-[10px] gap-[10px] hover:not-disabled:!bg-white/15";
   if (variant === "outline")
     return "!bg-white !text-brand-light-blue border-[1.5px] !border-brand-light-blue text-xl";
   return "";

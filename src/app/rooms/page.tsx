@@ -33,7 +33,7 @@ const roomsPanelHeaderClass =
 const roomsPanelBodyClass =
   "px-3 pt-4 pb-[18px] flex flex-col gap-3 [&_p]:text-[20px] [&_p]:text-black max-[640px]:p-2.5 max-[640px]:[&_p]:text-[14px]";
 const enterButtonClass =
-  "min-w-24 h-10 rounded-[9px] border-[1.5px] border-dark-navy bg-white text-dark-navy text-[20px] font-bold leading-none cursor-pointer disabled:opacity-35 disabled:cursor-default max-[640px]:min-w-[76px] max-[640px]:h-9 max-[640px]:text-[17px] max-[640px]:px-2.5";
+  "min-w-24 h-10 rounded-[9px] border-[1.5px] border-dark-navy bg-white text-dark-navy text-[20px] font-bold leading-none cursor-pointer transition duration-150 enabled:hover:bg-[#f1f3f5] enabled:hover:shadow-sm enabled:active:scale-[0.97] disabled:opacity-35 disabled:cursor-default max-[640px]:min-w-[76px] max-[640px]:h-9 max-[640px]:text-[17px] max-[640px]:px-2.5";
 
 type EditableRoom = Pick<
   ProdeRoom,
@@ -214,8 +214,8 @@ export default function RoomsPage() {
             <h1>{i18n.roomsProdeListTitle}</h1>
           </header>
           <div className={roomsPanelBodyClass}>
-            <div className="flex items-center !mt-[-12px]">
-              <div style={{ width: "40px", height: "40px" }}>
+            <div className="flex items-start gap-2 !mt-[-12px] max-[640px]:!mt-0 max-[640px]:gap-1.5">
+              <div className="shrink-0 w-10 h-10 max-[640px]:w-[22px] max-[640px]:h-[22px] [&_svg]:!h-full [&_svg]:!w-full">
                 <InfoIcon />
               </div>
               <p>{i18n.roomsWarning}</p>
@@ -268,8 +268,10 @@ export default function RoomsPage() {
                           {row.name}
                         </td>
                         <td className="text-center">
-                          <span className="inline-flex items-center justify-center gap-2 text-[16px] [&_svg]:block max-[640px]:text-[14px] max-[640px]:gap-1">
-                            <PlayersIcon />
+                          <span className="inline-flex items-center justify-center gap-2 text-[16px] [&_svg]:block max-[640px]:text-[14px]">
+                            <span className="max-[640px]:hidden">
+                              <PlayersIcon />
+                            </span>
                             <span>{row.playerCount}</span>
                           </span>
                         </td>

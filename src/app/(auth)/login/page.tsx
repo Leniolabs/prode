@@ -67,7 +67,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => signIn("google", { callbackUrl: "/rooms" })}
-                    className="bg-white rounded-[10px] h-[58px] w-full px-6 shadow-[0px_0px_1.5px_rgba(0,0,0,0.08),0px_2px_1.5px_rgba(0,0,0,0.17)] flex items-center justify-center gap-3 cursor-pointer hover:bg-[#f8f9fa]"
+    className="bg-white rounded-[10px] h-[58px] w-full px-6 shadow-[0px_0px_1.5px_rgba(0,0,0,0.08),0px_2px_1.5px_rgba(0,0,0,0.17)] flex items-center justify-center gap-3 cursor-pointer transition duration-150 hover:bg-[#f8f9fa] hover:shadow-md active:scale-[0.98]"
                   >
                     <span className="flex items-center [&_svg]:h-6 [&_svg]:w-6">
                       <GoogleIcon />
@@ -79,7 +79,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => signIn("azure-ad", { callbackUrl: "/rooms" })}
-                    className="bg-white rounded-[10px] h-[58px] w-full px-6 shadow-[0px_0px_1.5px_rgba(0,0,0,0.08),0px_2px_1.5px_rgba(0,0,0,0.17)] flex items-center justify-center gap-3 cursor-pointer hover:bg-[#f8f9fa]"
+    className="bg-white rounded-[10px] h-[58px] w-full px-6 shadow-[0px_0px_1.5px_rgba(0,0,0,0.08),0px_2px_1.5px_rgba(0,0,0,0.17)] flex items-center justify-center gap-3 cursor-pointer transition duration-150 hover:bg-[#f8f9fa] hover:shadow-md active:scale-[0.98]"
                   >
                     <span className="flex items-center [&_svg]:h-6 [&_svg]:w-6">
                       <MicrosoftIcon />
