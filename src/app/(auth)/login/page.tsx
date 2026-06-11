@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Layout, Footer } from "@/layout";
 import { Button } from "@/components/common/Button";
-import { GoogleIcon } from "@/components/common/Icons";
+import { GoogleIcon, MicrosoftIcon } from "@/components/common/Icons";
 
 export default function LoginPage() {
   const session = useSession();
@@ -25,7 +25,7 @@ export default function LoginPage() {
   return (
     <Layout>
       <main className="flex-1 flex flex-col items-center justify-center px-6 py-10">
-        <div className="flex flex-col items-center gap-[clamp(36px,7vh,70px)]">
+        <div className="flex flex-col items-center gap-[clamp(36px,7vh,70px)] w-full max-w-[396px]">
           <Image
             src="/mundial_2026.png"
             alt="FIFA World Cup 2026"
@@ -63,18 +63,32 @@ export default function LoginPage() {
                   </p>
                 )}
 
-                <button
-                  type="button"
-                  onClick={() => signIn("google", { callbackUrl: "/rooms" })}
-                  className="bg-white rounded-[10px] h-[58px] w-full shadow-[0px_0px_1.5px_rgba(0,0,0,0.08),0px_2px_1.5px_rgba(0,0,0,0.17)] flex items-center justify-center gap-3 cursor-pointer hover:bg-[#f8f9fa]"
-                >
-                  <span className="flex items-center [&_svg]:h-6 [&_svg]:w-6">
-                    <GoogleIcon />
-                  </span>
-                  <span className="font-medium text-[20px] text-black/[0.54]">
-                    Sign In with Google
-                  </span>
-                </button>
+                <div className="flex flex-col gap-3 w-full">
+                  <button
+                    type="button"
+                    onClick={() => signIn("google", { callbackUrl: "/rooms" })}
+                    className="bg-white rounded-[10px] h-[58px] w-full px-6 shadow-[0px_0px_1.5px_rgba(0,0,0,0.08),0px_2px_1.5px_rgba(0,0,0,0.17)] flex items-center justify-center gap-3 cursor-pointer hover:bg-[#f8f9fa]"
+                  >
+                    <span className="flex items-center [&_svg]:h-6 [&_svg]:w-6">
+                      <GoogleIcon />
+                    </span>
+                    <span className="font-medium text-[20px] text-black/[0.54]">
+                      Sign In with Google
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => signIn("azure-ad", { callbackUrl: "/rooms" })}
+                    className="bg-white rounded-[10px] h-[58px] w-full px-6 shadow-[0px_0px_1.5px_rgba(0,0,0,0.08),0px_2px_1.5px_rgba(0,0,0,0.17)] flex items-center justify-center gap-3 cursor-pointer hover:bg-[#f8f9fa]"
+                  >
+                    <span className="flex items-center [&_svg]:h-6 [&_svg]:w-6">
+                      <MicrosoftIcon />
+                    </span>
+                    <span className="font-medium text-[20px] text-black/[0.54]">
+                      Sign In with Microsoft
+                    </span>
+                  </button>
+                </div>
               </>
             )}
           </div>
