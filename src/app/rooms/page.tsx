@@ -31,7 +31,7 @@ const roomsPanelClass =
 const roomsPanelHeaderClass =
   "bg-brand-green text-white text-center pt-[18px] px-6 pb-4 [&_h1]:m-0 [&_h1]:text-[25px] [&_h1]:font-bold [&_h1]:leading-[1.15] max-[640px]:pt-4 max-[640px]:px-5 max-[640px]:pb-[14px]";
 const roomsPanelBodyClass =
-  "px-3 pt-4 pb-[18px] flex flex-col gap-3 [&_p]:text-[20px] [&_p]:text-black max-[640px]:p-2.5";
+  "px-3 pt-4 pb-[18px] flex flex-col gap-3 [&_p]:text-[20px] [&_p]:text-black max-[640px]:p-2.5 max-[640px]:[&_p]:text-[14px]";
 const enterButtonClass =
   "min-w-24 h-10 rounded-[9px] border-[1.5px] border-dark-navy bg-white text-dark-navy text-[20px] font-bold leading-none cursor-pointer disabled:opacity-35 disabled:cursor-default max-[640px]:min-w-[76px] max-[640px]:h-9 max-[640px]:text-[17px] max-[640px]:px-2.5";
 
@@ -193,11 +193,14 @@ export default function RoomsPage() {
         deadlinePost={i18n.headerWelcomeLine2}
         prodeEnd={props?.prodeEnd}
       >
-        <HeaderMenu
-          prodePublic={props?.userRanking?.prodePublic}
-          dark={props?.userRanking?.dark}
-          background={props?.userRanking?.background}
-        />
+        <div className="shrink-0 [&_div:has(>img)]:!h-[46px] [&_div:has(>img)]:!w-[46px] [&_div:has(>img)_img]:!h-[46px] [&_div:has(>img)_img]:!w-[46px] max-[640px]:[&_div:has(>img)]:!h-[40px] max-[640px]:[&_div:has(>img)]:!w-[40px] max-[640px]:[&_div:has(>img)_img]:!h-[40px] max-[640px]:[&_div:has(>img)_img]:!w-[40px]">
+          <HeaderMenu
+            compact
+            prodePublic={props?.userRanking?.prodePublic}
+            dark={props?.userRanking?.dark}
+            background={props?.userRanking?.background}
+          />
+        </div>
       </WelcomeBar>
       <main className={pageContentClass}>
         <div className={ctaRowClass}>
@@ -224,11 +227,24 @@ export default function RoomsPage() {
                     <th className="text-left rounded-tl-[8px]">
                       {i18n.roomsProdeListColumnName}
                     </th>
-                    <th className="text-center w-[120px] max-[640px]:w-[64px]">
-                      {i18n.roomsProdeListColumnPlayers}
+                    <th className="text-center w-[120px] max-[640px]:w-[52px]">
+                      <span className="max-[640px]:hidden">
+                        {i18n.roomsProdeListColumnPlayers}
+                      </span>
+                      <span
+                        className="inline-flex w-full justify-center min-[641px]:hidden [&_svg]:block"
+                        aria-label={i18n.roomsProdeListColumnPlayers}
+                      >
+                        <PlayersIcon />
+                      </span>
                     </th>
-                    <th className="text-center w-[190px] max-[640px]:w-[120px]">
-                      {i18n.roomsProdeListColumnMember}
+                    <th className="text-center w-[190px] max-[640px]:w-[88px]">
+                      <span className="max-[640px]:hidden">
+                        {i18n.roomsProdeListColumnMember}
+                      </span>
+                      <span className="inline min-[641px]:hidden">
+                        {i18n.locale === "es" ? "Miembro?" : "Member?"}
+                      </span>
                     </th>
                     <th className="w-[180px] max-[640px]:w-[104px] rounded-tr-[8px]" />
                   </tr>
