@@ -30,11 +30,13 @@ export async function POST(req: NextRequest, context: { params: Promise<{ id: st
     return NextResponse.json({ allowed: false, code: 'WRONG_PASSWORD' })
   }
 
+  // Password (and email-domain) checks passed: grant access. Register if needed,
+  // but treat an already-registered user as success too — re-submitting the
+  // correct password must let them in, not 400 (which the client swallows).
   const userIsRegistered = await isUserRegisteredToRoom(room, user)
   if (!userIsRegistered) {
     await registerUserToRoom(room, user)
-    return NextResponse.json({ allowed: true })
   }
 
-  return NextResponse.json({}, { status: 400 })
+  return NextResponse.json({ allowed: true })
 }

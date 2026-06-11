@@ -15,6 +15,9 @@
     "passwordCheckTitle": "Este prode requiere contraseña",
     "passwordCheckLabel": "Ingresa la contraseña",
     "passwordCheckButtonLabel": "Entrar",
+    "passwordCheckWrong": "La contraseña es incorrecta.",
+    "passwordCheckEmailDomain": "Tu email no pertenece al dominio permitido.",
+    "passwordCheckError": "No pudimos validar la contraseña.",
 
     "headerPointsLabel": "Puntos",
     "headerRankingLabel": "Posición",
@@ -142,6 +145,9 @@
     "passwordCheckTitle": "This room requires a password",
     "passwordCheckLabel": "Enter the password",
     "passwordCheckButtonLabel": "Enter",
+    "passwordCheckWrong": "The password is incorrect.",
+    "passwordCheckEmailDomain": "Your email is not in the allowed domain.",
+    "passwordCheckError": "We couldn't validate the password.",
 
     "headerPointsLabel": "Points",
     "headerRankingLabel": "Position",

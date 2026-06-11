@@ -14,6 +14,9 @@ export interface LocaleData {
   passwordCheckTitle: string;
   passwordCheckLabel: string;
   passwordCheckButtonLabel: string;
+  passwordCheckWrong: string;
+  passwordCheckEmailDomain: string;
+  passwordCheckError: string;
 
   headerPointsLabel: string;
   headerRankingLabel: string;

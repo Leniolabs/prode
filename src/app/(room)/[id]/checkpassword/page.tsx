@@ -24,27 +24,32 @@ export default function CheckPasswordPage() {
 
   const handlePassword = React.useCallback(
     (password: string) => {
-      axios.post(`/api/${id}/checkpassword`, { password }).then((response) => {
-        const allowed = response.data?.allowed as boolean
-        if (allowed) {
-          setError("")
-          router.push(`/${id}/ranking`)
-        } else {
+      axios
+        .post(`/api/${id}/checkpassword`, { password })
+        .then((response) => {
+          const allowed = response.data?.allowed as boolean
+          if (allowed) {
+            setError("")
+            router.push(`/${id}/ranking`)
+            return
+          }
           if (response.data?.code === "EMAIL_DOMAIN") {
-            setError("Tu email no pertenece al dominio permitido.")
+            setError(i18n.passwordCheckEmailDomain)
             return
           }
-
           if (response.data?.code === "WRONG_PASSWORD") {
-            setError("La contraseña es incorrecta.")
+            setError(i18n.passwordCheckWrong)
             return
           }
-
-          setError("No pudimos validar la contraseña.")
-        }
-      })
+          setError(i18n.passwordCheckError)
+        })
+        .catch(() => {
+          // axios rejects on any non-2xx — surface a message instead of a
+          // silent no-op when the request fails.
+          setError(i18n.passwordCheckError)
+        })
     },
-    [id, router]
+    [id, router, i18n]
   )
 
   if (session.status === 'loading' || session.status === 'unauthenticated') return null
