@@ -183,10 +183,11 @@ export default function NewProdePage() {
                 <div className="text-lg font-bold text-dark-navy px-4 pt-1 pb-0.5 w-full">
                   {i18n.createPointsTitle}
                 </div>
-                <div className="[&>div>div]:!mb-[0.4em] w-full">
+                <div className="[&>div>div]:!mb-[1.9em] w-full">
                   <FormSectionContent>
                     <FormInput
                       label={i18n.createPointsResultLabel}
+                      legend={i18n.createPointsResultLegend}
                       type="number"
                       inline
                       value={form.pointsWinner}
@@ -194,6 +195,7 @@ export default function NewProdePage() {
                     />
                     <FormInput
                       label={i18n.createPointsGoalsLabel}
+                      legend={i18n.createPointsGoalsLegend}
                       type="number"
                       inline
                       value={form.pointsGoals}
@@ -201,6 +203,7 @@ export default function NewProdePage() {
                     />
                     <FormInput
                       label={i18n.createPointsPenaltisLabel}
+                      legend={i18n.createPointsPenaltisLegend}
                       type="number"
                       inline
                       value={form.pointsPenal}
@@ -216,7 +219,7 @@ export default function NewProdePage() {
                   {i18n.buttonLabelCancel}
                 </Button>
                 <Button variant="secondary" onClick={handleCreate} disabled={!form.name.trim() || roomNameError === true}>
-                  {i18n.buttonLabelSave}
+                  {i18n.locale === "es" ? "Crear" : "Create"}
                 </Button>
               </FormFooter>
             </Form>
