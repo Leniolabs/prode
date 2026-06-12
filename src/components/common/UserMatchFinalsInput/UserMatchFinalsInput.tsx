@@ -584,8 +584,20 @@ export function UserMatchFinalsInput(
     return formatDate(props.date, i18n.locale);
   }, [props.date, i18n.locale]);
 
-  const goalStatusCls = resultStatus ? STATUS_BG[resultStatus] ?? "" : "";
-  const penaltisStatusCls = penaltisStatus ? STATUS_BG[penaltisStatus] ?? "" : "";
+  // Fall back to bg-transparent here rather than carrying it in the input's
+  // base class: a base `bg-transparent` competes with the status bg at equal
+  // specificity and, because Tailwind orders utilities alphabetically,
+  // `bg-transparent` outranks `bg-correct` so the green never shows. Picking
+  // one bg class keeps the highlight override (!important) winning when set.
+  const goalStatusCls = resultStatus ? STATUS_BG[resultStatus] ?? "bg-transparent" : "bg-transparent";
+  // Same alphabetical-ordering trap as the goal inputs, but the penalty badge's
+  // default background is bg-white on desktop (a readable badge over the goal
+  // input) and transparent on mobile. Carry that default here so the status bg
+  // is the only background utility when a status is set.
+  const penaltisDefaultBg = "bg-white max-[1024px]:bg-transparent";
+  const penaltisStatusCls = penaltisStatus
+    ? STATUS_BG[penaltisStatus] ?? penaltisDefaultBg
+    : penaltisDefaultBg;
 
   // highlight border/bg override: when highlight, inputs and countryInput use teal border + teal bg
   const highlightInputCls = props.highlight
@@ -634,7 +646,7 @@ export function UserMatchFinalsInput(
             data-testid="finals-match-goals-left"
             className={className(
               "match-input-number",
-              "w-[30px] h-[30px] border border-[#a7a8a9] bg-transparent outline-none text-center text-[#233042] text-[17px] p-[6px]",
+              "w-[30px] h-[30px] border border-[#a7a8a9] outline-none text-center text-[#233042] text-[17px] p-[6px]",
               "disabled:opacity-80",
               goalStatusCls,
               highlightInputCls,
@@ -658,8 +670,8 @@ export function UserMatchFinalsInput(
                 data-testid="finals-match-penalties-left"
                 className={className(
                   "match-input-number",
-                  "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#a7a8a9] bg-white outline-none text-center text-[#233042] disabled:opacity-80",
-                  "max-[1024px]:relative max-[1024px]:text-[14px] max-[1024px]:h-[34px] max-[1024px]:w-[34px] max-[1024px]:-ml-[1px] max-[1024px]:border-l-0 max-[1024px]:bottom-auto max-[1024px]:right-auto max-[1024px]:bg-transparent",
+                  "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#a7a8a9] outline-none text-center text-[#233042] disabled:opacity-80",
+                  "max-[1024px]:relative max-[1024px]:text-[14px] max-[1024px]:h-[34px] max-[1024px]:w-[34px] max-[1024px]:-ml-[1px] max-[1024px]:border-l-0 max-[1024px]:bottom-auto max-[1024px]:right-auto",
                   penaltisStatusCls,
                   highlightInputCls
                 )}
@@ -700,7 +712,7 @@ export function UserMatchFinalsInput(
             data-testid="finals-match-goals-right"
             className={className(
               "match-input-number",
-              "w-[30px] h-[30px] border border-[#a7a8a9] bg-transparent outline-none text-center text-[#233042] text-[17px] p-[6px]",
+              "w-[30px] h-[30px] border border-[#a7a8a9] outline-none text-center text-[#233042] text-[17px] p-[6px]",
               "disabled:opacity-80",
               goalStatusCls,
               highlightInputCls,
@@ -721,8 +733,8 @@ export function UserMatchFinalsInput(
                 data-testid="finals-match-penalties-right"
                 className={className(
                   "match-input-number",
-                  "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#a7a8a9] bg-white outline-none text-center text-[#233042] disabled:opacity-80",
-                  "max-[1024px]:relative max-[1024px]:text-[14px] max-[1024px]:h-[34px] max-[1024px]:w-[34px] max-[1024px]:-ml-[1px] max-[1024px]:border-l-0 max-[1024px]:bottom-auto max-[1024px]:right-auto max-[1024px]:bg-transparent",
+                  "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#a7a8a9] outline-none text-center text-[#233042] disabled:opacity-80",
+                  "max-[1024px]:relative max-[1024px]:text-[14px] max-[1024px]:h-[34px] max-[1024px]:w-[34px] max-[1024px]:-ml-[1px] max-[1024px]:border-l-0 max-[1024px]:bottom-auto max-[1024px]:right-auto",
                   penaltisStatusCls,
                   highlightInputCls
                 )}

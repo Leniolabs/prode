@@ -134,7 +134,14 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
     return formatDate(props.date, i18n.locale);
   }, [props.date, i18n.locale]);
 
-  const inputStatusCls = resultStatus ? STATUS_CLASSES[resultStatus] ?? "" : "";
+  // Background and border-color are applied here as a single utility each.
+  // A constant `bg-transparent`/`border-neutral-gray` in the base class would
+  // compete with the status utility at equal specificity; Tailwind orders
+  // utilities alphabetically, so `bg-transparent` outranks `bg-correct` and
+  // the green never shows. Picking exactly one class per property avoids that.
+  const inputStatusCls = resultStatus
+    ? STATUS_CLASSES[resultStatus] ?? "bg-transparent border-neutral-gray"
+    : "bg-transparent border-neutral-gray";
 
   return (
     <div
@@ -178,7 +185,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
             data-testid="group-match-goals-left"
             className={className(
               "match-input-number",
-              "text-[17px] bg-transparent max-w-[30px] outline-none text-black text-center border border-neutral-gray",
+              "text-[17px] max-w-[30px] outline-none text-black text-center border",
               "disabled:opacity-80",
               inputStatusCls
             )}
@@ -195,7 +202,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
             data-testid="group-match-goals-right"
             className={className(
               "match-input-number",
-              "text-[17px] bg-transparent max-w-[30px] outline-none text-black text-center border border-neutral-gray ml-[6px]",
+              "text-[17px] max-w-[30px] outline-none text-black text-center border ml-[6px]",
               "disabled:opacity-80",
               inputStatusCls
             )}
