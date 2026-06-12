@@ -63,13 +63,13 @@ describe("normalizeEvent", () => {
 });
 
 describe("buildScoreboardDateRange", () => {
-  it("builds one ESPN date range from the pending match dates", () => {
+  it("builds one ESPN date range from the pending match dates, padded a day each side", () => {
     expect(
       buildScoreboardDateRange([
         new Date("2026-06-27T02:00:00.000Z"),
         new Date("2026-06-11T19:00:00.000Z"),
         new Date("2026-06-13T01:00:00.000Z"),
       ]),
-    ).toBe("20260611-20260627");
+    ).toBe("20260610-20260628");
   });
 });

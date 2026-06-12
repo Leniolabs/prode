@@ -60,9 +60,15 @@ export function buildScoreboardDateRange(dates: Date[]): string | null {
   }
 
   const sorted = [...dates].sort((left, right) => left.getTime() - right.getTime());
-  const start = formatDate(sorted[0]);
-  const end = formatDate(sorted[sorted.length - 1]);
+  // ESPN buckets the scoreboard by US-local date, so a UTC kickoff in the early
+  // hours lands on the prior calendar day. Pad both ends by a day to cover it.
+  const start = formatDate(addDays(sorted[0], -1));
+  const end = formatDate(addDays(sorted[sorted.length - 1], 1));
   return `${start}-${end}`;
+}
+
+function addDays(date: Date, days: number): Date {
+  return new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
 }
 
 function formatDate(date: Date): string {
