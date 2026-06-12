@@ -53,6 +53,10 @@ export function GroupsResultsWarning(
         <div className={className(chip, "bg-accent-cta")}>+0</div>
         {i18n.groupsIncorrectPrediction}
       </div>
+       <div className={indicator}>
+        <div className={className(chip, "bg-white border-red-500 border-2")}> </div>
+        {i18n.groupsIncomplete}
+      </div>
     </Warning>
   );
 }

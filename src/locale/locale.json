@@ -82,8 +82,9 @@
     "GROUP_K": "GRUPO K",
     "GROUP_L": "GRUPO L",
     "groupsExactGoals": "Goles exactos",
-    "groupsCorrectResult": "Resultado correcto",
-    "groupsIncorrectPrediction": "Predicción incorrecta",
+    "groupsCorrectResult": "Correcto",
+    "groupsIncorrectPrediction": "Incorrecta",
+    "groupsIncomplete": "Por cerrar",
 
     "finalsTitle": "FINALES",
     "FINALS_16": "DIECISEISAVOS DE FINAL",
@@ -212,8 +213,9 @@
     "GROUP_K": "GROUP K",
     "GROUP_L": "GROUP L",
     "groupsExactGoals": "Exact goals",
-    "groupsCorrectResult": "Right result",
-    "groupsIncorrectPrediction": "Incorrect prediction",
+    "groupsCorrectResult": "Correct",
+    "groupsIncorrectPrediction": "Incorrect",
+    "groupsIncomplete": "Closing Soon",
 
     "finalsTitle": "BRACKETS",
     "FINALS_16": "ROUND OF 32",

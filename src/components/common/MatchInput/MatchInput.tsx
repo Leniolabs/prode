@@ -134,14 +134,36 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
     return formatDate(props.date, i18n.locale);
   }, [props.date, i18n.locale]);
 
-  // Background and border-color are applied here as a single utility each.
-  // A constant `bg-transparent`/`border-neutral-gray` in the base class would
-  // compete with the status utility at equal specificity; Tailwind orders
-  // utilities alphabetically, so `bg-transparent` outranks `bg-correct` and
-  // the green never shows. Picking exactly one class per property avoids that.
-  const inputStatusCls = resultStatus
+    // --- Check if the match is happening today or tomorrow before 1:00 PM (Local Time) ---
+  const isMatchActive = React.useMemo(() => {
+    const now = new Date();
+    const matchDate = new Date(props.date);
+
+    // Start of the current day (Today at 00:00:00 local time)
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // 1:00 PM (13:00:00) of the next day local time
+    const tomorrow1pm = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 13, 0, 0);
+
+    // If the match kickoff falls between today 00:00 and tomorrow 13:00
+    return matchDate >= startOfToday && matchDate <= tomorrow1pm;
+  }, [props.date]);
+
+
+  // Grab the default class based on the result...
+  let inputStatusCls = resultStatus
     ? STATUS_CLASSES[resultStatus] ?? "bg-transparent border-neutral-gray"
     : "bg-transparent border-neutral-gray";
+
+  // ...and if it's currently active, swap out the border color for red.
+  // This correctly targets `border-neutral-gray`, `border-correct`, etc.
+  if (isMatchActive && !props.disabled) {
+    inputStatusCls = inputStatusCls.replace(/border-[\w-]+/, "border-red-500 border-2");
+  } 
+
+  if (!props.disabled) {
+    inputStatusCls = inputStatusCls.replace("bg-transparent", "bg-white");
+  }
 
   return (
     <div
@@ -213,7 +235,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
           />
         </div>
         {props.filled ? (
-          <div className="flex items-center gap-[3px] text-[13px] text-neutral-gray whitespace-nowrap cursor-default mt-1">
+          <div className="flex items-center gap-[3px] text-[13px] text-[#444444] whitespace-nowrap cursor-default mt-1">
             <span className="mr-[5px]">Resultado:</span>
             <CountryFlag
               code={countryLeft?.code}
@@ -238,7 +260,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
             )}
           </div>
         ) : (
-          <div className="flex items-center gap-[3px] text-[13px] text-neutral-gray whitespace-nowrap cursor-default">
+          <div className="flex items-center gap-[3px] text-[13px] text-[#444444] whitespace-nowrap cursor-default">
             {date}
             {props.onEditResult && (
               <ButtonIcon

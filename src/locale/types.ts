@@ -83,6 +83,7 @@ export interface LocaleData {
   groupsExactGoals: string;
   groupsCorrectResult: string;
   groupsIncorrectPrediction: string;
+  groupsIncomplete: string;
 
   finalsTitle: string;
   FINALS_16: string;

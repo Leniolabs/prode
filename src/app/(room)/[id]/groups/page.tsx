@@ -376,7 +376,7 @@ export default function RoomGroupsPage() {
               <Button
                 href={`/${id}/ranking`}
                 variant="secondary"
-                className="!text-brand-light-blue !border-2 !border-brand-light-blue !bg-transparent !text-[20px] !font-semibold"
+                invert
               >
                 {i18n.buttonCompleteRanking}
               </Button>
