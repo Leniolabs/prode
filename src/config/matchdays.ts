@@ -2,14 +2,11 @@ import type { FinalsStageGroup } from "@/utils/finals";
 
 // WC 2026 group-stage "fecha" (matchday) boundaries.
 //
-// Predictions lock per matchday: every match of a fecha closes at that fecha's
-// first kickoff, so a player must complete the whole fecha before it begins and
-// cannot peek at an early result before predicting a same-fecha match. Across
-// fechas, editing stays open ("ir completando fecha a fecha").
-//
-// Exception: fecha 1 is relaxed (see groupMatchLockTime in utils/date.ts). It
-// does NOT lock as a block; each fecha-1 match closes individually 1h before
-// its own kickoff. Fechas 2 and 3 keep the block-lock behavior above.
+// Group predictions lock per match at kickoff (see groupMatchLockTime in
+// utils/date.ts): each match closes individually the moment it starts, so later
+// same-fecha matches stay editable until their own kickoff. These boundaries are
+// no longer used as block-lock deadlines; they remain as fecha metadata and as a
+// sanity guard for pre-tournament dates.
 //
 // Each entry is the first kickoff (UTC) of its fecha. Derived from the seeded
 // fixture (prisma/seed/fixture.ts): the 72 group matches split 24/24/24 across
