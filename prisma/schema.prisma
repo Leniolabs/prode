@@ -197,6 +197,10 @@ model ProdeRoom {
   pointsGoals  Int         @default(3)
   pointsPenal  Int         @default(5)
   UserProde    UserProde[]
+
+  deletedAt DateTime?
+
+  @@index([deletedAt])
 }
 
 model UserProde {
@@ -218,8 +222,11 @@ model UserProde {
   matches       ProdeUserGroupMatch[]
   finalsMatches ProdeUserFinalsMatch[]
 
+  deletedAt DateTime?
+
   @@unique([userId, prodeRoomId])
   @@index([prodeRoomId])
+  @@index([deletedAt])
 }
 
 model ProdeUserGroupMatch {

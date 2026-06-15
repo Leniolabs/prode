@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
   const [userProdeNotTemplate, prode] = await Promise.all([
     prisma.userProde.findMany({
-      where: { userId: user.id, template: false },
+      where: { userId: user.id, template: false, deletedAt: null },
       include: { prodeRoom: true },
     }),
     prisma.prode.findFirst({ select: { prodeEnd: true } }),
