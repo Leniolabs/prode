@@ -1,12 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" height="480" width="640" viewBox="0 0 640 480">
-  <defs>
-    <clipPath id="a">
-      <path fill-opacity=".67" d="M-79.458 32h640v480h-640z"/>
-    </clipPath>
-  </defs>
-  <g stroke-width="1pt" fill-rule="evenodd" clip-path="url(#a)" transform="translate(79.458 -32)">
-    <path fill="#ff0" d="M-119.46 32h720v480h-720z"/>
-    <path d="M-119.46 32v480l480-480h-480z" fill="#00ca00"/>
-    <path d="M120.54 512h480V32l-480 480z" fill="red"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#007fff"/>
+  <line x1="0" y1="600" x2="800" y2="0" stroke="#f7d618" stroke-width="120"/>
+  <line x1="0" y1="600" x2="800" y2="0" stroke="#ce1021" stroke-width="72"/>
+  <path fill="#f7d618" transform="translate(150 150) scale(75)" d="M0,-1 0.2245,-0.309 0.9511,-0.309 0.3633,0.118 0.5878,0.809 0,0.382 -0.5878,0.809 -0.3633,0.118 -0.9511,-0.309 -0.2245,-0.309Z"/>
 </svg>
