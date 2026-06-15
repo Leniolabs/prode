@@ -20,6 +20,7 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { Meta } from "@/components/common/Meta";
 import { ButtonIcon } from "@/components/common/ButtonIcon";
 import { CloseIcon, CrownIcon, ExitIcon } from "@/components/common/Icons";
+import { LeaveRoomConfirmModal } from "@/components/common/LeaveRoomConfirmModal";
 import axios from "axios";
 import { useLocalizedText } from "@/locale";
 import { useQuery } from "@tanstack/react-query";
@@ -94,12 +95,21 @@ export default function RankingPage() {
     [router]
   );
 
+  const [leaveModalOpen, setLeaveModalOpen] = React.useState(false);
+
   const handleLeaveRoom = React.useCallback(() => {
-    if (confirm("Estas seguro?")) {
-      axios.delete(`/api/${props?.userProdeId}/leave`).then(() => {
-        router.push("/rooms");
-      });
-    }
+    setLeaveModalOpen(true);
+  }, []);
+
+  const handleLeaveCancel = React.useCallback(() => {
+    setLeaveModalOpen(false);
+  }, []);
+
+  const handleLeaveConfirm = React.useCallback(() => {
+    setLeaveModalOpen(false);
+    axios.delete(`/api/${props?.userProdeId}/leave`).then(() => {
+      router.push("/rooms");
+    });
   }, [props?.userProdeId, router]);
 
   const handleRemoveUser = React.useCallback(
@@ -162,6 +172,10 @@ export default function RankingPage() {
           <Button onClick={handleCopyLink}>
             {copyLabel ?? i18n.buttonLabelCopyLink}
           </Button>
+          <span
+            aria-hidden
+            className="ml-4 mr-4 h-7 w-px self-center bg-white/25"
+          />
           <Button onClick={handleLeaveRoom} variant="danger">
             <ExitIcon /> {i18n.buttonLabelLeave}
           </Button>
@@ -318,6 +332,12 @@ export default function RankingPage() {
       <Footer>
         <BrandLogo />
       </Footer>
+      {leaveModalOpen && (
+        <LeaveRoomConfirmModal
+          onCancel={handleLeaveCancel}
+          onConfirm={handleLeaveConfirm}
+        />
+      )}
     </Layout>
   );
 }

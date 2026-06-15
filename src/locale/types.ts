@@ -43,6 +43,14 @@ export interface LocaleData {
   buttonLabelCancel: string;
   buttonLabelCopyLink: string;
   buttonLabelLeave: string;
+  leaveRoomConfirmTitle: string;
+  leaveRoomConfirmWarning: string;
+  leaveRoomConfirmPromptPrefix: string;
+  leaveRoomConfirmKeyword: string;
+  leaveRoomConfirmPromptSuffix: string;
+  leaveRoomConfirmInputPlaceholder: string;
+  leaveRoomConfirmCancel: string;
+  leaveRoomConfirmAccept: string;
   buttonCompleteRanking: string;
   buttonLabelRanking: string;
   buttonLabelGoToMyProde: string;
