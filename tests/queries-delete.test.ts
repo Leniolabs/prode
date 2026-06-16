@@ -1,10 +1,14 @@
 /**
  * Phase 1D — deleteUserProde characterisation tests.
  *
+ * deleteUserProde is now a SOFT delete: it stamps UserProde.deletedAt and leaves
+ * the prediction rows (ProdeUserGroupMatch / ProdeUserFinalsMatch) intact so a
+ * later re-join can reactivate the membership and restore the predictions. Read
+ * paths exclude soft-deleted UserProdes via `deletedAt: null`, so the preserved
+ * predictions never leak into rankings or member counts.
+ *
  * Each test seeds a scenario, calls deleteUserProde, then asserts DB state via
- * Prisma .count() / .findFirst() calls. Tests pin actual behaviour; any
- * surprising finding is noted in the test name with the prefix
- * "pinned may be a bug:".
+ * Prisma .count() / .findFirst() calls.
  */
 
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -135,7 +139,7 @@ async function seedUserProdeWithPredictions(
 // ---------------------------------------------------------------------------
 
 describe("deleteUserProde", () => {
-  it("deletes all ProdeUserGroupMatch rows belonging to the given userProde", async () => {
+  it("preserves all ProdeUserGroupMatch rows belonging to the given userProde (soft delete)", async () => {
     const base = await seedBase("grp");
     const { upId } = await seedUserProdeWithPredictions("grp", base);
 
@@ -147,13 +151,14 @@ describe("deleteUserProde", () => {
 
     await deleteUserProde(upId);
 
+    // Soft delete leaves prediction rows untouched so a re-join can restore them.
     const afterCount = await prisma.prodeUserGroupMatch.count({
       where: { userProdeId: upId },
     });
-    expect(afterCount).toBe(0);
+    expect(afterCount).toBe(1);
   });
 
-  it("deletes all ProdeUserFinalsMatch rows belonging to the given userProde", async () => {
+  it("preserves all ProdeUserFinalsMatch rows belonging to the given userProde (soft delete)", async () => {
     const base = await seedBase("fin");
     const { upId } = await seedUserProdeWithPredictions("fin", base);
 
@@ -167,23 +172,32 @@ describe("deleteUserProde", () => {
     const afterCount = await prisma.prodeUserFinalsMatch.count({
       where: { userProdeId: upId },
     });
-    expect(afterCount).toBe(0);
+    expect(afterCount).toBe(1);
   });
 
-  it("deletes the UserProde row itself", async () => {
+  it("soft-deletes the UserProde row: it survives but gets a deletedAt stamp", async () => {
     const base = await seedBase("up");
     const { upId } = await seedUserProdeWithPredictions("up", base);
 
     const before = await prisma.userProde.findFirst({ where: { id: upId } });
     expect(before).not.toBeNull();
+    expect(before!.deletedAt).toBeNull();
 
     await deleteUserProde(upId);
 
+    // The row still exists (recoverable) but is now marked deleted.
     const after = await prisma.userProde.findFirst({ where: { id: upId } });
-    expect(after).toBeNull();
+    expect(after).not.toBeNull();
+    expect(after!.deletedAt).not.toBeNull();
+
+    // It no longer counts as an active member.
+    const activeCount = await prisma.userProde.count({
+      where: { id: upId, deletedAt: null },
+    });
+    expect(activeCount).toBe(0);
   });
 
-  it("does not touch another user's rows when one userProde is deleted", async () => {
+  it("does not touch another user's rows when one userProde is soft-deleted", async () => {
     // Seed two separate users, each with their own UserProde and predictions.
     const prodeId = "prode-del-isolation";
     const userId1 = "user-del-iso-1";
@@ -203,24 +217,24 @@ describe("deleteUserProde", () => {
     const { upId: upId1 } = await seedUserProdeWithPredictions("iso1", base1);
     const { upId: upId2 } = await seedUserProdeWithPredictions("iso2", base2);
 
-    // Delete only the first user's prode
+    // Soft-delete only the first user's prode
     await deleteUserProde(upId1);
 
-    // First user's rows are gone
-    expect(
-      await prisma.userProde.findFirst({ where: { id: upId1 } })
-    ).toBeNull();
+    // First user's row survives but is marked deleted; predictions preserved.
+    const up1 = await prisma.userProde.findFirst({ where: { id: upId1 } });
+    expect(up1).not.toBeNull();
+    expect(up1!.deletedAt).not.toBeNull();
     expect(
       await prisma.prodeUserGroupMatch.count({ where: { userProdeId: upId1 } })
-    ).toBe(0);
+    ).toBe(1);
     expect(
       await prisma.prodeUserFinalsMatch.count({ where: { userProdeId: upId1 } })
-    ).toBe(0);
+    ).toBe(1);
 
-    // Second user's rows are untouched
-    expect(
-      await prisma.userProde.findFirst({ where: { id: upId2 } })
-    ).not.toBeNull();
+    // Second user's row is untouched and still active.
+    const up2 = await prisma.userProde.findFirst({ where: { id: upId2 } });
+    expect(up2).not.toBeNull();
+    expect(up2!.deletedAt).toBeNull();
     expect(
       await prisma.prodeUserGroupMatch.count({ where: { userProdeId: upId2 } })
     ).toBe(1);
@@ -233,7 +247,7 @@ describe("deleteUserProde", () => {
     // No seed — call directly with a fabricated ID that has never existed.
     const ghostId = "non-existent-userprode-id-9999";
 
-    // deleteMany on a non-matching where clause is a no-op in Prisma/Postgres;
+    // updateMany on a non-matching where clause is a no-op in Prisma/Postgres;
     // the function should complete without throwing.
     await expect(deleteUserProde(ghostId)).resolves.toBeUndefined();
 

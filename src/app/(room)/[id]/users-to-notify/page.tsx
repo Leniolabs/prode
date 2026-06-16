@@ -61,8 +61,8 @@ export default async function UsersToNotifyByRoomPage({ params }: PageProps) {
 
   if (!currentUser || currentUser.blocked) redirect('/login')
   if (!id) redirect('/rooms')
-  const room = await prisma.prodeRoom.findUnique({
-    where: { id },
+  const room = await prisma.prodeRoom.findFirst({
+    where: { id, deletedAt: null },
     select: { id: true, userId: true, prodeId: true },
   })
 
@@ -100,6 +100,7 @@ export default async function UsersToNotifyByRoomPage({ params }: PageProps) {
     where: {
       prodeRoomId: room.id,
       template: false,
+      deletedAt: null,
     },
     select: {
       id: true,

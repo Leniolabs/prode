@@ -11,7 +11,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { PrismaClient } from '@/generated/prisma';
 
-import { registerUserToRoom } from "@/utils/queries";
+import { deleteUserProde, registerUserToRoom } from "@/utils/queries";
 import {
   cleanDB,
   makeCountry,
@@ -475,6 +475,72 @@ describe("registerUserToRoom", () => {
         where: { prodeRoomId: ROOM_ID, userId: USER_ID },
       });
       expect(countAfter).toBe(1);
+    },
+    30_000
+  );
+
+  // -------------------------------------------------------------------------
+  // Scenario 9: Re-joining a room after leaving reactivates the soft-deleted
+  // UserProde (same row, deletedAt cleared) and preserves its predictions.
+  // -------------------------------------------------------------------------
+
+  it(
+    "reactivates a soft-deleted UserProde on re-join instead of creating a new row, preserving predictions",
+    async () => {
+      await makeProde(prisma, PRODE_ID);
+      await makeUser(prisma, USER_ID, "user1@test.local");
+      const room = await makeProdeRoom(prisma, {
+        id: ROOM_ID,
+        prodeId: PRODE_ID,
+        userId: USER_ID,
+      });
+      const user = (await prisma.user.findUniqueOrThrow({
+        where: { id: USER_ID },
+      })) as any;
+
+      // First join.
+      const first = await registerUserToRoom(room, user);
+      expect(first).toBeDefined();
+      const originalId = first!.id;
+
+      // Seed a prediction so we can prove it survives the leave/rejoin cycle.
+      await makeMatch(prisma, {
+        id: MATCH_GROUP_FUTURE,
+        prodeId: PRODE_ID,
+        stage: "GROUP_A",
+        date: FUTURE,
+      });
+      await makeGroupPrediction(prisma, {
+        userProdeId: originalId,
+        matchId: MATCH_GROUP_FUTURE,
+        goalsLeft: 3,
+        goalsRight: 2,
+      });
+
+      // Leave (soft delete).
+      await deleteUserProde(originalId);
+      const afterLeave = await prisma.userProde.findUniqueOrThrow({
+        where: { id: originalId },
+      });
+      expect(afterLeave.deletedAt).not.toBeNull();
+
+      // Re-join: should reactivate the same row, not create a second one.
+      await registerUserToRoom(room, user);
+
+      const rows = await prisma.userProde.findMany({
+        where: { prodeRoomId: ROOM_ID, userId: USER_ID },
+      });
+      expect(rows.length).toBe(1);
+      expect(rows[0].id).toBe(originalId);
+      expect(rows[0].deletedAt).toBeNull();
+
+      // The original prediction is still attached (not duplicated, not lost).
+      const predictions = await prisma.prodeUserGroupMatch.findMany({
+        where: { userProdeId: originalId },
+      });
+      expect(predictions.length).toBe(1);
+      expect(predictions[0].goalsLeft).toBe(3);
+      expect(predictions[0].goalsRight).toBe(2);
     },
     30_000
   );

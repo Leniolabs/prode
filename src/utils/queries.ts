@@ -52,9 +52,10 @@ export async function getUserByEmail(email: string) {
 }
 
 export async function getUserProdeById(userProdeId: string) {
-  return prisma.userProde.findUnique({
+  return prisma.userProde.findFirst({
     where: {
       id: userProdeId,
+      deletedAt: null,
     },
     include: {
       user: true,
@@ -73,6 +74,7 @@ export async function getUserByUserProdeId(userProdeId: string) {
       userProdes: {
         some: {
           id: userProdeId,
+          deletedAt: null,
         },
       },
       blocked: false,
@@ -90,14 +92,16 @@ export async function countUsersInProdeRoom(id: string) {
   return prisma.userProde.count({
     where: {
       prodeRoomId: id,
+      deletedAt: null,
     },
   });
 }
 
 export async function getProdeRoom(id: string) {
-  return prisma.prodeRoom.findUnique({
+  return prisma.prodeRoom.findFirst({
     where: {
       id,
+      deletedAt: null,
     },
     include: {
       prode: true,
@@ -110,6 +114,7 @@ export async function getUserProde(room: ProdeRoom, user: User) {
     where: {
       prodeRoomId: room.id,
       userId: user.id,
+      deletedAt: null,
     },
     include: {
       matches: true,
@@ -138,6 +143,7 @@ export async function isUserRegisteredToRoom(room: ProdeRoom, user: User) {
     where: {
       prodeRoomId: room.id,
       userId: user.id,
+      deletedAt: null,
     },
   });
   return !!prode;
@@ -173,7 +179,24 @@ export async function createTemplateUserProde(user: User) {
 }
 
 export async function registerUserToRoom(room: ProdeRoom, user: User) {
-  if (await isUserRegisteredToRoom(room, user)) return;
+  // A previously soft-deleted membership is reactivated rather than recreated.
+  // This honours the @@unique([userId, prodeRoomId]) constraint (the row still
+  // exists) and restores the user's preserved predictions in one step.
+  const existing = await prisma.userProde.findFirst({
+    where: {
+      prodeRoomId: room.id,
+      userId: user.id,
+    },
+  });
+
+  if (existing) {
+    if (existing.deletedAt === null) return;
+    await prisma.userProde.update({
+      where: { id: existing.id },
+      data: { deletedAt: null },
+    });
+    return existing;
+  }
 
   const userProde = await prisma.userProde.create({
     data: {
@@ -260,6 +283,7 @@ export async function getUserFinalMatches(
             userProde: {
               prodeRoomId: room.id,
               userId: user.id,
+              deletedAt: null,
             },
           },
         },
@@ -407,6 +431,7 @@ export async function getUserGroupMatches(
             userProde: {
               prodeRoomId: room.id,
               userId: user.id,
+              deletedAt: null,
             },
           },
         },
@@ -670,6 +695,7 @@ export async function syncronizeTemplate(room: ProdeRoom, user: User) {
       userProde: {
         prodeRoomId: room.id,
         userId: user.id,
+        deletedAt: null,
       },
     },
     select: {
@@ -733,6 +759,7 @@ export async function syncronizeFinalsTemplate(room: ProdeRoom, user: User) {
       userProde: {
         prodeRoomId: room.id,
         userId: user.id,
+        deletedAt: null,
       },
       match: {
         countryLeftId: { not: null },
@@ -859,22 +886,22 @@ export async function getAllowedFinalMatchesToModify(ids: string[]) {
     .map((match) => match.id);
 }
 
+/**
+ * Soft-deletes a UserProde: stamps `deletedAt` instead of removing the row.
+ * Prediction rows (ProdeUserGroupMatch / ProdeUserFinalsMatch) are intentionally
+ * left intact so a re-join can reactivate the UserProde and restore them. Read
+ * paths exclude soft-deleted UserProdes via `deletedAt: null` filters, so the
+ * preserved predictions never leak into rankings or member counts.
+ *
+ * Name and signature are kept stable because the leave route depends on them.
+ */
 export async function deleteUserProde(userProdeId: string) {
-  await prisma.prodeUserGroupMatch.deleteMany({
-    where: {
-      userProdeId,
-    },
-  });
-
-  await prisma.prodeUserFinalsMatch.deleteMany({
-    where: {
-      userProdeId,
-    },
-  });
-
-  await prisma.userProde.deleteMany({
+  await prisma.userProde.updateMany({
     where: {
       id: userProdeId,
+    },
+    data: {
+      deletedAt: new Date(),
     },
   });
 }

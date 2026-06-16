@@ -25,7 +25,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ id: st
   if (!matches) return NextResponse.json({}, { status: 400 })
 
   const userProde = await prisma.userProde.findFirst({
-    where: { prodeRoomId: id, userId: user.id },
+    where: { prodeRoomId: id, userId: user.id, deletedAt: null },
     include: { finalsMatches: true, prode: true },
   })
   if (!userProde) return NextResponse.json({}, { status: 400 })

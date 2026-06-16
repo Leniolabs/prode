@@ -168,7 +168,7 @@ else 0 end points
 from "UserProde" up inner join "User" u on u."id" = up."userId"
 left outer join (${subGroups}) gp on gp."userProdeId" = up."id"
 left outer join (${subFinals}) fp on fp."userProdeId" = up."id"
-where up."prodeRoomId" = ${room.id}) rq
+where up."prodeRoomId" = ${room.id} and up."deletedAt" is null) rq
 order by rq."points" DESC, rq."email" ASC${offsetClause}${limitClause}`;
 }
 
@@ -257,7 +257,7 @@ left outer join (${subGroupI}) gpI on gpI."userProdeId" = up."id"
 left outer join (${subGroupJ}) gpJ on gpJ."userProdeId" = up."id"
 left outer join (${subGroupK}) gpK on gpK."userProdeId" = up."id"
 left outer join (${subGroupL}) gpL on gpL."userProdeId" = up."id"
-where up."prodeRoomId" = ${room.id}) rq
+where up."prodeRoomId" = ${room.id} and up."deletedAt" is null) rq
 order by rq."points" DESC, rq."email" ASC${offsetClause}${limitClause}`;
 }
 

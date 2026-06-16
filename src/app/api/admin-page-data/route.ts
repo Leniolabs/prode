@@ -15,14 +15,15 @@ export async function GET(req: NextRequest) {
   if (user.role !== 'ADMIN') return NextResponse.json({}, { status: 403 })
 
   const rooms = await prisma.prodeRoom.findMany({
+    where: { deletedAt: null },
     select: {
       id: true,
       password: true,
       name: true,
       public: true,
-      _count: true,
+      _count: { select: { UserProde: { where: { deletedAt: null } } } },
       emailDomain: true,
-      UserProde: { where: { userId: user.id } },
+      UserProde: { where: { userId: user.id, deletedAt: null } },
     },
     skip: pageLength * page,
     take: pageLength,
@@ -35,8 +36,8 @@ export async function GET(req: NextRequest) {
   })
 
   const userCount = await prisma.user.count()
-  const roomCount = await prisma.prodeRoom.count()
-  const prodeCount = await prisma.userProde.count({ where: { prodeRoomId: { not: null } } })
+  const roomCount = await prisma.prodeRoom.count({ where: { deletedAt: null } })
+  const prodeCount = await prisma.userProde.count({ where: { prodeRoomId: { not: null }, deletedAt: null } })
 
   return NextResponse.json({
     userCount,

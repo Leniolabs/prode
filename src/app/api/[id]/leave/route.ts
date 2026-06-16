@@ -18,8 +18,10 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ id: 
 
   const isAdmin = userProde.userId === user.id
 
+  // Count only active (non-soft-deleted) members so branching reflects real
+  // membership after prior leaves.
   const usersLength = await prisma.userProde.count({
-    where: { prodeRoomId: userProde.prodeRoomId },
+    where: { prodeRoomId: userProde.prodeRoomId, deletedAt: null },
   })
 
   if (userProde.prodeRoomId) {
@@ -28,6 +30,7 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ id: 
         where: {
           prodeRoomId: userProde.prodeRoomId,
           userId: { not: userProde.userId },
+          deletedAt: null,
         },
       })
       if (firstUserProde) {
@@ -38,8 +41,13 @@ export async function DELETE(req: NextRequest, context: { params: Promise<{ id: 
         await deleteUserProde(userProde.id)
       }
     } else {
+      // Last/sole member (or a non-promotable admin) leaving: soft-delete the
+      // membership and the room so both are recoverable instead of destroyed.
       await deleteUserProde(userProde.id)
-      await prisma.prodeRoom.deleteMany({ where: { id: userProde.prodeRoomId } })
+      await prisma.prodeRoom.updateMany({
+        where: { id: userProde.prodeRoomId },
+        data: { deletedAt: new Date() },
+      })
     }
   }
 

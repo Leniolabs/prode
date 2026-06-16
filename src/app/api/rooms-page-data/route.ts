@@ -19,11 +19,12 @@ export async function GET(req: NextRequest) {
   const [rooms, userProdeNotTemplate, prode] = await Promise.all([
     prisma.prodeRoom.findMany({
       where: {
+        deletedAt: null,
         AND: [
           {
             OR: [
               { public: true },
-              { UserProde: { some: { userId: user.id } } },
+              { UserProde: { some: { userId: user.id, deletedAt: null } } },
             ],
           },
           {
@@ -44,12 +45,12 @@ export async function GET(req: NextRequest) {
         pointsWinner: true,
         pointsGoals: true,
         pointsPenal: true,
-        _count: true,
-        UserProde: { where: { userId: user.id } },
+        _count: { select: { UserProde: { where: { deletedAt: null } } } },
+        UserProde: { where: { userId: user.id, deletedAt: null } },
       },
     }),
     prisma.userProde.findMany({
-      where: { userId: user.id, template: false },
+      where: { userId: user.id, template: false, deletedAt: null },
       include: { prodeRoom: true },
     }),
     prisma.prode.findFirst({ select: { prodeEnd: true } }),
