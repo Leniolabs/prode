@@ -318,7 +318,7 @@ export default function RoomGroupsPage() {
                       <MatchInput
                         key={match.id}
                         className={
-                          ["bg-[#f6f5f5]", "bg-[#ededed]", "bg-[#e1e1e1]"][
+                          ["bg-[#CCDCE7]", "bg-[#D9E4ED]", "bg-[#E6EDF2]"][
                             Math.floor(index / 2)
                           ]
                         }
