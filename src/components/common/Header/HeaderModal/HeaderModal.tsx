@@ -1,6 +1,11 @@
 import { signOut } from "next-auth/react";
 import React from "react";
-import { useLocalizedText, useLocale, useSetLocale, SUPPORTED_LOCALES } from "../../../../locale";
+import {
+  useLocalizedText,
+  useLocale,
+  useSetLocale,
+  SUPPORTED_LOCALES,
+} from "../../../../locale";
 import { className } from "../../../../utils/classname";
 import { Button } from "../../Button";
 import { Modal } from "../../Modal";
@@ -84,40 +89,49 @@ export function HeaderModal(props: React.PropsWithChildren<HeaderModalProps>) {
       onClose={props.onCancel}
       headerClassName="bg-[#00192c]"
     >
-      <div className="flex bg-[#edededcc] p-6">
+      <div className="bg-[#edededcc] p-6">
         <UserImage
           editable
-          className="[&_img]:border-2 [&_img]:border-solid [&_img]:border-white"
+          className="m-auto [&_img]:border-2 [&_img]:border-solid [&_img]:border-white"
           image={image || props.image}
           onChange={setImage}
         />
-        <div className="ml-3 flex flex-col overflow-hidden text-[18px] font-normal [&>div]:flex [&>div]:max-w-full [&>div]:items-center [&>div]:whitespace-nowrap [&_label]:mr-1.5 [&_label]:text-[20px] [&_label]:font-semibold [&_label]:text-dark-navy [&_svg]:mr-1.5">
+        <div className="ml-3 flex min-w-0 flex-1 flex-col gap-0 overflow-hidden text-[18px] font-normal">
           {props.position && (
-            <div>
-              <label>{i18n.profilePositionLabel}</label>
-              {medalColor && (
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle cx="8" cy="8" r="8" fill={medalColor} />
-                </svg>
-              )}
-              {props.position}
+            <div className="flex min-w-0 flex-col">
+              <label className="text-[20px] font-semibold text-dark-navy">
+                {i18n.profilePositionLabel}
+              </label>
+              <div className="mt-1 flex items-center text-[18px] whitespace-nowrap">
+                {medalColor && (
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="mr-1.5"
+                  >
+                    <circle cx="8" cy="8" r="8" fill={medalColor} />
+                  </svg>
+                )}
+                {props.position}
+              </div>
             </div>
           )}
-          <div className="relative flex">
-            <label>{i18n.profileMailLabel}</label>
-            {props.email}
+          <div className="flex min-w-0 flex-col">
+            <label className="text-[20px] font-semibold text-dark-navy">
+              {i18n.profileMailLabel}
+            </label>
+            <div className="mt-1 truncate text-[18px]">{props.email}</div>
           </div>
-          <div className="relative flex">
-            <label>{i18n.profileNameLabel}</label>
+          <div className="flex min-w-0 flex-col">
+            <label className="text-[20px] font-semibold text-dark-navy">
+              {i18n.profileNameLabel}
+            </label>
             <input
               data-testid="profile-name-input"
-              className="w-full max-w-full border border-solid border-neutral-gray bg-white text-[16px] text-dark-navy shadow-none outline-none"
+              className="mt-1 w-full max-w-full border border-solid border-neutral-gray bg-white px-2 py-1 text-[16px] text-dark-navy shadow-none outline-none"
               value={name}
               onChange={handleNameChange}
             />

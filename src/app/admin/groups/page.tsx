@@ -198,8 +198,8 @@ export default function AdminGroupsPage() {
         </GroupsContainer>
       </Container>
       <Footer>
-        <BrandLogo />
         <LocaleSelect />
+        <BrandLogo />
       </Footer>
     </Layout>
   );

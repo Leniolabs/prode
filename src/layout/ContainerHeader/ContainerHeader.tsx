@@ -31,7 +31,7 @@ export function ContainerHeader(
     >
       <div
         className={className(
-          "w-full flex items-center font-bold text-xl px-3 py-[7px] text-white",
+          "flex min-w-0 flex-1 items-center font-bold text-xl px-3 py-[7px] text-white",
           isSecondary
             ? "bg-container-header-secondary uppercase"
             : "bg-brand-blue",
@@ -43,7 +43,7 @@ export function ContainerHeader(
       </div>
       <div
         className={className(
-          "flex [&>*:not(:first-child)]:ml-[5px]",
+          "flex shrink-0 [&>*:not(:first-child)]:ml-[5px]",
           "max-lg:ml-auto max-lg:w-full max-lg:[&_button]:w-full"
         )}
       >

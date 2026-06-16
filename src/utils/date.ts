@@ -19,6 +19,12 @@ function applyTimezoneOffset(date: Date, timezone?: string) {
   return newDate;
 }
 
+function normalizeMeridiem(value: string) {
+  return value
+    .replace(/\ba\.\s*m\./gi, "a.m.")
+    .replace(/\bp\.\s*m\./gi, "p.m.");
+}
+
 /**
  * The lock time of a group match: its own kickoff. Group matches no longer lock
  * as a block per fecha; each one closes individually at the moment it starts.
@@ -98,7 +104,7 @@ export function formatDate(date: Date, locale: string, timezone?: string) {
     minute: "numeric",
   });
 
-  return `${dayShort} ${day}/${month} - ${hour}`;
+  return `${dayShort} ${day}/${month} - ${normalizeMeridiem(hour)}`;
 }
 
 export function formatHour(date: Date, locale: string, timezone?: string) {
@@ -110,7 +116,7 @@ export function formatHour(date: Date, locale: string, timezone?: string) {
     minute: "numeric",
   });
 
-  return `${hour}`;
+  return normalizeMeridiem(hour);
 }
 
 export function getTodayMatches<T extends { id: string; date: string }>(

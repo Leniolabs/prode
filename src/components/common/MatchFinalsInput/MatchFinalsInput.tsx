@@ -71,10 +71,10 @@ const parseResults = (value: {
 
 // Shared input classes for goal/penalty inputs in the finals card
 const GOALS_INPUT_CLS =
-  "match-input-number ml-[6px] w-[34px] h-full border border-[#233042] bg-transparent outline-none text-center text-[#233042] p-[6px] disabled:opacity-80";
+  "match-input-number ml-[6px] w-[34px] h-full rounded-[2px] border border-[#233042] bg-transparent outline-none text-center text-[#233042] p-[6px] disabled:opacity-80";
 
 const PENALTIS_INPUT_CLS =
-  "match-input-number text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#233042] bg-transparent outline-none text-center text-[#233042] disabled:opacity-80";
+  "match-input-number text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] rounded-[2px] border border-[#233042] bg-transparent outline-none text-center text-[#233042] disabled:opacity-80";
 
 function MatchFinalsInputComponent(
   props: React.PropsWithChildren<MatchFinalsInputProps>

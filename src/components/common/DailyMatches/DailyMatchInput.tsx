@@ -34,12 +34,12 @@ interface DailyMatchInputProps {
 }
 
 const scoreInputClass =
-  "text-[20px] bg-transparent w-10 h-10 outline-none text-black text-center border border-[#767676] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:opacity-80";
+  "text-[20px] bg-transparent w-10 h-10 rounded-[2px] outline-none text-black text-center border border-[#767676] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:opacity-80";
 
 const scoreInputStatusClass: Record<string, string> = {
-  GOALS_MATCH: "!bg-[#309e3a] !border-[#309e3a]",
-  WINNER_MATCH: "!bg-[#0093dd] !border-[#0093dd]",
-  WRONG: "!bg-[#f9aa51] !border-[#f9aa51]",
+  GOALS_MATCH: "!bg-brand-green",
+  WINNER_MATCH: "!bg-brand-light-blue",
+  WRONG: "!bg-accent-cta",
 };
 
 export function DailyMatchInput(

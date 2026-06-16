@@ -14,8 +14,8 @@ export default function BlockedPage() {
         <LeniCamel />
       </Container>
       <Footer>
-        <BrandLogo />
         <LocaleSelect />
+        <BrandLogo />
       </Footer>
     </Layout>
   );

@@ -84,7 +84,7 @@ export function AdminMatchInput(
           <input
             type="number"
             inputMode={"decimal"}
-            className="match-input-number text-[17px] bg-transparent max-w-[30px] outline-none text-black text-center border border-neutral-gray disabled:opacity-80"
+            className="match-input-number text-[17px] bg-transparent max-w-[30px] rounded-[2px] outline-none text-black text-center border border-neutral-gray disabled:opacity-80"
             defaultValue={props.goalsLeft ?? ""}
             onChange={handleLeftGoalsChange}
             disabled={props.disabled}
@@ -93,7 +93,7 @@ export function AdminMatchInput(
           <input
             type="number"
             inputMode={"decimal"}
-            className="match-input-number text-[17px] bg-transparent max-w-[30px] outline-none text-black text-center border border-neutral-gray ml-[6px] disabled:opacity-80"
+            className="match-input-number text-[17px] bg-transparent max-w-[30px] rounded-[2px] outline-none text-black text-center border border-neutral-gray ml-[6px] disabled:opacity-80"
             defaultValue={props.goalsRight ?? ""}
             onChange={handleRightGoalsChange}
             disabled={props.disabled}

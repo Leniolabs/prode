@@ -646,7 +646,7 @@ export function UserMatchFinalsInput(
             data-testid="finals-match-goals-left"
             className={className(
               "match-input-number",
-              "w-[30px] h-[30px] border border-[#a7a8a9] outline-none text-center text-[#233042] text-[17px] p-[6px]",
+              "w-[30px] h-[30px] rounded-[2px] border border-[#a7a8a9] outline-none text-center text-[#233042] text-[17px] p-[6px]",
               "disabled:opacity-80",
               goalStatusCls,
               highlightInputCls,
@@ -670,7 +670,7 @@ export function UserMatchFinalsInput(
                 data-testid="finals-match-penalties-left"
                 className={className(
                   "match-input-number",
-                  "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#a7a8a9] outline-none text-center text-[#233042] disabled:opacity-80",
+                  "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] rounded-[2px] border border-[#a7a8a9] outline-none text-center text-[#233042] disabled:opacity-80",
                   "max-[1024px]:relative max-[1024px]:text-[14px] max-[1024px]:h-[34px] max-[1024px]:w-[34px] max-[1024px]:-ml-[1px] max-[1024px]:border-l-0 max-[1024px]:bottom-auto max-[1024px]:right-auto",
                   penaltisStatusCls,
                   highlightInputCls
@@ -712,7 +712,7 @@ export function UserMatchFinalsInput(
             data-testid="finals-match-goals-right"
             className={className(
               "match-input-number",
-              "w-[30px] h-[30px] border border-[#a7a8a9] outline-none text-center text-[#233042] text-[17px] p-[6px]",
+              "w-[30px] h-[30px] rounded-[2px] border border-[#a7a8a9] outline-none text-center text-[#233042] text-[17px] p-[6px]",
               "disabled:opacity-80",
               goalStatusCls,
               highlightInputCls,
@@ -733,7 +733,7 @@ export function UserMatchFinalsInput(
                 data-testid="finals-match-penalties-right"
                 className={className(
                   "match-input-number",
-                  "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] border border-[#a7a8a9] outline-none text-center text-[#233042] disabled:opacity-80",
+                  "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] rounded-[2px] border border-[#a7a8a9] outline-none text-center text-[#233042] disabled:opacity-80",
                   "max-[1024px]:relative max-[1024px]:text-[14px] max-[1024px]:h-[34px] max-[1024px]:w-[34px] max-[1024px]:-ml-[1px] max-[1024px]:border-l-0 max-[1024px]:bottom-auto max-[1024px]:right-auto",
                   penaltisStatusCls,
                   highlightInputCls

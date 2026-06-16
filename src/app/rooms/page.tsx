@@ -333,8 +333,8 @@ export default function RoomsPage() {
         )}
       </main>
       <Footer>
-        <BrandLogo />
         <LocaleSelect />
+        <BrandLogo />
       </Footer>
     </Layout>
   );

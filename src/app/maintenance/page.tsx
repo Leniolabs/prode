@@ -40,8 +40,8 @@ export default function MaintenancePage() {
         <LeniCamel />
       </Container>
       <Footer>
-        <BrandLogo />
         <LocaleSelect />
+        <BrandLogo />
       </Footer>
     </Layout>
   );
