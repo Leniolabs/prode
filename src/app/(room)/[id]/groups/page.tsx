@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React from "react";
 import { Match, ProdeRoom, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
@@ -62,11 +62,25 @@ interface RoomGroupsData {
   roomAdmin: boolean;
   canEditResults: boolean;
   userProdeId: string;
-  room?: Pick<ProdeRoom, "id" | "name" | "emailDomain" | "password" | "pointsGoals" | "pointsPenal" | "pointsWinner" | "public">;
+  room?: Pick<
+    ProdeRoom,
+    | "id"
+    | "name"
+    | "emailDomain"
+    | "password"
+    | "pointsGoals"
+    | "pointsPenal"
+    | "pointsWinner"
+    | "public"
+  >;
   finalsStarted: boolean;
   submissionEndsAt: string;
-  userRanking?: Pick<User, "id" | "name" | "image" | "email" | "prodePublic" | "background" | "dark"> & {
-    points: number; ranking: number;
+  userRanking?: Pick<
+    User,
+    "id" | "name" | "image" | "email" | "prodePublic" | "background" | "dark"
+  > & {
+    points: number;
+    ranking: number;
   };
   ranking?: (Ranking & { gap: boolean })[];
   matches?: UIMatch[];
@@ -82,9 +96,19 @@ export default function RoomGroupsPage() {
   const params = useParams();
   const id = params?.id as string;
   const i18n = useLocalizedText();
-  const timezone = React.useMemo(() => new Date().getTimezoneOffset().toString(), []);
+  const timezone = React.useMemo(
+    () => new Date().getTimezoneOffset().toString(),
+    [],
+  );
 
-  const { data: props } = useQuery<RoomGroupsResponse>({ queryKey: ["room-groups-data", id, timezone], queryFn: () => fetch(`/api/room-groups-data?id=${id}&timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
+  const { data: props } = useQuery<RoomGroupsResponse>({
+    queryKey: ["room-groups-data", id, timezone],
+    queryFn: () =>
+      fetch(`/api/room-groups-data?id=${id}&timezone=${timezone}`).then((r) =>
+        r.json(),
+      ),
+    enabled: session.status === "authenticated" && !!id,
+  });
   const redirected = useBodyRedirect(props?.redirect);
 
   const [now, setNow] = React.useState(() => Date.now());
@@ -102,24 +126,30 @@ export default function RoomGroupsPage() {
 
   const todayMatches = React.useMemo(() => {
     return props?.todayMatches?.map(
-      (match) => matches.find((m) => m.id === match.id) || match
+      (match) => matches.find((m) => m.id === match.id) || match,
     );
   }, [props?.todayMatches, matches]);
   const nextMatches = React.useMemo(() => {
     return props?.nextMatches?.map(
-      (match) => matches.find((m) => m.id === match.id) || match
+      (match) => matches.find((m) => m.id === match.id) || match,
     );
   }, [props?.nextMatches, matches]);
 
   const handleGoalsChange = React.useCallback(
-    (matchId: string, userGoalsLeft: number | null, userGoalsRight: number | null) => {
+    (
+      matchId: string,
+      userGoalsLeft: number | null,
+      userGoalsRight: number | null,
+    ) => {
       setMatches((matches) =>
         matches.map((match) =>
-          match.id === matchId ? { ...match, userGoalsLeft, userGoalsRight } : match
-        )
+          match.id === matchId
+            ? { ...match, userGoalsLeft, userGoalsRight }
+            : match,
+        ),
       );
     },
-    []
+    [],
   );
 
   const differentMatches = React.useMemo(() => {
@@ -139,7 +169,11 @@ export default function RoomGroupsPage() {
     const nowDate = new Date(now);
     return differentMatches.some(
       (match) =>
-        !isGroupMatchLocked(new Date(match.date), GROUP_MATCHDAY_DEADLINES, nowDate)
+        !isGroupMatchLocked(
+          new Date(match.date),
+          GROUP_MATCHDAY_DEADLINES,
+          nowDate,
+        ),
     );
   }, [differentMatches, now]);
 
@@ -161,7 +195,7 @@ export default function RoomGroupsPage() {
           .filter(
             (match) =>
               (match.goalsLeft || match.goalsLeft === 0) &&
-              (match.goalsRight || match.goalsRight === 0)
+              (match.goalsRight || match.goalsRight === 0),
           ),
       })
       .then(() => {
@@ -176,7 +210,7 @@ export default function RoomGroupsPage() {
     const matchesToSave = differentMatches.filter(
       (match) =>
         (match.userGoalsLeft || match.userGoalsLeft === 0) &&
-        (match.userGoalsRight || match.userGoalsRight === 0)
+        (match.userGoalsRight || match.userGoalsRight === 0),
     );
 
     if (matchesToSave.length === 0) return;
@@ -194,7 +228,7 @@ export default function RoomGroupsPage() {
     (row: Ranking) => {
       if (row && row.id) router.push(`/${row.id}/view`);
     },
-    [router]
+    [router],
   );
 
   if (session.status === "loading" || session.status === "unauthenticated")
@@ -259,8 +293,18 @@ export default function RoomGroupsPage() {
           </div>
           <CardsContainer gridArea="matches">
             {[
-              "GROUP_A", "GROUP_B", "GROUP_C", "GROUP_D", "GROUP_E", "GROUP_F",
-              "GROUP_G", "GROUP_H", "GROUP_I", "GROUP_J", "GROUP_K", "GROUP_L",
+              "GROUP_A",
+              "GROUP_B",
+              "GROUP_C",
+              "GROUP_D",
+              "GROUP_E",
+              "GROUP_F",
+              "GROUP_G",
+              "GROUP_H",
+              "GROUP_I",
+              "GROUP_J",
+              "GROUP_K",
+              "GROUP_L",
             ].map((group) => (
               <Card
                 key={group}
@@ -274,11 +318,18 @@ export default function RoomGroupsPage() {
                       <MatchInput
                         key={match.id}
                         className={
-                          ["bg-[#f6f5f5]", "bg-[#ededed]", "bg-[#e1e1e1]"][
+                          ["bg-[#CCDCE7]", "bg-[#D9E4ED]", "bg-[#E6EDF2]"][
                             Math.floor(index / 2)
                           ]
                         }
-                        disabled={match.disabled || isGroupMatchLocked(new Date(match.date), GROUP_MATCHDAY_DEADLINES, new Date(now))}
+                        disabled={
+                          match.disabled ||
+                          isGroupMatchLocked(
+                            new Date(match.date),
+                            GROUP_MATCHDAY_DEADLINES,
+                            new Date(now),
+                          )
+                        }
                         date={new Date(match.date)}
                         countryLeftId={match.countryLeftId}
                         goalsLeft={match.goalsLeft}
@@ -301,10 +352,12 @@ export default function RoomGroupsPage() {
             style={{ gridArea: "sidebar" }}
           >
             <Card
-              className={sectionCardClass}
+              className={`${sectionCardClass}`}
               title={
                 <>
-                  {todayMatches ? i18n.todayMatchesLabel : i18n.upcomingMatchesLabel}
+                  {todayMatches
+                    ? i18n.todayMatchesLabel
+                    : i18n.upcomingMatchesLabel}
                 </>
               }
             >
@@ -314,8 +367,22 @@ export default function RoomGroupsPage() {
                     {(todayMatches || nextMatches)?.map((match) => (
                       <DailyMatchInput
                         key={match.id}
-                        disabled={match.disabled || isGroupMatchLocked(new Date(match.date), GROUP_MATCHDAY_DEADLINES, new Date(now))}
-                        submissionEndsAt={groupMatchLockTime(new Date(match.date), GROUP_MATCHDAY_DEADLINES)?.toISOString() ?? props?.submissionEndsAt ?? ""}
+                        disabled={
+                          match.disabled ||
+                          isGroupMatchLocked(
+                            new Date(match.date),
+                            GROUP_MATCHDAY_DEADLINES,
+                            new Date(now),
+                          )
+                        }
+                        submissionEndsAt={
+                          groupMatchLockTime(
+                            new Date(match.date),
+                            GROUP_MATCHDAY_DEADLINES,
+                          )?.toISOString() ??
+                          props?.submissionEndsAt ??
+                          ""
+                        }
                         date={new Date(match.date)}
                         today={!!todayMatches}
                         countryLeftId={match.countryLeftId}
@@ -338,6 +405,7 @@ export default function RoomGroupsPage() {
                 )}
               </CardContent>
             </Card>
+            <div className="h-5" />
             <Card
               className={`${sectionCardClass} min-[1300px]:flex-1 min-[1300px]:min-h-0 [&>:nth-child(2)]:flex-1 [&>:nth-child(3)]:mt-auto`}
               title={i18n.rankingTitle}
@@ -348,7 +416,10 @@ export default function RoomGroupsPage() {
                   columns={[
                     {
                       header: "Pos",
-                      accesor: (row) => !row.gap && <UserPositionDisplay position={row.ranking} />,
+                      accesor: (row) =>
+                        !row.gap && (
+                          <UserPositionDisplay position={row.ranking} />
+                        ),
                       width: "48px",
                     },
                     {
@@ -357,7 +428,10 @@ export default function RoomGroupsPage() {
                         row.gap ? (
                           <GapIcon />
                         ) : (
-                          <UserRankingDisplay name={row.name || ""} image={row.image} />
+                          <UserRankingDisplay
+                            name={row.name || ""}
+                            image={row.image}
+                          />
                         ),
                     },
                     {
@@ -370,24 +444,20 @@ export default function RoomGroupsPage() {
                   onRowClick={handleUserClick}
                   data={props?.ranking || []}
                   clickable={(row: Ranking & { gap: boolean }) => !row.gap}
-              />
-            </CardContent>
-            <CardFooter>
-              <Button
-                href={`/${id}/ranking`}
-                variant="secondary"
-                invert
-              >
-                {i18n.buttonCompleteRanking}
-              </Button>
-            </CardFooter>
+                />
+              </CardContent>
+              <CardFooter>
+                <Button href={`/${id}/ranking`} variant="secondary" invert>
+                  {i18n.buttonCompleteRanking}
+                </Button>
+              </CardFooter>
             </Card>
           </div>
         </GroupsContainer>
       </Container>
       <Footer>
-        <BrandLogo />
         <LocaleSelect />
+        <BrandLogo />
       </Footer>
     </Layout>
   );

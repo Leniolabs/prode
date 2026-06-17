@@ -191,8 +191,8 @@ export default function AdminPage() {
         </Card>
       </main>
       <Footer>
-        <BrandLogo />
         <LocaleSelect />
+        <BrandLogo />
       </Footer>
     </Layout>
   );

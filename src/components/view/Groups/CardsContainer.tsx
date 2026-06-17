@@ -7,7 +7,7 @@ interface CardsContainerProps {
 }
 
 export function CardsContainer(
-  props: React.PropsWithChildren<CardsContainerProps>
+  props: React.PropsWithChildren<CardsContainerProps>,
 ) {
   return (
     <section
@@ -15,8 +15,8 @@ export function CardsContainer(
         // Grid items default to min-width:auto (min-content), which lets a wide
         // child (MatchInput) force the track — and the whole page — past 100vw.
         // [&>*]:min-w-0 allows the cards to shrink to the track instead.
-        "grid w-full grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-3 items-start content-start [&>*]:min-w-0",
-        props.className
+        "grid w-full grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5 items-start content-start [&>*]:min-w-0",
+        props.className,
       )}
       style={{ gridArea: props.gridArea }}
     >

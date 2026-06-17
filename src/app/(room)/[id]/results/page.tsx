@@ -66,8 +66,8 @@ export default function ResultsPage() {
         />
       </Container>
       <Footer>
-        <BrandLogo />
         <LocaleSelect />
+        <BrandLogo />
       </Footer>
     </Layout>
   );

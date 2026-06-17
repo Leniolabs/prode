@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React from "react";
 import { Match, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
@@ -17,10 +17,7 @@ import {
 import { useRequireSession } from "@/hooks";
 import { useInterval } from "@/hooks/useInterval";
 import axios from "axios";
-import {
-  CardsContainer,
-  GroupsContainer,
-} from "@/components/view/Groups";
+import { CardsContainer, GroupsContainer } from "@/components/view/Groups";
 import { Warning } from "@/components/common/Warning";
 import Link from "next/link";
 import { LocaleSelect } from "@/components/common/LocaleSelect";
@@ -34,7 +31,7 @@ import { isGroupMatchLocked, groupMatchLockTime } from "@/utils/date";
 import { GROUP_MATCHDAY_DEADLINES } from "@/config/matchdays";
 
 const stageHeaderClass =
-  "mb-[18px] [&>:first-child]:bg-brand-green [&>:first-child]:text-white [&>:first-child]:rounded-card [&>:first-child]:text-[25px] [&>:first-child]:font-bold [&>:first-child]:leading-[1.15] [&>:first-child]:pt-[11px] [&>:first-child]:px-5 [&>:first-child]:pb-[13px] [&>:first-child]:normal-case";
+  "mb-[18px] [&>:first-child]:bg-brand-green [&>:first-child]:text-white [&>:first-child]:rounded-card [&>:first-child]:text-[25px] [&>:first-child]:font-bold [&>:first-child]:leading-[1.15] [&>:first-child]:h-[50px] [&>:first-child]:min-h-[50px] [&>:first-child]:py-0 [&>:first-child]:px-5 [&>:first-child]:normal-case [&>:first-child]:whitespace-nowrap";
 const sectionCardClass =
   "[&>:first-child]:bg-brand-green [&>:first-child]:text-white [&>:first-child]:rounded-t-[8px] [&>:first-child]:text-[25px] [&>:first-child]:font-bold [&>:first-child]:leading-[1.15] [&>:first-child]:min-h-[40px] [&>:first-child]:pt-[11px] [&>:first-child]:px-5 [&>:first-child]:pb-[13px] [&>:first-child]:normal-case";
 const groupCardClass =
@@ -59,7 +56,10 @@ interface GroupsData {
   finalsStarted: boolean;
   canEditResults: boolean;
   matches?: UIMatch[];
-  userRanking: Pick<User, "id" | "name" | "image" | "email" | "prodePublic" | "background" | "dark">;
+  userRanking: Pick<
+    User,
+    "id" | "name" | "image" | "email" | "prodePublic" | "background" | "dark"
+  >;
   userProdeId: string;
   todayMatches?: UIMatch[];
   nextMatches?: UIMatch[];
@@ -68,9 +68,17 @@ interface GroupsData {
 export default function GroupsPage() {
   const session = useRequireSession();
   const i18n = useLocalizedText();
-  const timezone = React.useMemo(() => new Date().getTimezoneOffset().toString(), []);
+  const timezone = React.useMemo(
+    () => new Date().getTimezoneOffset().toString(),
+    [],
+  );
 
-  const { data: props } = useQuery<GroupsData>({ queryKey: ["groups-page-data", timezone], queryFn: () => fetch(`/api/groups-page-data?timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" });
+  const { data: props } = useQuery<GroupsData>({
+    queryKey: ["groups-page-data", timezone],
+    queryFn: () =>
+      fetch(`/api/groups-page-data?timezone=${timezone}`).then((r) => r.json()),
+    enabled: session.status === "authenticated",
+  });
 
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);
@@ -87,24 +95,28 @@ export default function GroupsPage() {
 
   const todayMatches = React.useMemo(() => {
     return props?.todayMatches?.map(
-      (match) => matches.find((m) => m.id === match.id) || match
+      (match) => matches.find((m) => m.id === match.id) || match,
     );
   }, [props?.todayMatches, matches]);
   const nextMatches = React.useMemo(() => {
     return props?.nextMatches?.map(
-      (match) => matches.find((m) => m.id === match.id) || match
+      (match) => matches.find((m) => m.id === match.id) || match,
     );
   }, [props?.nextMatches, matches]);
 
   const handleGoalsChange = React.useCallback(
-    (id: string, userGoalsLeft: number | null, userGoalsRight: number | null) => {
+    (
+      id: string,
+      userGoalsLeft: number | null,
+      userGoalsRight: number | null,
+    ) => {
       setMatches((matches) =>
         matches.map((match) =>
-          match.id === id ? { ...match, userGoalsLeft, userGoalsRight } : match
-        )
+          match.id === id ? { ...match, userGoalsLeft, userGoalsRight } : match,
+        ),
       );
     },
-    []
+    [],
   );
 
   const differentMatches = React.useMemo(() => {
@@ -124,7 +136,11 @@ export default function GroupsPage() {
     const nowDate = new Date(now);
     return differentMatches.some(
       (match) =>
-        !isGroupMatchLocked(new Date(match.date), GROUP_MATCHDAY_DEADLINES, nowDate)
+        !isGroupMatchLocked(
+          new Date(match.date),
+          GROUP_MATCHDAY_DEADLINES,
+          nowDate,
+        ),
     );
   }, [differentMatches, now]);
 
@@ -146,7 +162,7 @@ export default function GroupsPage() {
           .filter(
             (match) =>
               (match.goalsLeft || match.goalsLeft === 0) &&
-              (match.goalsRight || match.goalsRight === 0)
+              (match.goalsRight || match.goalsRight === 0),
           ),
       })
       .then(() => {
@@ -169,8 +185,7 @@ export default function GroupsPage() {
         </Button>
       </RoomWelcomeBar>
       <Warning offset>
-        {i18n.groupsWarning}{" "}
-        <Link href="/rooms">{i18n.groupsWarningLink}</Link>
+        {i18n.groupsWarning} <Link href="/rooms">{i18n.groupsWarningLink}</Link>
         .
       </Warning>
 
@@ -193,8 +208,18 @@ export default function GroupsPage() {
           </ContainerHeader>
           <CardsContainer gridArea="matches">
             {[
-              "GROUP_A", "GROUP_B", "GROUP_C", "GROUP_D", "GROUP_E", "GROUP_F",
-              "GROUP_G", "GROUP_H", "GROUP_I", "GROUP_J", "GROUP_K", "GROUP_L",
+              "GROUP_A",
+              "GROUP_B",
+              "GROUP_C",
+              "GROUP_D",
+              "GROUP_E",
+              "GROUP_F",
+              "GROUP_G",
+              "GROUP_H",
+              "GROUP_I",
+              "GROUP_J",
+              "GROUP_K",
+              "GROUP_L",
             ].map((group) => (
               <Card
                 key={group}
@@ -208,7 +233,14 @@ export default function GroupsPage() {
                       <MatchInput
                         key={match.id}
                         className={matchPairBg[Math.floor(index / 2)]}
-                        disabled={match.disabled || isGroupMatchLocked(new Date(match.date), GROUP_MATCHDAY_DEADLINES, new Date(now))}
+                        disabled={
+                          match.disabled ||
+                          isGroupMatchLocked(
+                            new Date(match.date),
+                            GROUP_MATCHDAY_DEADLINES,
+                            new Date(now),
+                          )
+                        }
                         date={new Date(match.date)}
                         countryLeftId={match.countryLeftId}
                         goalsLeft={match.goalsLeft}
@@ -244,8 +276,22 @@ export default function GroupsPage() {
                   {(todayMatches || nextMatches)?.map((match) => (
                     <DailyMatchInput
                       key={match.id}
-                      disabled={match.disabled || isGroupMatchLocked(new Date(match.date), GROUP_MATCHDAY_DEADLINES, new Date(now))}
-                      submissionEndsAt={groupMatchLockTime(new Date(match.date), GROUP_MATCHDAY_DEADLINES)?.toISOString() ?? props?.submissionEndsAt ?? ""}
+                      disabled={
+                        match.disabled ||
+                        isGroupMatchLocked(
+                          new Date(match.date),
+                          GROUP_MATCHDAY_DEADLINES,
+                          new Date(now),
+                        )
+                      }
+                      submissionEndsAt={
+                        groupMatchLockTime(
+                          new Date(match.date),
+                          GROUP_MATCHDAY_DEADLINES,
+                        )?.toISOString() ??
+                        props?.submissionEndsAt ??
+                        ""
+                      }
                       date={new Date(match.date)}
                       countryLeftId={match.countryLeftId}
                       today={!!todayMatches}
@@ -271,8 +317,8 @@ export default function GroupsPage() {
         </GroupsContainer>
       </Container>
       <Footer>
-        <BrandLogo />
         <LocaleSelect />
+        <BrandLogo />
       </Footer>
     </Layout>
   );

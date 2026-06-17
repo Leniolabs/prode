@@ -239,8 +239,8 @@ export default function NewProdePage() {
       </main>
 
       <Footer>
-        <BrandLogo />
         <LocaleSelect />
+        <BrandLogo />
       </Footer>
     </Layout>
   );

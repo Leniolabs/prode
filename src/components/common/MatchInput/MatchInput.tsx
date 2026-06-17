@@ -28,11 +28,11 @@ if (typeof document !== "undefined" && !document.getElementById(INPUT_STYLE_ID))
   document.head.appendChild(s);
 }
 
-/** Map resultStatus → Tailwind bg+border classes */
+/** Map resultStatus → Tailwind bg classes while keeping the default border. */
 const STATUS_CLASSES: Record<string, string> = {
-  GOALS_MATCH: "bg-correct border-correct",
-  WINNER_MATCH: "bg-winner border-winner",
-  WRONG: "bg-wrong border-wrong",
+  GOALS_MATCH: "bg-brand-green border-neutral-gray",
+  WINNER_MATCH: "bg-brand-light-blue border-neutral-gray",
+  WRONG: "bg-accent-cta border-neutral-gray",
 };
 
 interface MatchInputProps {
@@ -207,7 +207,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
             data-testid="group-match-goals-left"
             className={className(
               "match-input-number",
-              "text-[17px] max-w-[30px] outline-none text-black text-center border",
+              "text-[17px] max-w-[30px] rounded-[2px] outline-none text-black text-center border",
               "disabled:opacity-80",
               inputStatusCls
             )}
@@ -224,7 +224,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
             data-testid="group-match-goals-right"
             className={className(
               "match-input-number",
-              "text-[17px] max-w-[30px] outline-none text-black text-center border ml-[6px]",
+              "text-[17px] max-w-[30px] rounded-[2px] outline-none text-black text-center border ml-[6px]",
               "disabled:opacity-80",
               inputStatusCls
             )}

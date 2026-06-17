@@ -299,8 +299,8 @@ export default function AdminFinalsPage() {
         </FinalsContainer>
       </Container>
       <Footer>
-        <BrandLogo />
         <LocaleSelect />
+        <BrandLogo />
       </Footer>
     </Layout>
   );

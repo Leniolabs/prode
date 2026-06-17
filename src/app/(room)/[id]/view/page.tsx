@@ -297,8 +297,8 @@ export default function ViewPage() {
         )}
       </Container>
       <Footer>
-        <BrandLogo />
         <LocaleSelect />
+        <BrandLogo />
       </Footer>
     </Layout>
   );

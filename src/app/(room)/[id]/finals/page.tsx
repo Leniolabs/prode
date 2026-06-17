@@ -369,8 +369,8 @@ export default function RoomFinalsPage() {
         </FinalsContainer>
       </Container>
       <Footer>
-        <BrandLogo />
         <LocaleSelect />
+        <BrandLogo />
       </Footer>
     </Layout>
   );

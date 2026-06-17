@@ -11,8 +11,8 @@ export function Card(props: React.PropsWithChildren<CardProps>) {
   return (
     <section
       className={className(
-        "flex flex-col w-full mb-3 bg-card-body text-dark-navy rounded-card shadow-card",
-        props.className
+        "flex flex-col w-full bg-card-body text-dark-navy rounded-card shadow-card",
+        props.className,
       )}
       style={{ gridArea: props.gridArea }}
     >

@@ -424,8 +424,8 @@ export default function FinalsPage() {
         </FinalsContainer>
       </Container>
       <Footer>
-        <BrandLogo />
         <LocaleSelect />
+        <BrandLogo />
       </Footer>
     </Layout>
   );

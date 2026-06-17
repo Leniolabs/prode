@@ -13,7 +13,7 @@ export function LocaleSelect(props: LocaleSelectProps) {
   const setLocale = useSetLocale();
 
   return (
-    <div className="flex text-white select-none">
+    <div className="mr-auto flex text-white select-none">
       {SUPPORTED_LOCALES.map((locale, i, arr) => (
         <div key={locale}>
           <a
