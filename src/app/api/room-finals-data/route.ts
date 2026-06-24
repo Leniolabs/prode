@@ -8,7 +8,7 @@ import {
   getUserFinalMatches,
   registerUserToRoom,
 } from '@/utils/queries'
-import { getTodayMatches } from '@/utils/date'
+import { getNextMatches, getTodayMatches } from '@/utils/date'
 import { NextRequest, NextResponse } from 'next/server'
 
 function shouldPasswordCheck(room: { password: string | null }) {
@@ -49,6 +49,10 @@ export async function GET(req: NextRequest) {
   const ranking = await getRanking(room, 0, 10)
   const userRanking = await getUserRanking(room, userProde)
   const todayMatches = getTodayMatches(matches, timezone)
+  // Only surface upcoming knockout matches whose participants are already
+  // decided (both countries set). Bracket slots still showing TBD are omitted.
+  const knownMatches = matches.filter((match) => match.countryLeftId && match.countryRightId)
+  const nextMatches = getNextMatches(knownMatches, timezone)
 
   const filterUnique = <T>(arr: T[], eq: (a: T, b: T) => boolean) =>
     arr.filter((item, index) => arr.findIndex((x) => eq(x, item)) === index)
@@ -72,6 +76,7 @@ export async function GET(req: NextRequest) {
       ...(room.userId === user.id ? { password: room.password, public: room.public, emailDomain: room.emailDomain } : {}),
     },
     submissionEndsAt: room.prode.finalsSubmissionsEnd.toISOString(),
+    finalsSavedAt: userProde.finalsSavedAt ? userProde.finalsSavedAt.toISOString() : null,
     finalsStarted: room.prode.stage === 'FINALS',
     userRanking: {
       id: user.id,
@@ -86,8 +91,8 @@ export async function GET(req: NextRequest) {
     ranking: fullRanking,
     matches,
     todayMatches: todayMatches.length ? todayMatches : null,
-    // On /finals only surface matches happening today (not every future
-    // bracket match) — there's no "next upcoming" fallback here.
-    nextMatches: null,
+    // Next upcoming knockout matches with known participants. The 16avos page
+    // narrows this to FINALS_16 only; /finals shows whatever knockout day is next.
+    nextMatches: nextMatches.length ? nextMatches : null,
   })
 }

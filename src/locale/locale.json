@@ -22,7 +22,7 @@
     "headerPointsLabel": "Puntos",
     "headerRankingLabel": "Posición",
 
-    "noMoreMatches": "No hay mas partidos",
+    "noMoreMatches": "No hay partidos para mostrar",
     "upcomingMatchesLabel": "Próximos partidos",
     "todayMatchesLabel": "Partidos de hoy",
     "matchResultLabel": "Resultado",
@@ -167,7 +167,7 @@
     "headerPointsLabel": "Points",
     "headerRankingLabel": "Position",
 
-    "noMoreMatches": "There are no more matches",
+    "noMoreMatches": "There are no matches to show",
     "upcomingMatchesLabel": "Upcoming Matches",
     "todayMatchesLabel": "Today's Matches",
     "matchResultLabel": "Result",

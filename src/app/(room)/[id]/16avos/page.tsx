@@ -67,6 +67,7 @@ interface RoomFinalsData {
   userProdeId: string;
   room?: Pick<ProdeRoom, "id" | "name" | "emailDomain" | "password" | "pointsGoals" | "pointsPenal" | "pointsWinner" | "public">;
   submissionEndsAt: string;
+  finalsSavedAt?: string | null;
   userRanking: Pick<User, "id" | "name" | "image" | "email" | "prodePublic" | "dark" | "background"> & {
     points: number; ranking: number;
   };
@@ -118,6 +119,10 @@ export default function RoomRoundOf32Page() {
       setOriginalMatches(props.matches);
     }
   }, [props?.matches]);
+
+  React.useEffect(() => {
+    if (props?.finalsSavedAt) setSavedAt(new Date(props.finalsSavedAt));
+  }, [props?.finalsSavedAt]);
 
   // The Round of 32 (FINALS_16) is the only round shown and edited on this page.
   const roundMatches = React.useMemo(

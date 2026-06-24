@@ -77,6 +77,7 @@ interface RoomFinalsData {
   userProdeId: string;
   room?: Pick<ProdeRoom, "id" | "name" | "emailDomain" | "password" | "pointsGoals" | "pointsPenal" | "pointsWinner" | "public">;
   submissionEndsAt: string;
+  finalsSavedAt?: string | null;
   userRanking: Pick<User, "id" | "name" | "image" | "email" | "prodePublic" | "dark" | "background"> & {
     points: number; ranking: number;
   };
@@ -130,6 +131,10 @@ export default function RoomFinalsPage() {
       setOriginalMatches(props.matches);
     }
   }, [props?.matches]);
+
+  React.useEffect(() => {
+    if (props?.finalsSavedAt) setSavedAt(new Date(props.finalsSavedAt));
+  }, [props?.finalsSavedAt]);
 
   const todayMatches = React.useMemo(() => {
     return props?.todayMatches?.map((match) => matches.find((m) => m.id === match.id) || match);
