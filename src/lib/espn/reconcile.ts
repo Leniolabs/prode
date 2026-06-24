@@ -52,30 +52,25 @@ function pair(a: string, b: string): string {
   return [a, b].map((c) => c.toUpperCase()).sort().join("|");
 }
 
-// Pure comparison: aligns each seeded round-of-32 slot to the ESPN event at the
-// same kickoff time, then compares the two team codes as an unordered set
-// (home/away orientation may differ between sources). Only slots we have
-// already seeded (both codes present) and events ESPN has populated (both codes
-// present) are compared; everything else is reported as unmatched, never as a
-// divergence, so a not-yet-published bracket produces no false positives.
-export function reconcileSlots(
-  slots: SeededSlot[],
-  events: R32Event[],
-): ReconcileResult {
+// Pairs each slot with the nearest unused event whose kickoff falls within the
+// tolerance window. Slots are processed in kickoff order so nearest-unused
+// assignment is deterministic. Callers pre-filter the slots and events they
+// care about; this helper only owns the time-based matching, which the
+// reconcile (detective) and populate (writer) paths must share so they never
+// drift apart. The tightest real gap between two seeded fixtures is ~90 minutes.
+export function alignByKickoff<
+  S extends { date: Date },
+  E extends { kickoffUtc: string },
+>(slots: S[], events: E[], toleranceMs = MATCH_TOLERANCE_MS): { slot: S; event: E }[] {
   const candidates = events
-    .filter((e) => e.homeCode && e.awayCode)
-    .map((e) => ({ time: new Date(e.kickoffUtc).getTime(), event: e }))
+    .map((event) => ({ time: new Date(event.kickoffUtc).getTime(), event }))
     .filter((c) => Number.isFinite(c.time));
 
   const used = new Set<number>();
-  const result: ReconcileResult = { matched: 0, divergences: [], unmatched: [] };
+  const pairs: { slot: S; event: E }[] = [];
 
-  // Process in kickoff order so nearest-unused assignment is deterministic.
-  const seeded = slots
-    .filter((s) => s.leftCode && s.rightCode)
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
-
-  for (const slot of seeded) {
+  const ordered = [...slots].sort((a, b) => a.date.getTime() - b.date.getTime());
+  for (const slot of ordered) {
     const slotTime = slot.date.getTime();
     let bestIndex = -1;
     let bestDelta = Infinity;
@@ -88,15 +83,38 @@ export function reconcileSlots(
       }
     });
 
-    if (bestIndex === -1 || bestDelta > MATCH_TOLERANCE_MS) {
-      result.unmatched.push(slot.stage);
-      continue;
-    }
-
+    if (bestIndex === -1 || bestDelta > toleranceMs) continue;
     used.add(bestIndex);
-    const event = candidates[bestIndex].event;
-    result.matched++;
+    pairs.push({ slot, event: candidates[bestIndex].event });
+  }
 
+  return pairs;
+}
+
+// Pure comparison: aligns each seeded round-of-32 slot to the ESPN event at the
+// same kickoff time, then compares the two team codes as an unordered set
+// (home/away orientation may differ between sources). Only slots we have
+// already seeded (both codes present) and events ESPN has populated (both codes
+// present) are compared; everything else is reported as unmatched, never as a
+// divergence, so a not-yet-published bracket produces no false positives.
+export function reconcileSlots(
+  slots: SeededSlot[],
+  events: R32Event[],
+): ReconcileResult {
+  const seeded = slots.filter((s) => s.leftCode && s.rightCode);
+  const published = events.filter((e) => e.homeCode && e.awayCode);
+
+  const pairs = alignByKickoff(seeded, published);
+  const pairedStages = new Set(pairs.map((p) => p.slot.stage));
+
+  const result: ReconcileResult = { matched: 0, divergences: [], unmatched: [] };
+
+  for (const slot of seeded) {
+    if (!pairedStages.has(slot.stage)) result.unmatched.push(slot.stage);
+  }
+
+  for (const { slot, event } of pairs) {
+    result.matched++;
     if (pair(slot.leftCode!, slot.rightCode!) !== pair(event.homeCode!, event.awayCode!)) {
       result.divergences.push({
         stage: slot.stage,

@@ -9,6 +9,8 @@ import {
 } from "@/lib/results-sync/core";
 import { seedRoundOf32All } from "@/lib/bracket";
 import { reconcileRoundOf32 } from "./reconcile";
+import { populateRoundOf32FromEspn } from "./populate";
+import { linkCountryExternalIds } from "./link-countries";
 import { fetchScoreboardRange, isFinal, type EspnCompetitor, type EspnEvent } from "./client";
 
 function parseScore(raw: string | undefined): number | null {
@@ -91,57 +93,59 @@ export async function syncMatchResults(): Promise<SyncResult> {
 
   const pendingMatches = await loadPendingMatches(now);
   result.pending = pendingMatches.length;
-  if (pendingMatches.length === 0) {
-    return result;
-  }
 
-  const dateRange = buildScoreboardDateRange(pendingMatches.map((match) => match.date));
-  if (!dateRange) {
-    return result;
-  }
+  // The match-result loop and the seed below depend on having pending matches to
+  // resolve; when there are none we skip straight to R32 maintenance. That block
+  // (link → reconcile → populate → advance) is idempotent and forward-only, so
+  // it runs on every invocation — a CI dispatch outside a live match still picks
+  // up newly clinched ESPN slots without waiting for one of our results to flip.
+  if (pendingMatches.length > 0) {
+    const dateRange = buildScoreboardDateRange(pendingMatches.map((match) => match.date));
+    if (dateRange) {
+      const events = await fetchScoreboardRange(dateRange);
+      result.fetched = events.length;
 
-  const events = await fetchScoreboardRange(dateRange);
-  result.fetched = events.length;
+      const providerMatches = events
+        .map((event) => normalizeEvent(event))
+        .filter((match): match is ProviderMatch => match !== null)
+        .filter((match) => shouldSyncProviderMatch(match, now));
 
-  const providerMatches = events
-    .map((event) => normalizeEvent(event))
-    .filter((match): match is ProviderMatch => match !== null)
-    .filter((match) => shouldSyncProviderMatch(match, now));
+      result.checked = providerMatches.length;
 
-  result.checked = providerMatches.length;
+      const usedMatchIds = new Set<string>();
 
-  const usedMatchIds = new Set<string>();
+      for (const providerMatch of providerMatches) {
+        try {
+          const resolution = findPendingMatch(providerMatch, pendingMatches, usedMatchIds, {
+            allowFixtureIdLookup: false,
+          });
+          if (!resolution) {
+            result.skipped++;
+            continue;
+          }
 
-  for (const providerMatch of providerMatches) {
-    try {
-      const resolution = findPendingMatch(providerMatch, pendingMatches, usedMatchIds, {
-        allowFixtureIdLookup: false,
-      });
-      if (!resolution) {
-        result.skipped++;
-        continue;
+          const outcome = await applyProviderMatch(providerMatch, resolution, {
+            persistFixtureId: false,
+          });
+          usedMatchIds.add(resolution.match.id);
+          if (outcome === "updated") {
+            result.updated++;
+          } else {
+            result.skipped++;
+          }
+        } catch (error) {
+          result.errors.push(
+            `match ${providerMatch.id}: ${error instanceof Error ? error.message : String(error)}`,
+          );
+        }
       }
-
-      const outcome = await applyProviderMatch(providerMatch, resolution, {
-        persistFixtureId: false,
-      });
-      usedMatchIds.add(resolution.match.id);
-      if (outcome === "updated") {
-        result.updated++;
-      } else {
-        result.skipped++;
-      }
-    } catch (error) {
-      result.errors.push(
-        `match ${providerMatch.id}: ${error instanceof Error ? error.message : String(error)}`,
-      );
     }
   }
 
   if (result.updated > 0) {
-    // Seed the round of 32 from group standings once groups are final, then
-    // propagate knockout winners up the bracket. Seeding runs first so any R32
-    // results already pulled in this pass can advance in the same call.
+    // Our own computation seeds the round of 32 from group standings the moment
+    // every group is final — fast, and independent of when ESPN publishes each
+    // slot. ESPN overrides it below; this is the "speed" half of the bracket.
     try {
       await seedRoundOf32All();
     } catch (error) {
@@ -149,19 +153,15 @@ export async function syncMatchResults(): Promise<SyncResult> {
         `r32 seed: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
-    try {
-      await advanceFinalsBracket();
-    } catch (error) {
-      result.errors.push(
-        `bracket advance: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
   }
 
-  // Validate the computed round-of-32 against the official bracket published by
-  // ESPN. Detective control: logs divergences (chiefly third-place tiebreakers
-  // we cannot derive from scores), never mutates the bracket. Self-fetches the
-  // R32 window and no-ops until at least one slot is seeded.
+  // Validate our computed round-of-32 against the official bracket published by
+  // ESPN. This MUST run before the ESPN override below: it reads what our
+  // seeder stored, so a divergence here genuinely means "our logic disagrees
+  // with ESPN" (a deterministic-slot bug, or a third-place tiebreaker we cannot
+  // derive from scores). Running it after the override would compare ESPN
+  // against itself and silence the alert. Self-fetches the R32 window and
+  // no-ops until at least one slot is seeded.
   try {
     const reconcile = await reconcileRoundOf32();
     result.reconcile = {
@@ -173,6 +173,46 @@ export async function syncMatchResults(): Promise<SyncResult> {
     result.errors.push(
       `r32 reconcile: ${error instanceof Error ? error.message : String(error)}`,
     );
+  }
+
+  // Ensure every Country is linked to its ESPN team id before the populate step
+  // below maps ESPN teams onto our rows. Self-healing and idempotent: it only
+  // touches the ESPN catalog when a country is still unlinked, so once linked
+  // this is a single COUNT. Removes the manual "did espn-countries.ts run on
+  // prod?" failure mode that would otherwise make populate silently no-op.
+  try {
+    await linkCountryExternalIds();
+  } catch (error) {
+    result.errors.push(
+      `country link: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+
+  // ESPN is the source of truth: override each round-of-32 slot ESPN has
+  // resolved (clinched teams, plus the third-place tiebreakers we cannot derive
+  // from scores). Forward-only; runs every tick so a slot appears as soon as
+  // ESPN publishes it, even when no result of ours changed this pass.
+  let populated = 0;
+  try {
+    const populate = await populateRoundOf32FromEspn();
+    populated = populate.written;
+  } catch (error) {
+    result.errors.push(
+      `r32 populate: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+
+  if (result.updated > 0 || populated > 0) {
+    // Propagate knockout winners up the bracket once the round-of-32
+    // participants are set (by our seeder and/or ESPN). Runs after the override
+    // so it advances from the authoritative teams.
+    try {
+      await advanceFinalsBracket();
+    } catch (error) {
+      result.errors.push(
+        `bracket advance: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 
   return result;
