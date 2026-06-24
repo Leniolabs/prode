@@ -295,7 +295,7 @@ export default function RoomFinalsPage() {
       <Container full>
         <FinalsContainer>
           <div
-            className="flex flex-col gap-4 h-full min-w-0 m-0"
+            className="flex flex-col gap-3 h-full min-w-0 m-0"
             style={{ gridArea: "matches-header" }}
           >
             <div className="flex flex-wrap items-stretch gap-3 min-w-0 max-[640px]:flex-col max-[640px]:items-stretch">

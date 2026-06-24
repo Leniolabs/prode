@@ -223,6 +223,7 @@ model UserProde {
   finalsMatches ProdeUserFinalsMatch[]
 
   groupsSavedAt DateTime?
+  finalsSavedAt DateTime?
 
   deletedAt DateTime?
 

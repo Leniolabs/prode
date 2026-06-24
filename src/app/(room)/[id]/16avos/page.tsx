@@ -20,10 +20,7 @@ import { useBodyRedirect, useRequireSession } from "@/hooks";
 import { useInterval } from "@/hooks/useInterval";
 import axios from "axios";
 import { UserMatchFinalsInput } from "@/components/common/UserMatchFinalsInput";
-import {
-  CardsContainer,
-  GroupsContainer,
-} from "@/components/view/Groups";
+import { GroupsContainer } from "@/components/view/Groups";
 import { FinalsResultsWarning } from "@/components/view/Finals";
 import { Meta } from "@/components/common/Meta";
 import { LocaleSelect } from "@/components/common/LocaleSelect";
@@ -353,15 +350,15 @@ export default function RoomRoundOf32Page() {
           </div>
           <Card
             gridArea="matches"
-            className="self-start [&>div:first-child]:!bg-white [&>div:first-child]:!text-brand-blue [&>div:first-child]:!text-[16px] [&>div:first-child]:!font-bold [&>div:first-child]:!min-h-[40px] [&>div:first-child]:!py-0 [&>div:first-child]:!px-5 [&>div:first-child]:!leading-[40px] [&>div:first-child]:uppercase [&>div:first-child]:!rounded-b-none [&>div:first-child]:!rounded-t-card"
+            className="self-start !bg-[#f6f5f5cc] [&>div:first-child]:!bg-transparent [&>div:first-child]:!text-brand-blue [&>div:first-child]:!text-[16px] [&>div:first-child]:!font-bold [&>div:first-child]:!min-h-[40px] [&>div:first-child]:!pt-3 [&>div:first-child]:!pb-0 [&>div:first-child]:!px-5 [&>div:first-child]:!leading-[40px] [&>div:first-child]:uppercase [&>div:first-child]:!justify-start [&>div:first-child]:!text-left [&>div:first-child]:!rounded-b-none [&>div:first-child]:!rounded-t-card"
             title={<>{formattedTitle}</>}
           >
             <CardContent className="p-4">
-              <CardsContainer>
+              <div className="grid grid-cols-2 min-[1024px]:grid-cols-4 gap-x-5 gap-y-[14px] w-full justify-items-center [&>*]:w-full [&>*]:max-w-[260px]">
                 {roundMatches.map((match, index) => (
                   <UserMatchFinalsInput
                     key={match.id}
-                    className="[--finals-card-bg:#ffffff] rounded-card border border-[#e1e1e1] !p-3"
+                    className="[--finals-card-bg:#ededed]"
                     disabled={match.disabled || isLocked(match.stage)}
                     submissionEndsAt={tierDeadline(match.stage)}
                     date={new Date(match.date)}
@@ -382,7 +379,7 @@ export default function RoomRoundOf32Page() {
                     filled={match.filled}
                   />
                 ))}
-              </CardsContainer>
+              </div>
             </CardContent>
           </Card>
           <div
@@ -432,6 +429,7 @@ export default function RoomRoundOf32Page() {
                 )}
               </CardContent>
             </Card>
+            <div className="h-5" />
             <Card
               className={`${sectionCardClass} min-[1300px]:flex-1 min-[1300px]:min-h-0 [&>:nth-child(2)]:flex-1 [&>:nth-child(3)]:mt-auto`}
               title={
