@@ -152,8 +152,8 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
 
   // Grab the default class based on the result...
   let inputStatusCls = resultStatus
-    ? STATUS_CLASSES[resultStatus] ?? "bg-transparent border-neutral-gray"
-    : "bg-transparent border-neutral-gray";
+    ? STATUS_CLASSES[resultStatus] ?? "bg-white border-neutral-gray"
+    : "bg-white border-neutral-gray";
 
   // ...and if it's currently active, swap out the border color for red.
   // This correctly targets `border-neutral-gray`, `border-correct`, etc.
@@ -169,7 +169,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
     <div
       className={className(
         props.className,
-        "flex items-center h-[52px] px-2 gap-1"
+        "flex items-center h-[66px] px-2 gap-1"
       )}
     >
       {/* Left team — flex:1 + min-w-0 prevents overflow */}
@@ -196,8 +196,10 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
         </label>
       </div>
 
-      {/* Center — flex-shrink:0 so it never collapses */}
-      <div className="flex-none flex flex-col items-center">
+      {/* Center — fixed to the score-boxes width (34 + 8 gap + 34) so the
+          "Resultado:" caption below overflows symmetrically instead of widening
+          this column and knocking the team columns out of alignment row-to-row. */}
+      <div className="flex-none flex flex-col items-center justify-center w-[76px] gap-[3px]">
         <div className="flex">
           <input
             min={0}
@@ -207,7 +209,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
             data-testid="group-match-goals-left"
             className={className(
               "match-input-number",
-              "text-[17px] max-w-[30px] rounded-[2px] outline-none text-black text-center border",
+              "text-[17px] w-[34px] h-[34px] rounded-[6px] outline-none text-black text-center border",
               "disabled:opacity-80",
               inputStatusCls
             )}
@@ -224,7 +226,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
             data-testid="group-match-goals-right"
             className={className(
               "match-input-number",
-              "text-[17px] max-w-[30px] rounded-[2px] outline-none text-black text-center border ml-[6px]",
+              "text-[17px] w-[34px] h-[34px] rounded-[6px] outline-none text-black text-center border ml-[8px]",
               "disabled:opacity-80",
               inputStatusCls
             )}
@@ -235,7 +237,7 @@ export function MatchInput(props: React.PropsWithChildren<MatchInputProps>) {
           />
         </div>
         {props.filled ? (
-          <div className="flex items-center gap-[3px] text-[13px] text-[#444444] whitespace-nowrap cursor-default mt-1">
+          <div className="flex items-center gap-[3px] text-[13px] text-[#444444] whitespace-nowrap cursor-default">
             <span className="mr-[5px]">Resultado:</span>
             <CountryFlag
               code={countryLeft?.code}

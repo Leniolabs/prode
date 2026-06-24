@@ -380,7 +380,7 @@ export default function RoomGroupsPage() {
             ].map((group) => (
               <Card
                 key={group}
-                className="rounded-card overflow-hidden [&>div:first-child]:!bg-white [&>div:first-child]:!text-brand-blue [&>div:first-child]:!text-[16px] [&>div:first-child]:!font-bold [&>div:first-child]:!leading-none [&>div:first-child]:!min-h-[28px] [&>div:first-child]:!py-0 [&>div:first-child]:!pt-[7px] [&>div:first-child]:!pb-[5px] [&>div:first-child]:!px-3 [&>div:first-child]:!justify-start [&>div:first-child]:uppercase [&>div:first-child]:!rounded-none"
+                className="rounded-card overflow-hidden [&>div:first-child]:!bg-white [&>div:first-child]:!text-brand-blue [&>div:first-child]:!text-[16px] [&>div:first-child]:!font-bold [&>div:first-child]:!leading-none [&>div:first-child]:!min-h-[28px] [&>div:first-child]:!py-0 [&>div:first-child]:!pt-[7px] [&>div:first-child]:!pb-[5px] [&>div:first-child]:!px-3 [&>div:first-child]:!justify-center [&>div:first-child]:uppercase [&>div:first-child]:!rounded-none"
                 title={i18n[group as keyof typeof i18n]}
               >
                 <CardContent>
