@@ -700,7 +700,7 @@ export function UserMatchFinalsInput(
         >
           {userCountryLeft?.code && (
             <CountryFlag
-              className="[&_img]:w-[26px] [&_img]:h-[26px] [&_img]:rounded-full [&_img]:object-cover"
+              className="[&_img]:w-[28px] [&_img]:h-[20px] [&_img]:rounded-[2px] [&_img]:object-cover"
               code={userCountryLeft?.code}
             />
           )}
@@ -750,7 +750,7 @@ export function UserMatchFinalsInput(
         >
           {userCountryRight?.code && (
             <CountryFlag
-              className="[&_img]:w-[26px] [&_img]:h-[26px] [&_img]:rounded-full [&_img]:object-cover"
+              className="[&_img]:w-[28px] [&_img]:h-[20px] [&_img]:rounded-[2px] [&_img]:object-cover"
               code={userCountryRight?.code}
             />
           )}
