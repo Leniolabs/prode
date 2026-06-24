@@ -33,9 +33,21 @@ export type SyncResult = {
   updated: number;
   skipped: number;
   errors: string[];
-  // Round-of-32 reconciliation summary against the official bracket. Counts
-  // only; details are logged. Absent until a provider runs the reconcile step.
-  reconcile?: { matched: number; divergences: number; unmatched: number };
+  // Round-of-32 reconciliation against the official bracket. Includes the full
+  // divergence list so the cron job log (and any alert built on it) can name
+  // the drifting slots. Absent until a provider runs the reconcile step. The
+  // divergence shape is inlined here rather than imported from the ESPN module
+  // to keep the results-sync layer free of a back-dependency on a provider.
+  reconcile?: {
+    matched: number;
+    unmatched: number;
+    divergences: {
+      stage: string;
+      thirdPlaceSlot: boolean;
+      expected: [string, string];
+      actual: [string, string];
+    }[];
+  };
 };
 
 export type PendingMatch = {

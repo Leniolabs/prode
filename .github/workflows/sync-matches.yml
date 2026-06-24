@@ -31,3 +31,22 @@ jobs:
             echo "Sync failed with status $RESPONSE"
             exit 1
           fi
+
+      # Fail the job (which emails the workflow owner) when our computed
+      # round-of-32 disagrees with the official bracket published by ESPN.
+      # The sync above already persisted results server-side, so failing here
+      # never rolls anything back — it only raises the alert. A third-place
+      # divergence means FIFA's best-thirds tiebreakers resolved differently
+      # than we computed: correct the seed by hand. A deterministic-slot
+      # divergence means a bug. Note: this re-fires every cron tick until the
+      # drift is resolved, so expect repeated emails within a match window.
+      - name: Check round-of-32 against official bracket
+        if: success()
+        run: |
+          DRIFT=$(jq '(.reconcile.divergences // []) | length' /tmp/sync-response.json)
+          if [ "$DRIFT" != "0" ]; then
+            echo "::error::Round-of-32 drift on ${DRIFT} slot(s): computed bracket disagrees with the official bracket."
+            jq -r '.reconcile.divergences[] | "  \(.stage) [\(if .thirdPlaceSlot then "third-place tiebreaker — correct the seed" else "DETERMINISTIC SLOT — investigate bug" end)]: computed \(.expected | join(" v ")), official \(.actual | join(" v "))"' /tmp/sync-response.json
+            exit 1
+          fi
+          echo "No round-of-32 drift."

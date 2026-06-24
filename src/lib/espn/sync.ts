@@ -166,8 +166,8 @@ export async function syncMatchResults(): Promise<SyncResult> {
     const reconcile = await reconcileRoundOf32();
     result.reconcile = {
       matched: reconcile.matched,
-      divergences: reconcile.divergences.length,
       unmatched: reconcile.unmatched.length,
+      divergences: reconcile.divergences,
     };
   } catch (error) {
     result.errors.push(
