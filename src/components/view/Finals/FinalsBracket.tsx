@@ -98,7 +98,7 @@ export function FinalsBracket({
   ) => {
     // CSS flex order within the round (visual sequence). Driven by
     // FINAL_ORDER_MAP so each match sits in the bracket column above the match
-    // it feeds (e.g. FINALS_8_1 + FINALS_8_3 stack above FINALS_4_1). A naive
+    // it feeds (e.g. FINALS_8_1 + FINALS_8_2 stack above FINALS_4_1). A naive
     // index+1 breaks that alignment for the Cuartos onward.
     const order = getFinalsStageOrder(match.stage) || index + 1;
     return admin ? (
