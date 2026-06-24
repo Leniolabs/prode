@@ -43,6 +43,28 @@ describe("third-place combination table", () => {
       });
     }
   });
+
+  it("only assigns third-placed groups permitted by the official R32 fixture", () => {
+    // Each third-placed slot accepts third-placed teams from a fixed set of
+    // groups, per the official FIFA WC 2026 round-of-32 fixture. Index aligns
+    // with THIRD_PLACE_SLOT_ORDER [1A,1B,1D,1E,1G,1I,1K,1L] -> matches
+    // 79, 85, 81, 74, 82, 77, 87, 80.
+    const allowed: Record<string, string> = {
+      "1A": "CEFHI", // 79: 3rd C/E/F/H/I
+      "1B": "EFGIJ", // 85: 3rd E/F/G/I/J
+      "1D": "BEFIJ", // 81: 3rd B/E/F/I/J
+      "1E": "ABCDF", // 74: 3rd A/B/C/D/F
+      "1G": "AEHIJ", // 82: 3rd A/E/H/I/J
+      "1I": "CDFGH", // 77: 3rd C/D/F/G/H
+      "1K": "DEIJL", // 87: 3rd D/E/I/J/L
+      "1L": "EHIJK", // 80: 3rd E/H/I/J/K
+    };
+    for (const value of Object.values(THIRD_PLACE_COMBINATIONS)) {
+      THIRD_PLACE_SLOT_ORDER.forEach((slot, i) => {
+        expect(allowed[slot]).toContain(value[i]);
+      });
+    }
+  });
 });
 
 describe("computeGroupStandings", () => {

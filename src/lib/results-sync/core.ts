@@ -33,6 +33,9 @@ export type SyncResult = {
   updated: number;
   skipped: number;
   errors: string[];
+  // Round-of-32 reconciliation summary against the official bracket. Counts
+  // only; details are logged. Absent until a provider runs the reconcile step.
+  reconcile?: { matched: number; divergences: number; unmatched: number };
 };
 
 export type PendingMatch = {

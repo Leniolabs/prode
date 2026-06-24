@@ -8,6 +8,7 @@ import {
   type SyncResult,
 } from "@/lib/results-sync/core";
 import { seedRoundOf32All } from "@/lib/bracket";
+import { reconcileRoundOf32 } from "./reconcile";
 import { fetchScoreboardRange, isFinal, type EspnCompetitor, type EspnEvent } from "./client";
 
 function parseScore(raw: string | undefined): number | null {
@@ -155,6 +156,23 @@ export async function syncMatchResults(): Promise<SyncResult> {
         `bracket advance: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
+  }
+
+  // Validate the computed round-of-32 against the official bracket published by
+  // ESPN. Detective control: logs divergences (chiefly third-place tiebreakers
+  // we cannot derive from scores), never mutates the bracket. Self-fetches the
+  // R32 window and no-ops until at least one slot is seeded.
+  try {
+    const reconcile = await reconcileRoundOf32();
+    result.reconcile = {
+      matched: reconcile.matched,
+      divergences: reconcile.divergences.length,
+      unmatched: reconcile.unmatched.length,
+    };
+  } catch (error) {
+    result.errors.push(
+      `r32 reconcile: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 
   return result;
