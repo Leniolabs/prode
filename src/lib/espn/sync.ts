@@ -1,4 +1,5 @@
 import {
+  advanceFinalsBracket,
   applyProviderMatch,
   findPendingMatch,
   loadPendingMatches,
@@ -6,6 +7,7 @@ import {
   type ProviderMatch,
   type SyncResult,
 } from "@/lib/results-sync/core";
+import { seedRoundOf32All } from "@/lib/bracket";
 import { fetchScoreboardRange, isFinal, type EspnCompetitor, type EspnEvent } from "./client";
 
 function parseScore(raw: string | undefined): number | null {
@@ -131,6 +133,26 @@ export async function syncMatchResults(): Promise<SyncResult> {
     } catch (error) {
       result.errors.push(
         `match ${providerMatch.id}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  if (result.updated > 0) {
+    // Seed the round of 32 from group standings once groups are final, then
+    // propagate knockout winners up the bracket. Seeding runs first so any R32
+    // results already pulled in this pass can advance in the same call.
+    try {
+      await seedRoundOf32All();
+    } catch (error) {
+      result.errors.push(
+        `r32 seed: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+    try {
+      await advanceFinalsBracket();
+    } catch (error) {
+      result.errors.push(
+        `bracket advance: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }

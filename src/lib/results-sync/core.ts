@@ -1,4 +1,15 @@
 import { prisma } from "@/lib/prisma";
+import type { Stage } from "@/generated/prisma";
+import {
+  finalsSourceStages,
+  getFinalsStageGroup,
+  resolveFinalsMatches,
+  type FinalsMatchLike,
+} from "@/utils/finals";
+import {
+  getAdminFinalsMatchWinner,
+  getAdminFinalsMatchLooser,
+} from "@/lib/scoring/finals";
 
 const MATCH_WINDOW_MS = 12 * 60 * 60 * 1000;
 
@@ -195,4 +206,105 @@ export async function applyProviderMatch(
   });
 
   return "updated";
+}
+
+// Round-progression order. The visual order map in utils/finals.ts overlaps
+// across rounds (FINALS_16_1 and FINALS_8_1 both rank 1), so we cannot reuse it
+// here: resolveFinalsMatches requires every source round to be processed before
+// the round that consumes it.
+const FINALS_ROUND_INDEX: Record<string, number> = {
+  FINALS_16: 0,
+  FINALS_8: 1,
+  FINALS_4: 2,
+  FINALS_2: 3,
+  FINAL: 4,
+};
+
+function collectFinalsStages(): Stage[] {
+  const stages = new Set<string>();
+  for (const [stage, source] of Object.entries(finalsSourceStages)) {
+    stages.add(stage);
+    stages.add(source.left);
+    stages.add(source.right);
+  }
+  return Array.from(stages) as Stage[];
+}
+
+// Auto-advances the knockout bracket: once a source match has a decided result,
+// its winner (or loser, for the third-place match) is written onto the next
+// match's participant slots. Forward-only: a slot is only ever set or corrected
+// to a decided team, never wiped back to null when the source is still pending.
+export async function advanceFinalsBracket(): Promise<{ advanced: number }> {
+  const matches = await prisma.match.findMany({
+    where: { stage: { in: collectFinalsStages() } },
+    select: {
+      id: true,
+      prodeId: true,
+      stage: true,
+      goalsLeft: true,
+      goalsRight: true,
+      penaltisLeft: true,
+      penaltisRight: true,
+      countryLeftId: true,
+      countryRightId: true,
+    },
+  });
+
+  const byProde = new Map<string, typeof matches>();
+  for (const match of matches) {
+    const list = byProde.get(match.prodeId) ?? [];
+    list.push(match);
+    byProde.set(match.prodeId, list);
+  }
+
+  let advanced = 0;
+
+  for (const group of Array.from(byProde.values())) {
+    const sorted = [...group].sort(
+      (left, right) =>
+        (FINALS_ROUND_INDEX[getFinalsStageGroup(left.stage) ?? ""] ?? 0) -
+        (FINALS_ROUND_INDEX[getFinalsStageGroup(right.stage) ?? ""] ?? 0),
+    );
+
+    const input: (FinalsMatchLike & { id: string })[] = sorted.map((match) => ({
+      id: match.id,
+      stage: match.stage,
+      countryLeftId: match.countryLeftId ?? undefined,
+      countryRightId: match.countryRightId ?? undefined,
+      goalsLeft: match.goalsLeft,
+      goalsRight: match.goalsRight,
+      penaltisLeft: match.penaltisLeft,
+      penaltisRight: match.penaltisRight,
+    }));
+
+    const resolved = resolveFinalsMatches(
+      input,
+      getAdminFinalsMatchWinner,
+      getAdminFinalsMatchLooser,
+    );
+
+    const stored = new Map(sorted.map((match) => [match.id, match]));
+
+    for (const match of resolved) {
+      if (!finalsSourceStages[match.stage]) continue;
+
+      const original = stored.get(match.id);
+      if (!original) continue;
+
+      const data: { countryLeftId?: string; countryRightId?: string } = {};
+      if (match.countryLeftId && match.countryLeftId !== original.countryLeftId) {
+        data.countryLeftId = match.countryLeftId;
+      }
+      if (match.countryRightId && match.countryRightId !== original.countryRightId) {
+        data.countryRightId = match.countryRightId;
+      }
+
+      if (Object.keys(data).length === 0) continue;
+
+      await prisma.match.update({ where: { id: match.id }, data });
+      advanced++;
+    }
+  }
+
+  return { advanced };
 }
