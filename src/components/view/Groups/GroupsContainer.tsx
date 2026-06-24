@@ -8,7 +8,7 @@ interface GroupsContainerProps {
 }
 
 export function GroupsContainer(
-  props: React.PropsWithChildren<GroupsContainerProps>
+  props: React.PropsWithChildren<GroupsContainerProps>,
 ) {
   // The named-area grid (incl. the minmax(0, 1fr) overflow fix and the
   // 1300px breakpoint) lives in the `groups-grid` / `groups-grid-admin`
@@ -17,7 +17,9 @@ export function GroupsContainer(
     <section
       className={className(
         props.className,
-        props.admin ? "groups-grid-admin" : "groups-grid"
+        props.admin
+          ? "groups-grid-admin"
+          : "groups-grid grid-rows-[auto] auto-rows-[min-content]",
       )}
     >
       {props.children}
