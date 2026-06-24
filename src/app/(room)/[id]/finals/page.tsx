@@ -4,6 +4,7 @@ import { Match, ProdeRoom, Stage, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
 import { Button } from "@/components/common/Button";
 import { RoomWelcomeBar } from "@/components/common/Header";
+import { Warning } from "@/components/common/Warning";
 import { Table } from "@/components/common/Table";
 import { UserPositionDisplay } from "@/components/common/UserPositionDisplay";
 import { UserRankingDisplay } from "@/components/common/UserRankingDisplay";
@@ -12,7 +13,6 @@ import {
   Footer,
   Container,
   Card,
-  ContainerHeader,
   CardFooter,
   CardContent,
 } from "@/layout";
@@ -41,6 +41,7 @@ import {
 import { ShareToday } from "@/components/common/ShareButton/ShareToday";
 import { GapIcon } from "@/components/common/Icons";
 import { useRouter, useParams } from "next/navigation";
+import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { getMatchOrder } from "@/utils/finals";
 import { finalsTierLockTime, isFinalsMatchLocked } from "@/utils/date";
@@ -119,6 +120,7 @@ export default function RoomFinalsPage() {
   );
 
   const [updating, setUpdating] = React.useState(false);
+  const [savedAt, setSavedAt] = React.useState<Date | null>(null);
   const [matches, setMatches] = React.useState<UIMatch[]>([]);
   const [originalMatches, setOriginalMatches] = React.useState<UIMatch[]>([]);
 
@@ -206,6 +208,7 @@ export default function RoomFinalsPage() {
       })
       .then(() => {
         setOriginalMatches(matches);
+        setSavedAt(new Date());
         setTimeout(() => setUpdating(false), 500);
       });
   }, [id, differentMatches, matches]);
@@ -237,10 +240,45 @@ export default function RoomFinalsPage() {
     [router]
   );
 
+  const formattedFinalsTitle = React.useMemo(() => {
+    const title = i18n.finalsTitle.toLowerCase();
+    return title.charAt(0).toUpperCase() + title.slice(1);
+  }, [i18n.finalsTitle]);
+
+  // Warn when an unlocked knockout match with a known matchup (real or
+  // user-predicted teams) is missing a score prediction.
+  const hasIncompleteMatches = React.useMemo(() => {
+    return matches.some((match) => {
+      if (match.disabled || isLocked(match.stage)) return false;
+      const hasMatchup =
+        (match.userCountryLeftId ?? match.countryLeftId) &&
+        (match.userCountryRightId ?? match.countryRightId);
+      return (
+        !!hasMatchup &&
+        (match.userGoalsLeft == null || match.userGoalsRight == null)
+      );
+    });
+  }, [matches, isLocked]);
+
+  // "Guardado 18/06 - 11.30 am" — matches the groups page chip format.
+  const formattedSavedAt = React.useMemo(() => {
+    if (!savedAt) return null;
+    const dd = String(savedAt.getDate()).padStart(2, "0");
+    const mm = String(savedAt.getMonth() + 1).padStart(2, "0");
+    const ampm = savedAt.getHours() >= 12 ? "pm" : "am";
+    const hour = savedAt.getHours() % 12 || 12;
+    const min = String(savedAt.getMinutes()).padStart(2, "0");
+    return `${dd}/${mm} - ${hour}.${min} ${ampm}`;
+  }, [savedAt]);
+
   if (session.status === "loading" || session.status === "unauthenticated")
     return null;
 
   if (redirected) return null;
+
+  // sectionCard: dark-navy title bar (rounded top only). Mirrors the groups page.
+  const sectionCardClass =
+    "self-start [&>div:first-child]:!bg-dark-navy [&>div:first-child]:!text-white [&>div:first-child]:!text-[20px] [&>div:first-child]:!font-semibold [&>div:first-child]:!leading-[1.15] [&>div:first-child]:!min-h-[40px] [&>div:first-child]:!py-0 [&>div:first-child]:!pt-[11px] [&>div:first-child]:!pb-[13px] [&>div:first-child]:!px-5 [&>div:first-child]:!rounded-b-none [&>div:first-child]:!rounded-t-card";
 
   return (
     <Layout>
@@ -253,34 +291,76 @@ export default function RoomFinalsPage() {
         roomAdmin={props?.roomAdmin}
       >
         <Button invert href={`/rooms`}>{i18n.buttonLabelProdeList}</Button>
-        <Button invert href={`/${id}/ranking`}>{i18n.buttonLabelRanking}</Button>
-        <Button invert href={`/${id}/groups`}>{i18n.buttonLabelGroupPhase}</Button>
       </RoomWelcomeBar>
-      {props?.room && <FinalsResultsWarning roomConfig={props.room} />}
       <Container full>
         <FinalsContainer>
-          <ContainerHeader gridArea="matches-header" sticky title={i18n.finalsTitle}>
-            <Button variant="transparent" disabled={!hasEditableChanges} onClick={handleSave}>
-              {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}
-            </Button>
-          </ContainerHeader>
+          <div
+            className="flex flex-col gap-4 h-full min-w-0 m-0"
+            style={{ gridArea: "matches-header" }}
+          >
+            <div className="flex flex-wrap items-stretch gap-3 min-w-0 max-[640px]:flex-col max-[640px]:items-stretch">
+              <div className="bg-dark-navy text-white rounded-card text-[20px] font-semibold leading-[1.15] min-h-[50px] py-2 px-5 flex flex-wrap items-center gap-x-4 gap-y-2 flex-auto min-w-0">
+                <span className="min-w-0 flex-1 truncate max-[640px]:basis-full max-[640px]:flex-none">{formattedFinalsTitle}</span>
+                <div className="ml-auto flex flex-wrap items-center gap-2 shrink-0 max-[640px]:ml-0">
+                  {([
+                    { label: i18n.buttonLabelGroupPhase, href: `/${id}/groups` },
+                    { label: i18n.buttonLabelRoundOf32, href: `/${id}/16avos` },
+                  ] as const).map(({ label, href }) => (
+                    <Link
+                      key={label}
+                      href={href}
+                      className="inline-flex items-center justify-center rounded-md border border-white/40 px-3 py-[5px] text-[13px] font-semibold leading-none text-white whitespace-nowrap transition hover:bg-white/10"
+                    >
+                      {label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+              <div
+                className={`rounded-card flex-none min-h-[50px] px-4 flex items-center gap-2 font-semibold text-[15px] max-[640px]:min-h-0 max-[640px]:py-[10px] ${
+                  formattedSavedAt ? "bg-white text-dark-navy" : "bg-dark-navy text-white/70"
+                }`}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7v5l3 2" />
+                </svg>
+                {formattedSavedAt ? `${i18n.groupsSavedLabel} ${formattedSavedAt}` : i18n.groupsNotSavedLabel}
+              </div>
+            </div>
+            {props?.room && (
+              <FinalsResultsWarning
+                className="w-full m-0 rounded-card min-h-[44px] bg-white/75 items-center px-4 max-[640px]:py-[10px] [&>:nth-child(2)]:w-full [&>:nth-child(2)]:min-[1024px]:flex-nowrap [&>:nth-child(2)]:min-[1024px]:justify-around [&>:nth-child(2)]:min-[1024px]:gap-4"
+                roomConfig={props.room}
+              />
+            )}
+            {hasIncompleteMatches && (
+              <Warning
+                offset
+                className="w-full m-0 rounded-card min-h-[44px] items-center px-4 text-[14px] font-medium max-[640px]:py-[10px]"
+              >
+                {i18n.groupsIncompleteWarning}
+              </Warning>
+            )}
+          </div>
           <FinalsBracket
             matches={matches}
             now={now}
             onChange={handleMatchChange}
+            includeRoundOf32={false}
           />
           <BracketsMobileContainer gridArea="matches">
             <CollapsableContainer>
-              <Collapsable title={i18n.FINALS_16}>
-                {matches.filter((x) => x.stage.includes("FINALS_16_")).sort((a, b) => (a.date > b.date ? 1 : -1)).map((match, index) => (
-                  <UserMatchFinalsInput disabled={match.disabled || isLocked(match.stage)} submissionEndsAt={tierDeadline(match.stage)}
-                    key={match.id} date={new Date(match.date)} userCountryLeftId={match.countryLeftId} userGoalsLeft={match.userGoalsLeft}
-                    userCountryRightId={match.countryRightId} userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}
-                    userPenaltisRight={match.userPenaltisRight} penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                    goalsLeft={match.goalsLeft} goalsRight={match.goalsRight} countryLeftId={match.countryLeftId}
-                    countryRightId={match.countryRightId} onChange={handleMatchChange(match.id)} order={index + 1} filled={match.filled} />
-                ))}
-              </Collapsable>
               <Collapsable title={i18n.FINALS_8}>
                 {matches.filter((x) => x.stage.includes("FINALS_8_")).sort((a, b) => (a.date > b.date ? 1 : -1)).map((match, index) => (
                   <UserMatchFinalsInput disabled={match.disabled || isLocked(match.stage)} submissionEndsAt={tierDeadline(match.stage)}
@@ -328,7 +408,7 @@ export default function RoomFinalsPage() {
               </Collapsable>
             </CollapsableContainer>
           </BracketsMobileContainer>
-          <Card title={<>{todayMatches ? i18n.todayMatchesLabel : i18n.upcomingMatchesLabel}<ShareToday userProdeId={props?.userProdeId} /></>} gridArea="following">
+          <Card className={sectionCardClass} title={<>{todayMatches ? i18n.todayMatchesLabel : i18n.upcomingMatchesLabel}<ShareToday userProdeId={props?.userProdeId} /></>} gridArea="following">
             <CardContent>
               {(todayMatches || nextMatches)?.length ? (
                 <DailyMatches>
@@ -349,21 +429,36 @@ export default function RoomFinalsPage() {
               )}
             </CardContent>
           </Card>
-          <Card title={i18n.rankingTitle} gridArea="ranking">
+          <Card
+            className={sectionCardClass}
+            gridArea="ranking"
+            title={
+              <>
+                {i18n.rankingTitle}
+                <a
+                  href={`/${id}/ranking`}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[13px] font-medium text-white border border-white/30 rounded-full px-3 py-1 leading-none hover:bg-white/10 hover:border-white/50 transition-colors"
+                >
+                  {i18n.buttonLabelRanking}&nbsp;›
+                </a>
+              </>
+            }
+          >
             <CardContent>
               <Table
+                className="table-fixed w-full [&_td]:overflow-hidden [&_thead]:bg-transparent [&_thead_th]:!text-brand-blue [&_thead_th]:!text-[20px] [&_thead_th]:!font-medium"
                 onRowClick={handleUserClick}
                 columns={[
-                  { header: i18n.rankingPositionColumn, accesor: (row) => !row.gap && <UserPositionDisplay position={row.ranking} />, width: "50px" },
+                  { header: "Pos", accesor: (row) => !row.gap && <UserPositionDisplay position={row.ranking} />, width: "48px" },
                   { header: i18n.rankingNameColumn, accesor: (row) => row.gap ? <GapIcon /> : <UserRankingDisplay name={row.name || ""} image={row.image} /> },
-                  { header: i18n.rankingTotalColumn, accesor: (row) => (!row.gap ? row.points : ""), align: "RIGHT", width: "50px" },
+                  { header: "Pts", accesor: (row) => (!row.gap ? row.points : ""), align: "RIGHT", width: "52px" },
                 ]}
                 data={props?.ranking || []}
                 clickable={(row: Ranking & { gap: boolean }) => !row.gap}
               />
             </CardContent>
             <CardFooter>
-              <Button href={`/${id}/ranking`} variant="secondary">{i18n.buttonCompleteRanking}</Button>
+              <Button href={`/${id}/ranking`} variant="secondary" invert>{i18n.buttonCompleteRanking}</Button>
             </CardFooter>
           </Card>
         </FinalsContainer>

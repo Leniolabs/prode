@@ -63,6 +63,7 @@ interface RankingData {
     GROUP_J: number;
     GROUP_K: number;
     GROUP_L: number;
+    FINALS_16: number;
     FINALS_8: number;
     FINALS_4: number;
     FINALS_2: number;
@@ -87,6 +88,7 @@ interface RankingData {
     GROUP_J: number;
     GROUP_K: number;
     GROUP_L: number;
+    FINALS_16: number;
     FINALS_8: number;
     FINALS_4: number;
     FINALS_2: number;
@@ -434,6 +436,11 @@ export default function RankingPage() {
                     {
                       header: "L",
                       accesor: (row) => row.GROUP_L,
+                      align: "RIGHT",
+                    },
+                    {
+                      header: i18n.ranking16Column,
+                      accesor: (row) => row.FINALS_16,
                       align: "RIGHT",
                     },
                     {

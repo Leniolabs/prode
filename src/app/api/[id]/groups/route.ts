@@ -59,5 +59,11 @@ export async function POST(req: NextRequest, context: { params: Promise<{ id: st
 
   await syncronizeTemplate(room, user)
 
-  return NextResponse.json({ matches })
+  const groupsSavedAt = new Date()
+  await prisma.userProde.update({
+    where: { id: userProde.id },
+    data: { groupsSavedAt },
+  })
+
+  return NextResponse.json({ matches, groupsSavedAt: groupsSavedAt.toISOString() })
 }

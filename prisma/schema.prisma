@@ -222,6 +222,8 @@ model UserProde {
   matches       ProdeUserGroupMatch[]
   finalsMatches ProdeUserFinalsMatch[]
 
+  groupsSavedAt DateTime?
+
   deletedAt DateTime?
 
   @@unique([userId, prodeRoomId])

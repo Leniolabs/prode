@@ -76,6 +76,7 @@ export async function GET(req: NextRequest) {
     },
     finalsStarted: room.prode.stage === 'FINALS',
     submissionEndsAt: room.prode.groupSubmissionsEnd.toISOString(),
+    groupsSavedAt: userProde.groupsSavedAt ? userProde.groupsSavedAt.toISOString() : null,
     userRanking: {
       id: user.id,
       name: user.name,

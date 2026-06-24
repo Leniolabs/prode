@@ -32,10 +32,12 @@ export interface LocaleData {
   generatingVideoLabel: string;
 
   buttonLabelGroupPhase: string;
+  buttonLabelBack: string;
   buttonLabelGoBackToList: string;
   buttonLabelCreateRoom: string;
   buttonLabelProdeList: string;
   buttonLabelFinalsPhase: string;
+  buttonLabelRoundOf32: string;
   buttonLabelSave: string;
   buttonLabelSaving: string;
   buttonLabelExit: string;
@@ -67,6 +69,7 @@ export interface LocaleData {
   rankingTotalPlayersLabel: string;
   rankingPositionColumn: string;
   rankingNameColumn: string;
+  ranking16Column: string;
   ranking8Column: string;
   ranking4Column: string;
   ranking2Column: string;
@@ -92,6 +95,9 @@ export interface LocaleData {
   groupsCorrectResult: string;
   groupsIncorrectPrediction: string;
   groupsIncomplete: string;
+  groupsSavedLabel: string;
+  groupsNotSavedLabel: string;
+  groupsIncompleteWarning: string;
 
   finalsTitle: string;
   FINALS_16: string;

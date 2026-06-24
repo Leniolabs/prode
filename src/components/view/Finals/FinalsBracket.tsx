@@ -2,11 +2,28 @@ import React from "react";
 import { useLocalizedText } from "@/locale";
 import { UserMatchFinalsInput } from "@/components/common/UserMatchFinalsInput";
 import { MatchFinalsInput } from "@/components/common/MatchFinalsInput";
-import { getFinalsStageGroup } from "@/utils/finals";
+import { getFinalsStageGroup, getFinalsStageOrder } from "@/utils/finals";
 import { finalsTierLockTime, isFinalsMatchLocked } from "@/utils/date";
 import { FINALS_TIER_DEADLINES } from "@/config/matchdays";
 import { BracketsContainer } from "./BracketsContainer";
 import { BracketRound } from "./BracketRound";
+import { BracketIcon } from "./BracketIcon";
+
+// Connector "llaves" between two rounds: one funnel per match in the lower
+// round, column-aligned to the match boxes so each Y points at the game its
+// winners advance to. Count = number of matches in the round below.
+function BracketConnectors({ count }: { count: number }) {
+  return (
+    <div
+      aria-hidden
+      className="flex flex-wrap justify-around gap-x-5 w-full -my-2 [&>svg]:flex-[0_0_calc(25%-15px)] [&>svg]:max-w-[210px] [&>svg]:min-w-[170px] [&>svg]:h-[18px]"
+    >
+      {Array.from({ length: count }).map((_, i) => (
+        <BracketIcon key={i} />
+      ))}
+    </div>
+  );
+}
 
 export interface FinalsBracketMatch {
   id: string;
@@ -43,6 +60,12 @@ interface FinalsBracketProps {
   onChange: (id: string) => (value: MatchChangeValue) => void;
   /** Admin mode: editable country pickers + result inputs (sets references). */
   admin?: boolean;
+  /**
+   * Render the Round of 32 (FINALS_16) as the top bracket row. Defaults to
+   * true. The room finals page sets this false because the Round of 32 lives
+   * on its own `/16avos` matrix page; the bracket there starts at Octavos.
+   */
+  includeRoundOf32?: boolean;
 }
 
 const stageNum = (stage: string) =>
@@ -53,6 +76,7 @@ export function FinalsBracket({
   now,
   onChange,
   admin,
+  includeRoundOf32 = true,
 }: FinalsBracketProps) {
   const i18n = useLocalizedText();
 
@@ -72,9 +96,11 @@ export function FinalsBracket({
     index: number,
     advanced: boolean
   ) => {
-    // CSS flex order within the round (visual sequence). Tab order is handled by
-    // natural DOM order — MatchFinalsInput no longer sets explicit tabindex.
-    const order = index + 1;
+    // CSS flex order within the round (visual sequence). Driven by
+    // FINAL_ORDER_MAP so each match sits in the bracket column above the match
+    // it feeds (e.g. FINALS_8_1 + FINALS_8_3 stack above FINALS_4_1). A naive
+    // index+1 breaks that alignment for the Cuartos onward.
+    const order = getFinalsStageOrder(match.stage) || index + 1;
     return admin ? (
       <MatchFinalsInput
         key={match.id}
@@ -131,18 +157,26 @@ export function FinalsBracket({
 
   return (
     <BracketsContainer gridArea="matches">
-      <BracketRound size="16" title={i18n.FINALS_16}>
-        {byGroup("FINALS_16").map((m, i) => renderMatch(m, i, false))}
-      </BracketRound>
+      {includeRoundOf32 && (
+        <>
+          <BracketRound size="16" title={i18n.FINALS_16}>
+            {byGroup("FINALS_16").map((m, i) => renderMatch(m, i, false))}
+          </BracketRound>
+          <BracketConnectors count={8} />
+        </>
+      )}
       <BracketRound size="8" title={i18n.FINALS_8}>
         {byGroup("FINALS_8").map((m, i) => renderMatch(m, i, false))}
       </BracketRound>
+      <BracketConnectors count={4} />
       <BracketRound size="4" title={i18n.FINALS_4}>
         {byGroup("FINALS_4").map((m, i) => renderMatch(m, i, true))}
       </BracketRound>
+      <BracketConnectors count={2} />
       <BracketRound size="2" title={i18n.FINALS_2}>
         {byGroup("FINALS_2").map((m, i) => renderMatch(m, i, true))}
       </BracketRound>
+      <BracketConnectors count={2} />
       <BracketRound size="final" finalPair title={`${i18n.FINAL} · ${i18n.THIRD_PLACE}`}>
         {finalPair.map((m, i) => renderMatch(m, i, true))}
       </BracketRound>

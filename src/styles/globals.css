@@ -100,7 +100,7 @@
   display: grid;
   margin-bottom: 12px;
   width: 100%;
-  gap: 0px 12px;
+  gap: 16px 12px;
   grid-template-columns: 1fr;
   grid-template-rows: max-content max-content max-content max-content;
   grid-template-areas: "matches-header" "following" "matches" "ranking";

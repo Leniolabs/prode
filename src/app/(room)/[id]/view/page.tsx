@@ -36,8 +36,9 @@ import { LocaleSelect } from "@/components/common/LocaleSelect";
 import { useLocalizedText } from "@/locale";
 import { getMatchOrder } from "@/utils/finals";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useBodyRedirect } from "@/hooks";
+import { Button } from "@/components/common/Button";
 
 // ContainerHeader title-bar styling (applied to the header's first child).
 const headerDarkTitle =
@@ -96,6 +97,7 @@ type ViewResponse = ViewData & { redirect?: string };
 export default function ViewPage() {
   const params = useParams();
   const id = params?.id as string;
+  const router = useRouter();
   const i18n = useLocalizedText();
 
   const { data: props } = useQuery<ViewResponse>({ queryKey: ["view-page-data", id], queryFn: () => fetch(`/api/view-page-data?id=${id}`).then((r) => r.json()), enabled: !!id });
@@ -124,16 +126,30 @@ export default function ViewPage() {
             className={`${headerDarkTitle} !mb-[9px] max-lg:!mt-0`}
             noMarginTop={!props?.userRanking}
             title={
-              <>
-                <UserImage
-                  small
-                  image={props?.viewUser?.image}
-                  className="mr-2"
-                />
-                {i18n.viewTitle}
-                {props?.viewUser?.name}
-                {i18n.viewTitleAfter}
-              </>
+              <div className="relative flex w-full items-center min-h-[1em]">
+                <Button invert onClick={() => router.back()} className="shrink-0">
+                  ‹ {i18n.buttonLabelBack}
+                </Button>
+                <span className="absolute inset-0 flex items-center justify-center pointer-events-none gap-2">
+                  <UserImage
+                    small
+                    image={props?.viewUser?.image}
+                    className="pointer-events-auto"
+                  />
+                  <span>
+                    {i18n.viewTitle}
+                    {props?.viewUser?.name}
+                    {i18n.viewTitleAfter}
+                  </span>
+                </span>
+                <div className="shrink-0 ml-auto">
+                  {props?.id && (
+                    <Button invert href={`/${props.id}/ranking`}>
+                      {i18n.buttonLabelGoToMyProde} ›
+                    </Button>
+                  )}
+                </div>
+              </div>
             }
           />
         </GroupsContainer>

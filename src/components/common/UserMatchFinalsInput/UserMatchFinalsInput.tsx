@@ -590,14 +590,19 @@ export function UserMatchFinalsInput(
   // `bg-transparent` outranks `bg-correct` so the green never shows. Picking
   // one bg class keeps the highlight override (!important) winning when set.
   const goalStatusCls = resultStatus ? STATUS_BG[resultStatus] ?? "bg-transparent" : "bg-transparent";
-  // Same alphabetical-ordering trap as the goal inputs, but the penalty badge's
-  // default background is bg-white on desktop (a readable badge over the goal
-  // input) and transparent on mobile. Carry that default here so the status bg
-  // is the only background utility when a status is set.
-  const penaltisDefaultBg = "bg-white max-[1024px]:bg-transparent";
+  // The penalty box is now a full second column (90' goals + P penalties),
+  // so its default background matches the goal input (transparent). Same
+  // alphabetical-ordering trap applies: pick a single bg utility so the status
+  // bg is the only one when set.
   const penaltisStatusCls = penaltisStatus
-    ? STATUS_BG[penaltisStatus] ?? penaltisDefaultBg
-    : penaltisDefaultBg;
+    ? STATUS_BG[penaltisStatus] ?? "bg-transparent"
+    : "bg-transparent";
+
+  // Penalties only decide a knockout tie. The column always renders to match
+  // the mockup's "90' / P" header pair, but the input is editable only when the
+  // user predicts a draw (showPenaltis) and the row is otherwise editable.
+  const penaltisDisabled =
+    !userCountryLeft || !userCountryRight || props.disabled || !showPenaltis;
 
   // highlight border/bg override: when highlight, inputs and countryInput use teal border + teal bg
   const highlightInputCls = props.highlight
@@ -606,6 +611,61 @@ export function UserMatchFinalsInput(
   const highlightCountryCls = props.highlight
     ? "!border-[#4db4b2] !bg-[#4db4b230]"
     : "";
+
+  const renderGoalsInput = (
+    side: "left" | "right",
+    tabOffset: number,
+    testId: string,
+    value: number | null | undefined,
+    onChangeFn: (e: React.ChangeEvent<HTMLInputElement>) => void,
+    onBlurFn: (e: React.FocusEvent<HTMLInputElement>) => void,
+    isDisabled: boolean
+  ) => (
+    <input
+      type="number"
+      inputMode={"decimal"}
+      tabIndex={props.order * 4 + tabOffset}
+      data-testid={testId}
+      className={className(
+        "match-input-number",
+        "w-[30px] h-[30px] rounded-[2px] border border-[#a7a8a9] outline-none text-center text-[#233042] text-[17px] p-[6px]",
+        "disabled:opacity-80",
+        goalStatusCls,
+        highlightInputCls
+      )}
+      defaultValue={value ?? ""}
+      onChange={onChangeFn}
+      disabled={isDisabled}
+      onBlur={onBlurFn}
+    />
+  );
+
+  const renderPenaltisInput = (
+    tabOffset: number,
+    testId: string,
+    value: number | null | undefined,
+    onChangeFn: (e: React.ChangeEvent<HTMLInputElement>) => void,
+    onBlurFn: (e: React.FocusEvent<HTMLInputElement>) => void
+  ) => (
+    <input
+      key={`${testId}-${showPenaltis ? "on" : "off"}`}
+      type="number"
+      inputMode={"decimal"}
+      tabIndex={props.order * 4 + tabOffset}
+      data-testid={testId}
+      className={className(
+        "match-input-number",
+        "w-[30px] h-[30px] rounded-[2px] border border-[#a7a8a9] outline-none text-center text-[#233042] text-[17px] p-[6px]",
+        "disabled:opacity-80",
+        penaltisStatusCls,
+        highlightInputCls
+      )}
+      defaultValue={value ?? ""}
+      onChange={onChangeFn}
+      disabled={penaltisDisabled}
+      onBlur={onBlurFn}
+    />
+  );
 
   return (
     <div
@@ -618,6 +678,18 @@ export function UserMatchFinalsInput(
       )}
       style={{ order: props.order }}
     >
+      {/* Header row: kickoff date (left) + "90' / P" column headers above the
+          two input columns (right). */}
+      <div className="flex items-end mb-[6px]">
+        <span className="flex-1 min-w-0 text-[13px] text-[#767676] truncate">
+          {date}
+        </span>
+        <div className="flex shrink-0 gap-[6px] text-[11px] font-semibold text-[#767676] leading-none">
+          <span className="w-[30px] text-center">{"90'"}</span>
+          <span className="w-[30px] text-center">P</span>
+        </div>
+      </div>
+
       {/* Left country row */}
       <div className="flex relative mb-[6px]">
         <div
@@ -632,55 +704,38 @@ export function UserMatchFinalsInput(
               code={userCountryLeft?.code}
             />
           )}
-          <label className="ml-[6px] text-[14px] whitespace-nowrap overflow-hidden text-ellipsis">
-            {userCountryLeft?.name}
+          <label className="ml-[6px] text-[14px] whitespace-nowrap relative cursor-default group">
+            {userCountryLeft?.shortName}
+            <span
+              className={className(
+                "pointer-events-none absolute left-1/2 -translate-x-1/2 z-10",
+                "bottom-[calc(100%+6px)]",
+                "bg-black/85 text-white text-[11px] whitespace-nowrap px-[7px] py-[3px] rounded-[4px]",
+                "opacity-0 transition-opacity duration-150",
+                "max-[640px]:hidden",
+                "[@media(hover:hover)]:group-hover:opacity-100"
+              )}
+            >
+              {userCountryLeft?.name}
+            </span>
           </label>
         </div>
-        {/* Goals (+ corner penalties) group — relative so the penalty input
-            anchors to the goals input's bottom-right corner on desktop. */}
-        <div className="relative ml-[6px] flex shrink-0 items-start">
-          <input
-            type="number"
-            inputMode={"decimal"}
-            tabIndex={props.order * 4}
-            data-testid="finals-match-goals-left"
-            className={className(
-              "match-input-number",
-              "w-[30px] h-[30px] rounded-[2px] border border-[#a7a8a9] outline-none text-center text-[#233042] text-[17px] p-[6px]",
-              "disabled:opacity-80",
-              goalStatusCls,
-              highlightInputCls,
-              showPenaltis && "max-[1024px]:text-center max-[1024px]:border-r-0"
-            )}
-            defaultValue={props.userGoalsLeft ?? ""}
-            onChange={handleGoalsLeftChange}
-            disabled={!userCountryLeft || !userCountryRight || props.disabled}
-            onBlur={handleLeftInputBlur}
-          />
-          {showPenaltis && (
-            <>
-              {/* Divider: hidden on desktop, visible on <=1024 */}
-              <div className="hidden max-[1024px]:block relative border-l border-[#233042cc] mt-[7px] h-[20px] z-[1] -left-[0.5px]" />
-              {/* Penalties input — desktop: badge in the goals bottom-right
-                  corner; <=1024: joined to the right of the goal input */}
-              <input
-                type="number"
-                inputMode={"decimal"}
-                tabIndex={props.order * 4 + 2}
-                data-testid="finals-match-penalties-left"
-                className={className(
-                  "match-input-number",
-                  "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] rounded-[2px] border border-[#a7a8a9] outline-none text-center text-[#233042] disabled:opacity-80",
-                  "max-[1024px]:relative max-[1024px]:text-[14px] max-[1024px]:h-[34px] max-[1024px]:w-[34px] max-[1024px]:-ml-[1px] max-[1024px]:border-l-0 max-[1024px]:bottom-auto max-[1024px]:right-auto",
-                  penaltisStatusCls,
-                  highlightInputCls
-                )}
-                defaultValue={props.userPenaltisLeft ?? ""}
-                onChange={handlePenaltisLeftChange}
-                disabled={!userCountryLeft || !userCountryRight || props.disabled}
-                onBlur={handlePenaltisLeftInputBlur}
-              />
-            </>
+        <div className="ml-[6px] flex shrink-0 gap-[6px] items-start">
+          {renderGoalsInput(
+            "left",
+            0,
+            "finals-match-goals-left",
+            props.userGoalsLeft,
+            handleGoalsLeftChange,
+            handleLeftInputBlur,
+            !userCountryLeft || !userCountryRight || !!props.disabled
+          )}
+          {renderPenaltisInput(
+            2,
+            "finals-match-penalties-left",
+            props.userPenaltisLeft,
+            handlePenaltisLeftChange,
+            handlePenaltisLeftInputBlur
           )}
         </div>
       </div>
@@ -699,57 +754,44 @@ export function UserMatchFinalsInput(
               code={userCountryRight?.code}
             />
           )}
-          <label className="ml-[6px] text-[14px] whitespace-nowrap overflow-hidden text-ellipsis">
-            {userCountryRight?.name}
+          <label className="ml-[6px] text-[14px] whitespace-nowrap relative cursor-default group">
+            {userCountryRight?.shortName}
+            <span
+              className={className(
+                "pointer-events-none absolute left-1/2 -translate-x-1/2 z-10",
+                "bottom-[calc(100%+6px)]",
+                "bg-black/85 text-white text-[11px] whitespace-nowrap px-[7px] py-[3px] rounded-[4px]",
+                "opacity-0 transition-opacity duration-150",
+                "max-[640px]:hidden",
+                "[@media(hover:hover)]:group-hover:opacity-100"
+              )}
+            >
+              {userCountryRight?.name}
+            </span>
           </label>
         </div>
-        {/* Goals (+ corner penalties) group */}
-        <div className="relative ml-[6px] flex shrink-0 items-start">
-          <input
-            type="number"
-            inputMode={"decimal"}
-            tabIndex={props.order * 4 + 1}
-            data-testid="finals-match-goals-right"
-            className={className(
-              "match-input-number",
-              "w-[30px] h-[30px] rounded-[2px] border border-[#a7a8a9] outline-none text-center text-[#233042] text-[17px] p-[6px]",
-              "disabled:opacity-80",
-              goalStatusCls,
-              highlightInputCls,
-              showPenaltis && "max-[1024px]:text-center max-[1024px]:border-r-0"
-            )}
-            defaultValue={props.userGoalsRight ?? ""}
-            onChange={handleGoalsRightChange}
-            disabled={!userCountryRight || props.disabled}
-            onBlur={handleRightInputBlur}
-          />
-          {showPenaltis && (
-            <>
-              <div className="hidden max-[1024px]:block relative border-l border-[#233042cc] mt-[7px] h-[20px] z-[1] -left-[0.5px]" />
-              <input
-                type="number"
-                inputMode={"decimal"}
-                tabIndex={props.order * 4 + 3}
-                data-testid="finals-match-penalties-right"
-                className={className(
-                  "match-input-number",
-                  "text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] rounded-[2px] border border-[#a7a8a9] outline-none text-center text-[#233042] disabled:opacity-80",
-                  "max-[1024px]:relative max-[1024px]:text-[14px] max-[1024px]:h-[34px] max-[1024px]:w-[34px] max-[1024px]:-ml-[1px] max-[1024px]:border-l-0 max-[1024px]:bottom-auto max-[1024px]:right-auto",
-                  penaltisStatusCls,
-                  highlightInputCls
-                )}
-                defaultValue={props.userPenaltisRight ?? ""}
-                onChange={handlePenaltisRightChange}
-                disabled={!userCountryRight || props.disabled}
-                onBlur={handlePenaltisRightInputBlur}
-              />
-            </>
+        <div className="ml-[6px] flex shrink-0 gap-[6px] items-start">
+          {renderGoalsInput(
+            "right",
+            1,
+            "finals-match-goals-right",
+            props.userGoalsRight,
+            handleGoalsRightChange,
+            handleRightInputBlur,
+            !userCountryRight || !!props.disabled
+          )}
+          {renderPenaltisInput(
+            3,
+            "finals-match-penalties-right",
+            props.userPenaltisRight,
+            handlePenaltisRightChange,
+            handlePenaltisRightInputBlur
           )}
         </div>
       </div>
 
-      {/* Date / result row */}
-      {filled ? (
+      {/* Result row (actual score), shown once the match is played. */}
+      {filled && (
         <div className="text-[14px] text-[#767676] flex items-center">
           <span className="mr-[5px]">Resultado:</span>
           <CountryFlag
@@ -777,8 +819,6 @@ export function UserMatchFinalsInput(
             disabled={getAdminFinalsMatchWinner(props) !== countryRight?.id}
           />
         </div>
-      ) : (
-        <div className="text-[14px] text-[#767676] flex items-center">{date}</div>
       )}
     </div>
   );

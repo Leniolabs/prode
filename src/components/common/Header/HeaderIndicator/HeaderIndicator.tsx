@@ -17,7 +17,7 @@ export function HeaderIndicator(
   return (
     <div
       className={className(
-        "text-white mx-[24px]",
+        "text-white mx-[16px]",
         props.compact && "mx-[10px] flex items-baseline gap-[6px]",
         props.className
       )}
@@ -25,7 +25,7 @@ export function HeaderIndicator(
       <div
         className={className(
           "font-bold",
-          props.compact ? "text-[20px] leading-none" : "text-[32px] text-right",
+          props.compact ? "text-[20px] leading-none" : "text-[22px] leading-none text-right",
           !props.compact && props.align === "LEFT" && "text-left"
         )}
       >
@@ -34,7 +34,7 @@ export function HeaderIndicator(
       <div
         className={className(
           "font-bold",
-          props.compact ? "text-[13px]" : "text-[20px]",
+          props.compact ? "text-[13px]" : "text-[13px] uppercase tracking-wide",
           !props.compact && props.align === "LEFT" && "text-left"
         )}
       >

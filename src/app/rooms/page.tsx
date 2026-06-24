@@ -29,7 +29,7 @@ const dividerClass =
 const roomsPanelClass =
   "w-[min(100%,980px)] mx-auto rounded-card overflow-hidden border-2 border-[rgba(91,194,167,0.95)] bg-[rgba(255,255,255,0.98)] shadow-[0_14px_36px_rgba(0,0,0,0.08)]";
 const roomsPanelHeaderClass =
-  "bg-brand-green text-white text-center pt-[18px] px-6 pb-4 [&_h1]:m-0 [&_h1]:text-[25px] [&_h1]:font-bold [&_h1]:leading-[1.15] max-[640px]:pt-4 max-[640px]:px-5 max-[640px]:pb-[14px]";
+  "bg-brand-green text-white text-center pt-[18px] px-6 pb-4 [&_h1]:m-0 [&_h1]:text-[25px] [&_h1]:font-bold [&_h1]:leading-[1.15] [&_h1]:[text-shadow:0_1px_2px_rgba(0,0,0,0.25)] max-[640px]:pt-4 max-[640px]:px-5 max-[640px]:pb-[14px]";
 const roomsPanelBodyClass =
   "px-3 pt-4 pb-[18px] flex flex-col gap-3 [&_p]:text-[20px] [&_p]:text-black max-[640px]:p-2.5 max-[640px]:[&_p]:text-[14px]";
 const enterButtonClass =
