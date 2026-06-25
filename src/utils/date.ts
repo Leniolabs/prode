@@ -91,6 +91,8 @@ export function formatDate(date: Date, locale: string, timezone?: string) {
     })
     .replace(".", "");
 
+  const dayShortCap = dayShort.charAt(0).toUpperCase() + dayShort.slice(1);
+
   const day = newDate.toLocaleString(dateLocale, {
     day: "numeric",
   });
@@ -104,7 +106,7 @@ export function formatDate(date: Date, locale: string, timezone?: string) {
     minute: "numeric",
   });
 
-  return `${dayShort} ${day}/${month} - ${normalizeMeridiem(hour)}`;
+  return `${dayShortCap} ${day}/${month} - ${normalizeMeridiem(hour)}`;
 }
 
 export function formatHour(date: Date, locale: string, timezone?: string) {

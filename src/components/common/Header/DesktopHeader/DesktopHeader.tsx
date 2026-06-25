@@ -77,7 +77,7 @@ export function DesktopHeader(
   );
 
   return (
-    <Header className="max-lg:!hidden [&_a+a]:ml-1.5">
+    <Header className="max-lg:!hidden [&_a+a]:ml-1.5 items-center gap-x-3">
       <PageLogo />
       <HeaderMessage
         title={i18n.headerTitle}

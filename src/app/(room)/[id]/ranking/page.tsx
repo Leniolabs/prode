@@ -23,7 +23,7 @@ import { CloseIcon, CrownIcon, ExitIcon } from "@/components/common/Icons";
 import { LeaveRoomConfirmModal } from "@/components/common/LeaveRoomConfirmModal";
 import axios from "axios";
 import { useLocalizedText } from "@/locale";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 
 interface RankingData {
   id: string;
@@ -63,6 +63,7 @@ interface RankingData {
     GROUP_J: number;
     GROUP_K: number;
     GROUP_L: number;
+    FINALS_16: number;
     FINALS_8: number;
     FINALS_4: number;
     FINALS_2: number;
@@ -87,6 +88,7 @@ interface RankingData {
     GROUP_J: number;
     GROUP_K: number;
     GROUP_L: number;
+    FINALS_16: number;
     FINALS_8: number;
     FINALS_4: number;
     FINALS_2: number;
@@ -133,6 +135,7 @@ export default function RankingPage() {
         r.json(),
       ),
     enabled: session.status === "authenticated" && !!id,
+    placeholderData: keepPreviousData,
   });
   const redirected = useBodyRedirect(props?.redirect);
 
@@ -194,15 +197,17 @@ export default function RankingPage() {
         <Button invert href="/rooms">
           {i18n.buttonLabelProdeList}
         </Button>
-        {props?.finalsStarted ? (
-          <Button invert href={`/${id}/finals`}>
-            {i18n.buttonLabelFinalsPhase}
-          </Button>
-        ) : (
-          <Button invert href={`/${id}/groups`}>
-            {i18n.buttonLabelGroupPhase}
-          </Button>
-        )}
+        {props ? (
+          props.finalsStarted ? (
+            <Button invert href={`/${id}/finals`}>
+              {i18n.buttonLabelFinalsPhase}
+            </Button>
+          ) : (
+            <Button invert href={`/${id}/groups`}>
+              {i18n.buttonLabelGroupPhase}
+            </Button>
+          )
+        ) : null}
       </RoomWelcomeBar>
       <Container full direction="COL" className="mt-3">
         <ContainerHeader
@@ -434,6 +439,11 @@ export default function RankingPage() {
                     {
                       header: "L",
                       accesor: (row) => row.GROUP_L,
+                      align: "RIGHT",
+                    },
+                    {
+                      header: i18n.ranking16Column,
+                      accesor: (row) => row.FINALS_16,
                       align: "RIGHT",
                     },
                     {

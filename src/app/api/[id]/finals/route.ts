@@ -69,5 +69,11 @@ export async function POST(req: NextRequest, context: { params: Promise<{ id: st
 
   await syncronizeFinalsTemplate(room, user)
 
-  return NextResponse.json({}, { status: 201 })
+  const finalsSavedAt = new Date()
+  await prisma.userProde.update({
+    where: { id: userProde.id },
+    data: { finalsSavedAt },
+  })
+
+  return NextResponse.json({ finalsSavedAt: finalsSavedAt.toISOString() }, { status: 201 })
 }

@@ -12,8 +12,8 @@ export function HeaderDivider(
   return (
     <div
       className={className(
-        "border-r-2 border-white",
-        props.compact ? "h-[34px]" : "h-[70px]",
+        "border-r border-white/50",
+        props.compact ? "h-[34px]" : "h-[48px]",
         props.className
       )}
     />

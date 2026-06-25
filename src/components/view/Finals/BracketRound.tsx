@@ -16,11 +16,11 @@ const sizeClass: Record<BracketRoundSize, string> = {
 // Uniform, readable match boxes. Each round centers its matches, so the tree
 // funnels by row count (16 -> 8 -> 4 -> 2 -> final) while box size stays fixed.
 const matchesRow =
-  "flex flex-wrap justify-center gap-x-5 gap-y-[14px] w-full [&>*]:flex-[0_0_calc(25%-15px)] [&>*]:max-w-[calc(25%-15px)] [&>*]:min-w-[170px]";
+  "flex flex-wrap justify-around gap-x-5 gap-y-[14px] w-full [&>*]:flex-[0_0_calc(25%-15px)] [&>*]:max-w-[210px] [&>*]:min-w-[170px]";
 
 // Final + third place sit side by side with extra breathing room.
 const finalPairRow =
-  "flex flex-wrap justify-center gap-16 w-full [&>div]:flex-[0_0_calc(25%-15px)] [&>div]:max-w-[calc(25%-15px)] [&>div]:min-w-[170px]";
+  "flex flex-wrap justify-center gap-16 w-full [&>div]:flex-[0_0_calc(25%-15px)] [&>div]:max-w-[210px] [&>div]:min-w-[170px]";
 
 interface BracketRoundProps {
   title: React.ReactNode;

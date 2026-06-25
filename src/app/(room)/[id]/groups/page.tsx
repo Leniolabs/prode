@@ -2,10 +2,12 @@
 import React from "react";
 import { Match, ProdeRoom, User } from "@/generated/prisma";
 import { BrandLogo } from "@/components/common/BrandLogo";
+import Link from "next/link";
 import { Button } from "@/components/common/Button";
 import { DesktopHeader, MobileHeader } from "@/components/common/Header";
 import { RoomWelcomeBar } from "@/components/common/Header";
 import { MatchInput } from "@/components/common/MatchInput";
+import { Warning } from "@/components/common/Warning";
 import { Table } from "@/components/common/Table";
 import { UserPositionDisplay } from "@/components/common/UserPositionDisplay";
 import { UserRankingDisplay } from "@/components/common/UserRankingDisplay";
@@ -75,6 +77,7 @@ interface RoomGroupsData {
   >;
   finalsStarted: boolean;
   submissionEndsAt: string;
+  groupsSavedAt?: string | null;
   userRanking?: Pick<
     User,
     "id" | "name" | "image" | "email" | "prodePublic" | "background" | "dark"
@@ -114,6 +117,7 @@ export default function RoomGroupsPage() {
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);
   const [updating, setUpdating] = React.useState(false);
+  const [savedAt, setSavedAt] = React.useState<Date | null>(null);
   const [originalMatches, setOriginalMatches] = React.useState<UIMatch[]>([]);
   const [matches, setMatches] = React.useState<UIMatch[]>([]);
 
@@ -123,6 +127,10 @@ export default function RoomGroupsPage() {
       setOriginalMatches(props.matches);
     }
   }, [props?.matches]);
+
+  React.useEffect(() => {
+    if (props?.groupsSavedAt) setSavedAt(new Date(props.groupsSavedAt));
+  }, [props?.groupsSavedAt]);
 
   const todayMatches = React.useMemo(() => {
     return props?.todayMatches?.map(
@@ -182,6 +190,27 @@ export default function RoomGroupsPage() {
     return title.charAt(0).toUpperCase() + title.slice(1);
   }, [i18n.groupsTitle]);
 
+  // "Guardado 18/06 - 11.30 am" — day/month then 12-hour time with a dot separator.
+  const formattedSavedAt = React.useMemo(() => {
+    if (!savedAt) return null;
+    const dd = String(savedAt.getDate()).padStart(2, "0");
+    const mm = String(savedAt.getMonth() + 1).padStart(2, "0");
+    const ampm = savedAt.getHours() >= 12 ? "pm" : "am";
+    const hour = savedAt.getHours() % 12 || 12;
+    const min = String(savedAt.getMinutes()).padStart(2, "0");
+    return `${dd}/${mm} - ${hour}.${min} ${ampm}`;
+  }, [savedAt]);
+
+  const hasIncompleteMatches = React.useMemo(() => {
+    const nowDate = new Date(now);
+    return matches.some(
+      (match) =>
+        !match.disabled &&
+        !isGroupMatchLocked(new Date(match.date), GROUP_MATCHDAY_DEADLINES, nowDate) &&
+        (match.userGoalsLeft == null || match.userGoalsRight == null)
+    );
+  }, [matches, now]);
+
   const handleSave = React.useCallback(() => {
     setUpdating(true);
     axios
@@ -200,6 +229,7 @@ export default function RoomGroupsPage() {
       })
       .then(() => {
         setOriginalMatches(matches);
+        setSavedAt(new Date());
         setTimeout(() => setUpdating(false), 500);
       });
   }, [id, differentMatches, matches]);
@@ -239,7 +269,7 @@ export default function RoomGroupsPage() {
   // sectionCard: dark-navy title bar (rounded top only). Overrides the Card's
   // default brand-green title via first-child child selectors.
   const sectionCardClass =
-    "self-start [&>div:first-child]:!bg-dark-navy [&>div:first-child]:!text-white [&>div:first-child]:!text-[20px] [&>div:first-child]:!font-semibold [&>div:first-child]:!leading-[1.15] [&>div:first-child]:!min-h-[40px] [&>div:first-child]:!py-0 [&>div:first-child]:!pt-[11px] [&>div:first-child]:!pb-[13px] [&>div:first-child]:!px-5 [&>div:first-child]:!rounded-b-none [&>div:first-child]:!rounded-t-card";
+    "self-start [&>div:first-child]:!bg-dark-navy [&>div:first-child]:!text-white [&>div:first-child]:!text-[20px] [&>div:first-child]:!font-semibold [&>div:first-child]:!leading-[1.15] [&>div:first-child]:!min-h-[40px] [&>div:first-child]:!py-0 [&>div:first-child]:!pt-[11px] [&>div:first-child]:!pb-[13px] [&>div:first-child]:!px-5 [&>div:first-child]:!rounded-b-none [&>div:first-child]:!rounded-t-card [&>div:first-child]:!justify-start [&>div:first-child]:!text-left";
 
   return (
     <Layout>
@@ -254,25 +284,69 @@ export default function RoomGroupsPage() {
         <Button invert href={`/rooms`}>
           {i18n.buttonLabelProdeList}
         </Button>
-        <Button invert href={`/${id}/ranking`}>
-          {i18n.buttonLabelRanking}
-        </Button>
-        <Button disabled={!props?.finalsStarted} invert href={`/${id}/finals`}>
-          {i18n.buttonLabelFinalsPhase}
-        </Button>
       </RoomWelcomeBar>
       <Container full>
         <GroupsContainer>
           <div
-            className="flex flex-wrap h-full items-stretch gap-3 min-w-0 m-0 max-[640px]:flex-col max-[640px]:items-stretch"
+            className="flex flex-col gap-3 h-full min-w-0 m-0"
             style={{ gridArea: "matches-header" }}
           >
-            <div className="bg-dark-navy text-white rounded-card text-[20px] font-semibold leading-[1.15] min-h-[50px] px-5 flex items-center flex-auto min-w-0">
-              {formattedGroupsTitle}
+            <div className="flex flex-wrap items-stretch gap-3 min-w-0 max-[640px]:flex-col max-[640px]:items-stretch">
+              <div className="bg-dark-navy text-white rounded-card text-[20px] font-semibold leading-[1.15] min-h-[50px] py-2 px-5 flex flex-wrap items-center gap-x-4 gap-y-2 flex-auto min-w-0">
+                <span className="min-w-0 flex-1 truncate max-[640px]:basis-full max-[640px]:flex-none">{formattedGroupsTitle}</span>
+                <div className="ml-auto flex flex-wrap items-center gap-2 shrink-0 max-[640px]:ml-0">
+                  {([
+                    { label: i18n.buttonLabelRoundOf32, href: `/${id}/16avos` },
+                    { label: i18n.buttonLabelFinalsPhase, href: `/${id}/finals` },
+                  ] as const).map(({ label, href }) =>
+                    props?.finalsStarted ? (
+                      <Link
+                        key={label}
+                        href={href}
+                        className="inline-flex items-center justify-center rounded-md border border-white/40 px-3 py-[5px] text-[13px] font-semibold leading-none text-white whitespace-nowrap transition hover:bg-white/10"
+                      >
+                        {label}
+                      </Link>
+                    ) : (
+                      <span
+                        key={label}
+                        className="inline-flex items-center justify-center rounded-md border border-white/40 px-3 py-[5px] text-[13px] font-semibold leading-none text-white whitespace-nowrap opacity-50 pointer-events-none select-none"
+                      >
+                        {label}
+                      </span>
+                    )
+                  )}
+                </div>
+              </div>
+              <div
+                className={`rounded-card flex-none min-h-[50px] px-4 flex items-center gap-2 font-semibold text-[15px] max-[640px]:min-h-0 max-[640px]:py-[10px] ${
+                  formattedSavedAt
+                    ? "bg-white text-dark-navy"
+                    : "bg-dark-navy text-white/70"
+                }`}
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7v5l3 2" />
+                </svg>
+                {formattedSavedAt
+                  ? `${i18n.groupsSavedLabel} ${formattedSavedAt}`
+                  : i18n.groupsNotSavedLabel}
+              </div>
             </div>
             {props?.room && (
               <GroupsResultsWarning
-                className="h-full m-0 rounded-card flex-none min-h-[50px] bg-white/75 items-center px-4 max-[640px]:h-auto max-[640px]:min-h-0 max-[640px]:py-[10px] [&>:nth-child(2)]:min-[1024px]:flex-nowrap [&>:nth-child(2)]:min-[1024px]:justify-between [&>:nth-child(2)]:min-[1024px]:gap-4"
+                className="w-full m-0 rounded-card min-h-[44px] bg-white/75 items-center px-4 max-[640px]:py-[10px] [&>:nth-child(2)]:w-full [&>:nth-child(2)]:min-[1024px]:flex-nowrap [&>:nth-child(2)]:min-[1024px]:justify-around [&>:nth-child(2)]:min-[1024px]:gap-4"
                 roomConfig={{
                   pointsGoals: props.room.pointsGoals,
                   pointsWinner: props.room.pointsWinner,
@@ -280,16 +354,15 @@ export default function RoomGroupsPage() {
                 }}
               />
             )}
-            <div className="flex flex-none min-h-[50px] max-[640px]:min-h-0">
-              <Button
-                variant="transparent"
-                disabled={!hasEditableChanges}
-                className="ml-auto !bg-accent-cta !text-dark-navy !border-accent-cta !text-[20px] min-h-[50px] justify-center disabled:!bg-accent-cta disabled:!text-dark-navy disabled:!border-accent-cta max-[640px]:w-full"
-                onClick={handleSave}
+            {hasIncompleteMatches && (
+              <Warning
+                offset
+                iconClassName="text-red-500"
+                className="w-full m-0 rounded-card min-h-[44px] items-center px-4 text-[14px] font-medium max-[640px]:py-[10px] border-2 border-red-500"
               >
-                {updating ? i18n.buttonLabelSaving : i18n.buttonLabelSave}
-              </Button>
-            </div>
+                {i18n.groupsIncompleteWarning}
+              </Warning>
+            )}
           </div>
           <CardsContainer gridArea="matches">
             {[
@@ -308,7 +381,7 @@ export default function RoomGroupsPage() {
             ].map((group) => (
               <Card
                 key={group}
-                className="rounded-card overflow-hidden [&>div:first-child]:!bg-white [&>div:first-child]:!text-brand-blue [&>div:first-child]:!text-[16px] [&>div:first-child]:!font-bold [&>div:first-child]:!leading-none [&>div:first-child]:!min-h-[28px] [&>div:first-child]:!py-0 [&>div:first-child]:!pt-[7px] [&>div:first-child]:!pb-[5px] [&>div:first-child]:!px-3 [&>div:first-child]:!justify-start [&>div:first-child]:uppercase [&>div:first-child]:!rounded-none"
+                className="rounded-card overflow-hidden [&>div:first-child]:!bg-white [&>div:first-child]:!text-brand-blue [&>div:first-child]:!text-[16px] [&>div:first-child]:!font-bold [&>div:first-child]:!leading-none [&>div:first-child]:!min-h-[28px] [&>div:first-child]:!py-0 [&>div:first-child]:!pt-[7px] [&>div:first-child]:!pb-[5px] [&>div:first-child]:!px-3 [&>div:first-child]:!justify-center [&>div:first-child]:uppercase [&>div:first-child]:!rounded-none"
                 title={i18n[group as keyof typeof i18n]}
               >
                 <CardContent>
@@ -405,14 +478,24 @@ export default function RoomGroupsPage() {
                 )}
               </CardContent>
             </Card>
-            <div className="h-5" />
+            <div className="h-4" />
             <Card
               className={`${sectionCardClass} min-[1300px]:flex-1 min-[1300px]:min-h-0 [&>:nth-child(2)]:flex-1 [&>:nth-child(3)]:mt-auto`}
-              title={i18n.rankingTitle}
+              title={
+                <div className="relative w-full text-left">
+                  {i18n.rankingTitle}
+                  <a
+                    href={`/${id}/ranking`}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-[13px] font-medium text-white border border-white/30 rounded-full px-3 py-1 leading-none hover:bg-white/10 hover:border-white/50 transition-colors"
+                  >
+                    {i18n.buttonLabelRanking}&nbsp;›
+                  </a>
+                </div>
+              }
             >
               <CardContent>
                 <Table
-                  className="table-fixed w-full [&_td]:overflow-hidden [&_thead]:bg-transparent [&_thead_th]:!text-brand-blue [&_thead_th]:!text-[20px] [&_thead_th]:!font-medium"
+                  className="table-fixed w-full [&_td]:overflow-hidden [&_thead]:bg-transparent [&_thead_th]:!text-brand-blue [&_thead_th]:!text-[20px] [&_thead_th]:!font-medium capitalize"
                   columns={[
                     {
                       header: "Pos",
@@ -437,7 +520,6 @@ export default function RoomGroupsPage() {
                     {
                       header: "Pts",
                       accesor: (row) => (!row.gap ? row.points : ""),
-                      align: "RIGHT",
                       width: "52px",
                     },
                   ]}

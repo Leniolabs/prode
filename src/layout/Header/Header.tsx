@@ -10,7 +10,7 @@ export function Header(props: React.PropsWithChildren<HeaderProps>) {
     <header
       data-layout-header
       className={className(
-        "bg-header-translucent px-[42px] mx-0 flex items-center",
+        "bg-header-translucent px-[42px] mx-0 flex items-center border-b border-brand-light-blue",
         props.className
       )}
     >
