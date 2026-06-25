@@ -66,12 +66,26 @@ export function HeaderMenu(props: React.PropsWithChildren<HeaderMenuProps>) {
           props.className
         )}
       >
-        <span className="relative inline-flex">
-          <UserImage
-            small={props.compact}
-            image={session?.data?.user?.image}
-          />
-          <CogIcon className="absolute bottom-0 right-0 rounded-full bg-[#00192c] p-1 text-white" />
+        <span className="relative inline-flex overflow-visible p-0.5">
+          <span className="rounded-full bg-white p-[2px] shadow-[0_1px_4px_rgba(0,0,0,0.15)]">
+            <UserImage
+              small={props.compact}
+              image={session?.data?.user?.image}
+              className="bg-brand-blue"
+            />
+          </span>
+          <span
+            className="absolute z-10 flex items-center justify-center"
+            style={{
+              backgroundColor: "rgba(0, 0, 0, .4)",
+              borderRadius: "100%",
+              padding: "3px",
+              bottom: "-6px",
+              right: "-6px",
+            }}
+          >
+            <CogIcon className="block h-[22px] w-[22px] text-white" />
+          </span>
         </span>
       </button>
       {modalOpen && (
