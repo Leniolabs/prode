@@ -89,7 +89,7 @@ export default function RoomRoundOf32Page() {
   const id = params?.id as string;
   const timezone = React.useMemo(() => new Date().getTimezoneOffset().toString(), []);
 
-  const { data: props } = useQuery<RoomFinalsResponse>({ queryKey: ["room-finals-data", id, timezone], queryFn: () => fetch(`/api/room-finals-data?id=${id}&timezone=${timezone}`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
+  const { data: props } = useQuery<RoomFinalsResponse>({ queryKey: ["room-finals-data", "r32", id, timezone], queryFn: () => fetch(`/api/room-finals-data?id=${id}&timezone=${timezone}&phase=r32`).then((r) => r.json()), enabled: session.status === "authenticated" && !!id });
   const redirected = useBodyRedirect(props?.redirect);
 
   const [now, setNow] = React.useState(() => Date.now());

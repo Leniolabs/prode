@@ -3,6 +3,7 @@ import { prisma } from "../lib";
 import { matchCountriesMatchStatus, matchFinalResultStatus } from "./points";
 import { isGroupMatchLocked, isFinalsMatchLocked } from "./date";
 import { GROUP_MATCHDAY_DEADLINES, FINALS_TIER_DEADLINES } from "@/config/matchdays";
+import { knockoutPhaseAccess } from "@/lib/bracket";
 export {
   computeGroupMatchPoints,
   computeFinalMatchPoints,
@@ -30,12 +31,8 @@ export async function prodeEnded() {
 }
 
 export async function finalsStarted() {
-  const prode = await prisma.prode.findFirst({
-    select: {
-      stage: true,
-    },
-  });
-  return prode?.stage === "FINALS";
+  const { roundOf32Open } = await knockoutPhaseAccess();
+  return roundOf32Open;
 }
 
 type ProdeRoomWithDeadlines = ProdeRoom & {

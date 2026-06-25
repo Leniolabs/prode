@@ -76,6 +76,8 @@ interface RoomGroupsData {
     | "public"
   >;
   finalsStarted: boolean;
+  roundOf32Open: boolean;
+  finalsBracketOpen: boolean;
   submissionEndsAt: string;
   groupsSavedAt?: string | null;
   userRanking?: Pick<
@@ -296,10 +298,10 @@ export default function RoomGroupsPage() {
                 <span className="min-w-0 flex-1 truncate max-[640px]:basis-full max-[640px]:flex-none">{formattedGroupsTitle}</span>
                 <div className="ml-auto flex flex-wrap items-center gap-2 shrink-0 max-[640px]:ml-0">
                   {([
-                    { label: i18n.buttonLabelRoundOf32, href: `/${id}/16avos` },
-                    { label: i18n.buttonLabelFinalsPhase, href: `/${id}/finals` },
-                  ] as const).map(({ label, href }) =>
-                    props?.finalsStarted ? (
+                    { label: i18n.buttonLabelRoundOf32, href: `/${id}/16avos`, enabled: props?.roundOf32Open },
+                    { label: i18n.buttonLabelFinalsPhase, href: `/${id}/finals`, enabled: props?.finalsBracketOpen },
+                  ] as const).map(({ label, href, enabled }) =>
+                    enabled ? (
                       <Link
                         key={label}
                         href={href}

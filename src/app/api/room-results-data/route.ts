@@ -9,6 +9,7 @@ import {
   registerUserToRoom,
 } from '@/utils/queries'
 import { NextRequest, NextResponse } from 'next/server'
+import { knockoutPhaseAccess } from '@/lib/bracket'
 
 function shouldPasswordCheck(room: { password: string | null }) {
   return !!room.password
@@ -51,7 +52,7 @@ export async function GET(req: NextRequest) {
     id,
     roomAdmin: room.userId === user.id,
     name: room.name,
-    finalsStarted: room.prode.stage === 'FINALS',
+    finalsStarted: (await knockoutPhaseAccess()).roundOf32Open,
     room:
       room.userId === user.id
         ? {

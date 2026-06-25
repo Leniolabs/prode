@@ -1,12 +1,12 @@
 import { auth } from "@/lib/auth"
 import { prisma } from '@/lib'
 import {
-  finalsStarted,
   getUserByEmail,
   getUserTemplateProde,
   createTemplateUserProde,
   getUserTemplateFinalMatches,
 } from '@/utils/queries'
+import { knockoutPhaseAccess } from '@/lib/bracket'
 import { getTodayMatches } from '@/utils/date'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   const user = await getUserByEmail(session.user.email)
   if (!user) return NextResponse.json({}, { status: 401 })
 
-  if (!(await finalsStarted())) return NextResponse.json({ redirect: '/groups' }, { status: 200 })
+  if (!(await knockoutPhaseAccess()).finalsBracketOpen) return NextResponse.json({ redirect: '/groups' }, { status: 200 })
 
   let userProdeId = (await getUserTemplateProde(user))?.id
   if (!userProdeId) userProdeId = (await createTemplateUserProde(user))?.id

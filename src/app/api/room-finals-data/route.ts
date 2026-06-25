@@ -9,6 +9,7 @@ import {
   registerUserToRoom,
 } from '@/utils/queries'
 import { getNextMatches, getTodayMatches } from '@/utils/date'
+import { knockoutPhaseAccess } from '@/lib/bracket'
 import { NextRequest, NextResponse } from 'next/server'
 
 function shouldPasswordCheck(room: { password: string | null }) {
@@ -33,7 +34,13 @@ export async function GET(req: NextRequest) {
   const room = await getProdeRoom(id)
   if (!room) return NextResponse.json({ redirect: '/rooms' }, { status: 200 })
 
-  if (room.prode.stage !== 'FINALS') return NextResponse.json({ redirect: `/${id}/groups` }, { status: 200 })
+  const phase = req.nextUrl.searchParams.get('phase') === 'r32' ? 'r32' : 'finals'
+  const { roundOf32Open, finalsBracketOpen } = await knockoutPhaseAccess()
+  if (phase === 'r32') {
+    if (!roundOf32Open) return NextResponse.json({ redirect: `/${id}/groups` }, { status: 200 })
+  } else if (!finalsBracketOpen) {
+    return NextResponse.json({ redirect: roundOf32Open ? `/${id}/16avos` : `/${id}/groups` }, { status: 200 })
+  }
 
   let userProdeId = (await getUserProde(room, user))?.id
   if (!userProdeId) {
@@ -77,7 +84,9 @@ export async function GET(req: NextRequest) {
     },
     submissionEndsAt: room.prode.finalsSubmissionsEnd.toISOString(),
     finalsSavedAt: userProde.finalsSavedAt ? userProde.finalsSavedAt.toISOString() : null,
-    finalsStarted: room.prode.stage === 'FINALS',
+    finalsStarted: roundOf32Open,
+    roundOf32Open,
+    finalsBracketOpen,
     userRanking: {
       id: user.id,
       name: user.name,

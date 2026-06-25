@@ -9,6 +9,7 @@ import {
   registerUserToRoom,
 } from '@/utils/queries'
 import { getNextMatches, getTodayMatches } from '@/utils/date'
+import { knockoutPhaseAccess } from '@/lib/bracket'
 import { NextRequest, NextResponse } from 'next/server'
 
 function shouldPasswordCheck(room: { password: string | null }) {
@@ -60,6 +61,8 @@ export async function GET(req: NextRequest) {
     (a: any, b: any) => a.id === b.id
   ).filter((x: any, i: number, arr: any[]) => !(!x.id && i === arr.length - 1))
 
+  const { roundOf32Open, finalsBracketOpen } = await knockoutPhaseAccess()
+
   return NextResponse.json({
     id,
     userProdeId,
@@ -74,7 +77,9 @@ export async function GET(req: NextRequest) {
       pointsPenal: room.pointsPenal,
       ...(room.userId === user.id ? { password: room.password, public: room.public, emailDomain: room.emailDomain } : {}),
     },
-    finalsStarted: room.prode.stage === 'FINALS',
+    finalsStarted: roundOf32Open,
+    roundOf32Open,
+    finalsBracketOpen,
     submissionEndsAt: room.prode.groupSubmissionsEnd.toISOString(),
     groupsSavedAt: userProde.groupsSavedAt ? userProde.groupsSavedAt.toISOString() : null,
     userRanking: {

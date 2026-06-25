@@ -8,6 +8,7 @@ import {
   getUserFinalMatches,
 } from '@/utils/queries'
 import { NextRequest, NextResponse } from 'next/server'
+import { knockoutPhaseAccess } from '@/lib/bracket'
 
 export async function GET(req: NextRequest) {
   const userProdeId = req.nextUrl.searchParams.get('id') ?? ''
@@ -55,7 +56,7 @@ export async function GET(req: NextRequest) {
             pointsPenal: room.pointsPenal,
           }
         : null,
-    finalsStarted: room.prode.stage === 'FINALS',
+    finalsStarted: (await knockoutPhaseAccess()).roundOf32Open,
     userRanking: user
       ? {
           id: user.id,

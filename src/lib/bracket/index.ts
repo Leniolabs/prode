@@ -1,6 +1,7 @@
 export { computeGroupStandings, rankThirdPlaced } from "./standings";
 export { resolveRoundOf32, type R32Assignment } from "./assign";
 export { seedRoundOf32, seedRoundOf32All, type SeedResult } from "./seed";
+export { knockoutPhaseAccess, type KnockoutPhaseAccess } from "./phase";
 export { R32_SLOTS } from "./r32-slots";
 export {
   THIRD_PLACE_COMBINATIONS,
