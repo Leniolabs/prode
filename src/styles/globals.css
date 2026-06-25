@@ -67,8 +67,9 @@
  */
 @utility groups-grid {
   display: grid;
+  margin-bottom: 12px;
   width: 100%;
-  gap: 20px;
+  gap: 16px 12px;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: max-content max-content max-content;
   /* Mobile: surface the Today's/Upcoming Matches + ranking sidebar BEFORE the
@@ -76,7 +77,8 @@
   grid-template-areas: "matches-header" "sidebar" "matches";
 
   @media screen and (min-width: 1300px) {
-    grid-template-columns: minmax(0, 1fr) minmax(420px, 440px);
+    margin-right: 12px;
+    grid-template-columns: 70% 1fr;
     align-items: start;
     grid-template-areas: "matches-header sidebar" "matches sidebar";
   }

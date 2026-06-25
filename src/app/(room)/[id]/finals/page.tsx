@@ -283,7 +283,7 @@ export default function RoomFinalsPage() {
 
   // sectionCard: dark-navy title bar (rounded top only). Mirrors the groups page.
   const sectionCardClass =
-    "self-start [&>div:first-child]:!bg-dark-navy [&>div:first-child]:!text-white [&>div:first-child]:!text-[20px] [&>div:first-child]:!font-semibold [&>div:first-child]:!leading-[1.15] [&>div:first-child]:!min-h-[40px] [&>div:first-child]:!py-0 [&>div:first-child]:!pt-[11px] [&>div:first-child]:!pb-[13px] [&>div:first-child]:!px-5 [&>div:first-child]:!rounded-b-none [&>div:first-child]:!rounded-t-card";
+    "self-start [&>div:first-child]:!bg-dark-navy [&>div:first-child]:!text-white [&>div:first-child]:!text-[20px] [&>div:first-child]:!font-semibold [&>div:first-child]:!leading-[1.15] [&>div:first-child]:!min-h-[40px] [&>div:first-child]:!py-0 [&>div:first-child]:!pt-[11px] [&>div:first-child]:!pb-[13px] [&>div:first-child]:!px-5 [&>div:first-child]:!rounded-b-none [&>div:first-child]:!rounded-t-card [&>div:first-child]:!justify-start [&>div:first-child]:!text-left";
 
   return (
     <Layout>
@@ -352,7 +352,8 @@ export default function RoomFinalsPage() {
             {hasIncompleteMatches && (
               <Warning
                 offset
-                className="w-full m-0 rounded-card min-h-[44px] items-center px-4 text-[14px] font-medium max-[640px]:py-[10px]"
+                iconClassName="text-red-500"
+                className="w-full m-0 rounded-card min-h-[44px] items-center px-4 text-[14px] font-medium max-[640px]:py-[10px] border-2 border-red-500"
               >
                 {i18n.groupsIncompleteWarning}
               </Warning>
@@ -451,12 +452,12 @@ export default function RoomFinalsPage() {
           >
             <CardContent>
               <Table
-                className="table-fixed w-full [&_td]:overflow-hidden [&_thead]:bg-transparent [&_thead_th]:!text-brand-blue [&_thead_th]:!text-[20px] [&_thead_th]:!font-medium"
+                className="table-fixed w-full [&_td]:overflow-hidden [&_thead]:bg-transparent [&_thead_th]:!text-brand-blue [&_thead_th]:!text-[20px] [&_thead_th]:!font-medium capitalize"
                 onRowClick={handleUserClick}
                 columns={[
                   { header: "Pos", accesor: (row) => !row.gap && <UserPositionDisplay position={row.ranking} />, width: "48px" },
                   { header: i18n.rankingNameColumn, accesor: (row) => row.gap ? <GapIcon /> : <UserRankingDisplay name={row.name || ""} image={row.image} /> },
-                  { header: "Pts", accesor: (row) => (!row.gap ? row.points : ""), align: "RIGHT", width: "52px" },
+                  { header: "Pts", accesor: (row) => (!row.gap ? row.points : ""), width: "52px" },
                 ]}
                 data={props?.ranking || []}
                 clickable={(row: Ranking & { gap: boolean }) => !row.gap}

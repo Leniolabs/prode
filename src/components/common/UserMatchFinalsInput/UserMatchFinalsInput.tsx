@@ -672,7 +672,7 @@ export function UserMatchFinalsInput(
       className={className(
         props.className,
         "flex flex-col relative text-[16px]",
-        "bg-[var(--finals-card-bg,#f6f5f5)] rounded-[8px] p-[6px_8px]",
+        "bg-white rounded-[8px] p-[6px_8px]",
         // on mobile/tablet add bottom margin
         "max-[1024px]:mb-6"
       )}
@@ -681,7 +681,7 @@ export function UserMatchFinalsInput(
       {/* Header row: kickoff date (left) + "90' / P" column headers above the
           two input columns (right). */}
       <div className="flex items-end mb-[6px]">
-        <span className="flex-1 min-w-0 text-[13px] font-bold text-brand-blue truncate">
+        <span className="flex-1 min-w-0 text-[13px] font-medium text-brand-blue truncate">
           {date}
         </span>
         <div className="flex shrink-0 gap-[6px] text-[11px] font-semibold text-[#767676] leading-none">
@@ -700,7 +700,7 @@ export function UserMatchFinalsInput(
         >
           {userCountryLeft?.code && (
             <CountryFlag
-              className="[&_img]:w-[28px] [&_img]:h-[20px] [&_img]:rounded-[2px] [&_img]:object-cover"
+              className="rounded-[2px] border border-[#a7a8a9] overflow-hidden"
               code={userCountryLeft?.code}
             />
           )}
@@ -750,7 +750,7 @@ export function UserMatchFinalsInput(
         >
           {userCountryRight?.code && (
             <CountryFlag
-              className="[&_img]:w-[28px] [&_img]:h-[20px] [&_img]:rounded-[2px] [&_img]:object-cover"
+              className="rounded-[2px] border border-[#a7a8a9] overflow-hidden"
               code={userCountryRight?.code}
             />
           )}

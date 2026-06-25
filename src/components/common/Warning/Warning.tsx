@@ -5,6 +5,7 @@ import { InfoIcon } from "../Icons";
 interface WarningProps {
   offset?: boolean;
   className?: string;
+  iconClassName?: string;
 }
 
 export function Warning(props: React.PropsWithChildren<WarningProps>) {
@@ -16,7 +17,7 @@ export function Warning(props: React.PropsWithChildren<WarningProps>) {
       )}
     >
       <div className="flex items-center mr-3">
-        <InfoIcon />
+        <InfoIcon className={props.iconClassName} />
       </div>
       <div className="[&_a]:text-dark-navy [&_a]:underline">
         {props.children}
