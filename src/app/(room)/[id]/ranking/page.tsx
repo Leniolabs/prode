@@ -212,13 +212,13 @@ export default function RankingPage() {
       <Container full direction="COL" className="mt-3">
         <ContainerHeader
           sticky
-          className="gap-3 [&>:first-child]:bg-[#00192c] [&>:first-child]:rounded-t-lg [&>:first-child]:text-xl [&>:first-child]:font-semibold [&>:first-child]:leading-tight [&>:first-child]:min-h-[50px] [&>:first-child]:px-5 [&>:first-child]:normal-case [&>:first-child]:flex [&>:first-child]:items-center [&>:first-child]:gap-3 [&>:first-child]:flex-nowrap"
+          className="gap-3 [&>:first-child]:bg-[#00192c] [&>:first-child]:rounded-lg [&>:first-child]:text-xl [&>:first-child]:font-semibold [&>:first-child]:leading-tight [&>:first-child]:min-h-[50px] [&>:first-child]:px-5 [&>:first-child]:normal-case [&>:first-child]:flex [&>:first-child]:items-center [&>:first-child]:gap-3 [&>:first-child]:flex-nowrap"
           title={
             <>
               <span className="flex-1 whitespace-nowrap">
                 {i18n.rankingTitle}
               </span>
-              <span className="flex-none text-sm font-normal opacity-80 whitespace-nowrap">
+              <span className="flex-none text-xl font-semibold whitespace-nowrap">
                 {i18n.rankingTotalPlayersLabel} {props?.totalPlayers}
               </span>
             </>
@@ -227,10 +227,6 @@ export default function RankingPage() {
           <Button onClick={handleCopyLink}>
             {copyLabel ?? i18n.buttonLabelCopyLink}
           </Button>
-          <span
-            aria-hidden
-            className="ml-4 mr-4 h-7 w-px self-center bg-white/25"
-          />
           <Button onClick={handleLeaveRoom} variant="danger">
             <ExitIcon /> {i18n.buttonLabelLeave}
           </Button>

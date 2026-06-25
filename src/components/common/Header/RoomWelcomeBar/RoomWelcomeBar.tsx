@@ -81,7 +81,7 @@ export function RoomWelcomeBar(
           {/* Desktop: nav buttons live in the top bar (hidden on mobile,
               where they move to the sticky footer nav below). */}
           {hasNav && (
-            <div className="flex items-center gap-1.5 max-lg:hidden [&_a]:h-auto [&_a]:px-[14px] [&_a]:py-1.5 [&_a]:text-sm [&_button]:h-auto [&_button]:px-[14px] [&_button]:py-1.5 [&_button]:text-sm">
+            <div className="flex items-center gap-1.5 max-lg:hidden [&_a]:h-auto [&_a]:px-[14px] [&_a]:py-2.5 [&_a]:text-sm [&_button]:h-auto [&_button]:px-[14px] [&_button]:py-2.5 [&_button]:text-sm">
               {props.children}
             </div>
           )}
@@ -89,11 +89,11 @@ export function RoomWelcomeBar(
             <>
               {/* Desktop: labeled values, e.g. "Posición: 1   Puntos: 2" */}
               <div className="flex shrink-0 items-center gap-3 text-white max-lg:hidden">
-                <span className="flex items-baseline gap-1.5">
+                <span className="flex items-center gap-1.5">
                   <span className="text-sm font-medium text-white/80">
                     {i18n.headerRankingLabel}:
                   </span>
-                  <span className="text-[18px] font-bold tabular-nums">
+                  <span className="text-[40px] font-bold leading-none tabular-nums">
                     {props.userRanking?.ranking}
                   </span>
                 </span>
@@ -101,11 +101,11 @@ export function RoomWelcomeBar(
                   aria-hidden="true"
                   className="h-5 w-px shrink-0 bg-white/30"
                 />
-                <span className="flex items-baseline gap-1.5">
+                <span className="flex items-center gap-1.5">
                   <span className="text-sm font-medium text-white/80">
                     {i18n.headerPointsLabel}:
                   </span>
-                  <span className="text-[18px] font-bold tabular-nums">
+                  <span className="text-[40px] font-bold leading-none tabular-nums">
                     {props.userRanking?.points}
                   </span>
                 </span>

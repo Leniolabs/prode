@@ -66,11 +66,13 @@ export function HeaderMenu(props: React.PropsWithChildren<HeaderMenuProps>) {
           props.className
         )}
       >
-        <UserImage
-          small={props.compact}
-          image={session?.data?.user?.image}
-        />
-        <CogIcon className="absolute bottom-0 right-0 text-white" />
+        <span className="relative inline-flex">
+          <UserImage
+            small={props.compact}
+            image={session?.data?.user?.image}
+          />
+          <CogIcon className="absolute bottom-0 right-0 rounded-full bg-[#00192c] p-1 text-white" />
+        </span>
       </button>
       {modalOpen && (
         <HeaderModal

@@ -27,7 +27,7 @@ export function WelcomeBar({
   children,
 }: WelcomeBarProps) {
   return (
-    <div className="relative z-[1] flex flex-nowrap items-center gap-3 border-none bg-[#015697] px-[26px] pb-[14px] pt-3 max-[640px]:gap-2 max-[640px]:px-[14px] max-[640px]:pt-3 max-[640px]:pb-9">
+    <div className="relative z-[1] flex flex-nowrap items-center gap-3 border-b border-brand-light-blue bg-[#005596] px-[26px] pb-[14px] pt-3 max-[640px]:gap-2 max-[640px]:px-[14px] max-[640px]:pt-3 max-[640px]:pb-9">
       {/* Trophy logo navigates back to the landing page. */}
       <Link href="/" className="flex-shrink-0" aria-label="Prode">
         <Image

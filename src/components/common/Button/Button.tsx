@@ -32,7 +32,7 @@ function variantClasses(
   if (variant === "primary") return "";
   if (variant === "secondary") return "!bg-brand-light-blue !text-white !border-none";
   if (variant === "danger")
-    return "!bg-[#e02045] !text-white !border-[#e02045] [&>svg]:stroke-white [&>svg]:mr-[5px]";
+    return "!bg-[#e02045] !text-[#00192c] !border-[#e02045] [&>svg]:stroke-[#00192c] [&>svg]:mr-[5px]";
   if (variant === "transparent")
     return "!bg-transparent border !border-white !text-white rounded-button px-5 py-[10px] gap-[10px] hover:not-disabled:!bg-white/15";
   if (variant === "outline")
