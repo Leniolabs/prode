@@ -151,7 +151,7 @@ export function getRankingQuery(
     : Prisma.empty;
   return Prisma.sql`select *,
   RANK () OVER (
-    ORDER BY rq."points" DESC, rq."email" ASC
+    ORDER BY rq."points" DESC
 ) ranking
   FROM (select
 up."id",
@@ -206,7 +206,7 @@ export function getFullRankingQuery(
     : Prisma.empty;
   return Prisma.sql`select *,
   RANK () OVER (
-    ORDER BY rq."points" DESC, rq."email" ASC
+    ORDER BY rq."points" DESC
 ) ranking
   FROM (select
 up."id",
