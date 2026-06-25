@@ -38,7 +38,7 @@ import { getMatchOrder } from "@/utils/finals";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useBodyRedirect } from "@/hooks";
-import { Button } from "@/components/common/Button";
+import Link from "next/link";
 
 // ContainerHeader title-bar styling (applied to the header's first child).
 const headerDarkTitle =
@@ -127,9 +127,12 @@ export default function ViewPage() {
             noMarginTop={!props?.userRanking}
             title={
               <div className="relative flex w-full items-center min-h-[1em]">
-                <Button invert onClick={() => router.back()} className="shrink-0">
+                <button
+                  onClick={() => router.back()}
+                  className="inline-flex shrink-0 items-center justify-center rounded-md border border-white/40 px-3 py-[5px] text-[13px] font-semibold leading-none text-white whitespace-nowrap transition hover:bg-white/10 cursor-pointer"
+                >
                   ‹ {i18n.buttonLabelBack}
-                </Button>
+                </button>
                 <span className="absolute inset-0 flex items-center justify-center pointer-events-none gap-2">
                   <UserImage
                     small
@@ -144,9 +147,12 @@ export default function ViewPage() {
                 </span>
                 <div className="shrink-0 ml-auto">
                   {props?.id && (
-                    <Button invert href={`/${props.id}/ranking`}>
+                    <Link
+                      href={`/${props.id}/ranking`}
+                      className="inline-flex shrink-0 items-center justify-center rounded-md border border-white/40 px-3 py-[5px] text-[13px] font-semibold leading-none text-white whitespace-nowrap transition hover:bg-white/10"
+                    >
                       {i18n.buttonLabelGoToMyProde} ›
-                    </Button>
+                    </Link>
                   )}
                 </div>
               </div>

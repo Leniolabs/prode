@@ -197,24 +197,19 @@ export default function RankingPage() {
         <Button invert href="/rooms">
           {i18n.buttonLabelProdeList}
         </Button>
-        {props ? (
-          props.finalsStarted ? (
-            <Button invert href={`/${id}/finals`}>
-              {i18n.buttonLabelFinalsPhase}
-            </Button>
-          ) : (
-            <Button invert href={`/${id}/groups`}>
-              {i18n.buttonLabelGroupPhase}
-            </Button>
-          )
-        ) : null}
       </RoomWelcomeBar>
       <Container full direction="COL" className="mt-3">
         <ContainerHeader
           sticky
-          className="gap-3 [&>:first-child]:bg-[#00192c] [&>:first-child]:rounded-lg [&>:first-child]:text-xl [&>:first-child]:font-semibold [&>:first-child]:leading-tight [&>:first-child]:min-h-[50px] [&>:first-child]:px-5 [&>:first-child]:normal-case [&>:first-child]:flex [&>:first-child]:items-center [&>:first-child]:gap-3 [&>:first-child]:flex-nowrap"
+          className="gap-3 [&>:first-child]:bg-[#00192c] [&>:first-child]:rounded-lg [&>:first-child]:text-xl [&>:first-child]:font-semibold [&>:first-child]:leading-tight [&>:first-child]:min-h-[50px] [&>:first-child]:py-0 [&>:first-child]:px-5 [&>:first-child]:normal-case [&>:first-child]:flex [&>:first-child]:items-center [&>:first-child]:gap-3 [&>:first-child]:flex-nowrap"
           title={
             <>
+              <button
+                onClick={() => router.back()}
+                className="inline-flex flex-none items-center justify-center rounded-md border border-white/40 px-3 py-[5px] text-[13px] font-semibold leading-none text-white whitespace-nowrap transition hover:bg-white/10 cursor-pointer"
+              >
+                ‹ {i18n.buttonLabelBack}
+              </button>
               <span className="flex-1 whitespace-nowrap">
                 {i18n.rankingTitle}
               </span>
