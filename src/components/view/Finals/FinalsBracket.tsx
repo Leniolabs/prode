@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { useLocalizedText } from "@/locale";
 import { UserMatchFinalsInput } from "@/components/common/UserMatchFinalsInput";
 import { MatchFinalsInput } from "@/components/common/MatchFinalsInput";
@@ -151,9 +152,8 @@ export function FinalsBracket({
   );
   };
 
-  const finalPair = matches
-    .filter((m) => m.stage === "FINALS" || m.stage === "THIRD_PLACE")
-    .sort((a, b) => (a.stage > b.stage ? 1 : -1));
+  const finalMatch = matches.find((m) => m.stage === "FINALS");
+  const thirdMatch = matches.find((m) => m.stage === "THIRD_PLACE");
 
   return (
     <BracketsContainer gridArea="matches">
@@ -177,9 +177,36 @@ export function FinalsBracket({
         {byGroup("FINALS_2").map((m, i) => renderMatch(m, i, true))}
       </BracketRound>
       <BracketConnectors count={2} />
-      <BracketRound size="final" finalPair title={`${i18n.FINAL} · ${i18n.THIRD_PLACE}`}>
-        {finalPair.map((m, i) => renderMatch(m, i, true))}
-      </BracketRound>
+      <section className="flex flex-col items-center gap-4 w-full [--finals-card-bg:#e1e1e1]">
+        <div className="font-bold text-base tracking-[0.02em]">{i18n.FINAL}</div>
+        {finalMatch && (
+          <div className="flex items-center justify-center gap-4 rounded-card border border-[#c9d4e3] bg-white/70 p-4">
+            <Image
+              src="/copita.svg"
+              alt=""
+              aria-hidden
+              width={145}
+              height={177}
+              className="shrink-0 rounded-[8px]"
+            />
+            <div className="w-[210px] min-w-[180px]">
+              {renderMatch(finalMatch, 0, true)}
+            </div>
+          </div>
+        )}
+        <div
+          className="w-full"
+          style={{ maxWidth: 520, borderTop: "1px solid #c9d4e3" }}
+        />
+        <div className="font-bold text-base tracking-[0.02em]">
+          {i18n.THIRD_PLACE}
+        </div>
+        {thirdMatch && (
+          <div className="w-[210px] min-w-[180px]">
+            {renderMatch(thirdMatch, 1, true)}
+          </div>
+        )}
+      </section>
     </BracketsContainer>
   );
 }

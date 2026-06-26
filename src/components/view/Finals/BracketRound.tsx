@@ -32,6 +32,7 @@ interface BracketRoundProps {
 export function BracketRound(
   props: React.PropsWithChildren<BracketRoundProps>
 ) {
+  const count = React.Children.count(props.children);
   return (
     <section
       className={className(
@@ -40,8 +41,16 @@ export function BracketRound(
         props.className
       )}
     >
-      <div className="self-start font-bold text-base tracking-[0.02em]">
-        {props.title}
+      {/* Title sits in the first match-box slot via an invisible sizer row that
+          mirrors the matches layout, so it aligns above box 1 even when the
+          round is under-filled (e.g. 2 semifinal boxes spread by justify-around). */}
+      <div className={matchesRow}>
+        <div className="font-bold text-base tracking-[0.02em] whitespace-nowrap">
+          {props.title}
+        </div>
+        {Array.from({ length: Math.max(count - 1, 0) }).map((_, i) => (
+          <div key={i} aria-hidden />
+        ))}
       </div>
       <div className={props.finalPair ? finalPairRow : matchesRow}>
         {props.children}
