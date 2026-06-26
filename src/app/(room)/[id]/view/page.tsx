@@ -202,7 +202,7 @@ export default function ViewPage() {
                 <div className="shrink-0 ml-auto">
                   {props?.id && (
                     <Link
-                      href={`/${props.id}/ranking`}
+                      href={`/${props.id}/groups`}
                       className="inline-flex shrink-0 items-center justify-center rounded-md border border-white/40 px-3 py-[5px] text-[13px] font-semibold leading-none text-white whitespace-nowrap transition hover:bg-white/10"
                     >
                       {i18n.buttonLabelGoToMyProde} ›
