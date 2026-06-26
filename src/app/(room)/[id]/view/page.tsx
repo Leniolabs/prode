@@ -43,8 +43,6 @@ import Link from "next/link";
 // ContainerHeader title-bar styling (applied to the header's first child).
 const headerDarkTitle =
   "[&>:first-child]:bg-[#00192c] [&>:first-child]:text-white [&>:first-child]:rounded-card [&>:first-child]:text-[20px] [&>:first-child]:font-semibold [&>:first-child]:leading-[1.15] [&>:first-child]:min-h-[50px] [&>:first-child]:px-5 [&>:first-child]:normal-case";
-const headerGreenTitle =
-  "[&>:first-child]:bg-brand-green [&>:first-child]:text-white [&>:first-child]:rounded-card [&>:first-child]:text-[25px] [&>:first-child]:font-bold [&>:first-child]:leading-[1.15] [&>:first-child]:pt-[11px] [&>:first-child]:px-5 [&>:first-child]:pb-[13px] [&>:first-child]:normal-case";
 const groupCardClass =
   "rounded-card overflow-hidden [&>:first-child]:bg-white [&>:first-child]:text-brand-blue [&>:first-child]:text-[16px] [&>:first-child]:font-bold [&>:first-child]:leading-none [&>:first-child]:min-h-[28px] [&>:first-child]:px-3 [&>:first-child]:pt-[7px] [&>:first-child]:pb-[5px] [&>:first-child]:uppercase";
 const matchPairBg = ["bg-[#f6f5f5]", "bg-[#ededed]", "bg-[#e1e1e1]"];
@@ -84,6 +82,8 @@ interface ViewData {
   userInRoom: boolean;
   room?: Pick<ProdeRoom, "id" | "name" | "emailDomain" | "password" | "pointsGoals" | "pointsPenal" | "pointsWinner" | "public">;
   finalsStarted: boolean;
+  roundOf32Open: boolean;
+  finalsBracketOpen: boolean;
   userRanking?: Pick<User, "id" | "name" | "image" | "email" | "prodePublic" | "background" | "dark"> & {
     points?: number; ranking?: number;
   };
@@ -104,6 +104,60 @@ export default function ViewPage() {
   const redirected = useBodyRedirect(props?.redirect);
 
   const { matches, finalsMatches } = props ?? {};
+
+  type Stage = "groups" | "r32" | "finals";
+  const [stage, setStage] = React.useState<Stage>("groups");
+
+  const r32Title = i18n.FINALS_16;
+  const formattedR32Title = r32Title.charAt(0).toUpperCase() + r32Title.slice(1).toLowerCase();
+
+  const stageMeta: Record<Stage, { label: string; title: string }> = {
+    groups: { label: i18n.buttonLabelGroupPhase, title: i18n.groupsTitle },
+    r32: { label: i18n.buttonLabelRoundOf32, title: formattedR32Title },
+    finals: { label: i18n.buttonLabelFinalsPhase, title: i18n.finalsTitle },
+  };
+
+  const allStages: Stage[] = ["groups", "r32", "finals"];
+  const isStageOpen = (s: Stage) =>
+    s === "groups"
+      ? true
+      : s === "r32"
+      ? !!props?.roundOf32Open
+      : !!props?.finalsBracketOpen;
+
+  const activeStage = isStageOpen(stage) ? stage : "groups";
+
+  const roundOf32Matches = (finalsMatches || [])
+    .filter((m) => m.stage.startsWith("FINALS_16_"))
+    .sort((a, b) => (a.date > b.date ? 1 : -1));
+
+  const stageSwitcher = (
+    <div className="relative flex w-full flex-wrap items-center gap-x-4 gap-y-2 min-h-[1em]">
+      <span className="min-w-0 flex-1 truncate">{stageMeta[activeStage].title}</span>
+      <div className="ml-auto flex flex-wrap items-center gap-2 shrink-0">
+        {allStages
+          .filter((s) => s !== activeStage)
+          .map((s) =>
+            isStageOpen(s) ? (
+              <button
+                key={s}
+                onClick={() => setStage(s)}
+                className="inline-flex items-center justify-center rounded-md border border-white/40 px-3 py-[5px] text-[13px] font-semibold leading-none text-white whitespace-nowrap transition hover:bg-white/10 cursor-pointer"
+              >
+                {stageMeta[s].label}
+              </button>
+            ) : (
+              <span
+                key={s}
+                className="inline-flex items-center justify-center rounded-md border border-white/40 px-3 py-[5px] text-[13px] font-semibold leading-none text-white whitespace-nowrap opacity-50 pointer-events-none select-none"
+              >
+                {stageMeta[s].label}
+              </span>
+            )
+          )}
+      </div>
+    </div>
+  );
 
   if (redirected) return null;
 
@@ -159,6 +213,7 @@ export default function ViewPage() {
             }
           />
         </GroupsContainer>
+        {activeStage === "groups" && (
         <GroupsContainer full admin className="!gap-x-3 !gap-y-0">
           <ContainerHeader
             gridArea="matches-header"
@@ -166,7 +221,7 @@ export default function ViewPage() {
             noMarginTop
             noMarginBottom
             className={`${headerDarkTitle} !mb-[12px] max-lg:!mt-0`}
-            title={i18n.groupsTitle}
+            title={stageSwitcher}
           />
           <CardsContainer gridArea="matches">
             {[
@@ -201,15 +256,60 @@ export default function ViewPage() {
             ))}
           </CardsContainer>
         </GroupsContainer>
-        {props?.finalsStarted && (
+        )}
+        {activeStage === "r32" && (
+          <GroupsContainer full admin className="!gap-x-3 !gap-y-0">
+            <ContainerHeader
+              gridArea="matches-header"
+              sticky
+              noMarginTop
+              noMarginBottom
+              className={`${headerDarkTitle} !mb-[12px] max-lg:!mt-0`}
+              title={stageSwitcher}
+            />
+            <Card
+              gridArea="matches"
+              className="self-start !bg-[#f6f5f5cc] [&>div:first-child]:!hidden"
+              title={<>{formattedR32Title}</>}
+            >
+              <CardContent className="p-4">
+                <div className="grid grid-cols-2 min-[1024px]:grid-cols-4 gap-4 w-full justify-items-center [&>*]:w-full [&>*]:max-w-[260px]">
+                  {roundOf32Matches.map((match, index) => (
+                    <UserMatchFinalsInput
+                      key={match.id}
+                      className="[--finals-card-bg:#ededed]"
+                      disabled={true}
+                      date={new Date(match.date)}
+                      userCountryLeftId={match.countryLeftId}
+                      userGoalsLeft={match.userGoalsLeft}
+                      userCountryRightId={match.countryRightId}
+                      userGoalsRight={match.userGoalsRight}
+                      userPenaltisLeft={match.userPenaltisLeft}
+                      userPenaltisRight={match.userPenaltisRight}
+                      penaltisLeft={match.penaltisLeft}
+                      penaltisRight={match.penaltisRight}
+                      goalsLeft={match.goalsLeft}
+                      goalsRight={match.goalsRight}
+                      countryLeftId={match.countryLeftId}
+                      countryRightId={match.countryRightId}
+                      order={index + 1}
+                      filled={match.filled}
+                    />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </GroupsContainer>
+        )}
+        {activeStage === "finals" && (
           <FinalsContainer full admin>
             <ContainerHeader
               gridArea="matches-header"
               noMarginTop
               noMarginBottom
               sticky
-              className={`${headerGreenTitle} !mb-[12px] max-lg:!mt-0`}
-              title={i18n.finalsTitle}
+              className={`${headerDarkTitle} !mb-[12px] max-lg:!mt-0`}
+              title={stageSwitcher}
             />
             <BracketsContainer gridArea="matches">
               <BracketTitle full order={0}>{i18n.FINALS_8}</BracketTitle>

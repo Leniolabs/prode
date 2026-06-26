@@ -31,6 +31,7 @@ export async function GET(req: NextRequest) {
   const userInRoom = user ? await isUserRegisteredToRoom(room, user) : false
   const matches = await getUserGroupMatches(room, viewUser)
   const finalsMatches = await getUserFinalMatches(room, viewUser)
+  const phaseAccess = await knockoutPhaseAccess()
 
   return NextResponse.json({
     id: room.id,
@@ -56,7 +57,9 @@ export async function GET(req: NextRequest) {
             pointsPenal: room.pointsPenal,
           }
         : null,
-    finalsStarted: (await knockoutPhaseAccess()).roundOf32Open,
+    finalsStarted: phaseAccess.roundOf32Open,
+    roundOf32Open: phaseAccess.roundOf32Open,
+    finalsBracketOpen: phaseAccess.finalsBracketOpen,
     userRanking: user
       ? {
           id: user.id,

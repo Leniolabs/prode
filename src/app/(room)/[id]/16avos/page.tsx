@@ -68,6 +68,8 @@ interface RoomFinalsData {
   room?: Pick<ProdeRoom, "id" | "name" | "emailDomain" | "password" | "pointsGoals" | "pointsPenal" | "pointsWinner" | "public">;
   submissionEndsAt: string;
   finalsSavedAt?: string | null;
+  roundOf32Open: boolean;
+  finalsBracketOpen: boolean;
   userRanking: Pick<User, "id" | "name" | "image" | "email" | "prodePublic" | "dark" | "background"> & {
     points: number; ranking: number;
   };
@@ -299,17 +301,26 @@ export default function RoomRoundOf32Page() {
                 <span className="min-w-0 flex-1 truncate max-[640px]:basis-full max-[640px]:flex-none">{formattedTitle}</span>
                 <div className="ml-auto flex flex-wrap items-center gap-2 shrink-0 max-[640px]:ml-0">
                   {([
-                    { label: i18n.buttonLabelGroupPhase, href: `/${id}/groups` },
-                    { label: i18n.buttonLabelFinalsPhase, href: `/${id}/finals` },
-                  ] as const).map(({ label, href }) => (
-                    <Link
-                      key={label}
-                      href={href}
-                      className="inline-flex items-center justify-center rounded-md border border-white/40 px-3 py-[5px] text-[13px] font-semibold leading-none text-white whitespace-nowrap transition hover:bg-white/10"
-                    >
-                      {label}
-                    </Link>
-                  ))}
+                    { label: i18n.buttonLabelGroupPhase, href: `/${id}/groups`, enabled: true },
+                    { label: i18n.buttonLabelFinalsPhase, href: `/${id}/finals`, enabled: props?.finalsBracketOpen },
+                  ] as const).map(({ label, href, enabled }) =>
+                    enabled ? (
+                      <Link
+                        key={label}
+                        href={href}
+                        className="inline-flex items-center justify-center rounded-md border border-white/40 px-3 py-[5px] text-[13px] font-semibold leading-none text-white whitespace-nowrap transition hover:bg-white/10"
+                      >
+                        {label}
+                      </Link>
+                    ) : (
+                      <span
+                        key={label}
+                        className="inline-flex items-center justify-center rounded-md border border-white/40 px-3 py-[5px] text-[13px] font-semibold leading-none text-white whitespace-nowrap opacity-50 pointer-events-none select-none"
+                      >
+                        {label}
+                      </span>
+                    )
+                  )}
                 </div>
               </div>
               <div
