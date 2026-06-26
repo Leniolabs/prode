@@ -13,7 +13,23 @@ import { BracketIcon } from "./BracketIcon";
 // Connector "llaves" between two rounds: one funnel per match in the lower
 // round, column-aligned to the match boxes so each Y points at the game its
 // winners advance to. Count = number of matches in the round below.
-function BracketConnectors({ count }: { count: number }) {
+function BracketConnectors({ count, fluid }: { count: number; fluid?: boolean }) {
+  // Fluid: each connector sits in a 25% slot and centers a 210px-capped funnel,
+  // mirroring the card layout so the Y's stay column-aligned to the boxes above.
+  if (fluid) {
+    return (
+      <div
+        aria-hidden
+        className="flex flex-wrap justify-around gap-x-5 w-full -my-2 [&>div]:flex-[0_0_calc(25%-15px)] [&>div]:min-w-[170px] [&>div]:flex [&>div]:justify-center [&_svg]:max-w-[210px] [&_svg]:w-full [&_svg]:h-[18px]"
+      >
+        {Array.from({ length: count }).map((_, i) => (
+          <div key={i}>
+            <BracketIcon />
+          </div>
+        ))}
+      </div>
+    );
+  }
   return (
     <div
       aria-hidden
@@ -67,6 +83,12 @@ interface FinalsBracketProps {
    * on its own `/16avos` matrix page; the bracket there starts at Octavos.
    */
   includeRoundOf32?: boolean;
+  /**
+   * Stretch the four bracket columns to fill the container width (drops the
+   * per-box 210px cap). The view page renders the bracket full width; the room
+   * finals page keeps the capped default.
+   */
+  fluid?: boolean;
 }
 
 const stageNum = (stage: string) =>
@@ -78,6 +100,7 @@ export function FinalsBracket({
   onChange,
   admin,
   includeRoundOf32 = true,
+  fluid,
 }: FinalsBracketProps) {
   const i18n = useLocalizedText();
 
@@ -159,24 +182,24 @@ export function FinalsBracket({
     <BracketsContainer gridArea="matches">
       {includeRoundOf32 && (
         <>
-          <BracketRound size="16" title={i18n.FINALS_16}>
+          <BracketRound size="16" title={i18n.FINALS_16} fluid={fluid}>
             {byGroup("FINALS_16").map((m, i) => renderMatch(m, i, false))}
           </BracketRound>
-          <BracketConnectors count={8} />
+          <BracketConnectors count={8} fluid={fluid} />
         </>
       )}
-      <BracketRound size="8" title={i18n.FINALS_8}>
+      <BracketRound size="8" title={i18n.FINALS_8} fluid={fluid}>
         {byGroup("FINALS_8").map((m, i) => renderMatch(m, i, false))}
       </BracketRound>
-      <BracketConnectors count={4} />
-      <BracketRound size="4" title={i18n.FINALS_4}>
+      <BracketConnectors count={4} fluid={fluid} />
+      <BracketRound size="4" title={i18n.FINALS_4} fluid={fluid}>
         {byGroup("FINALS_4").map((m, i) => renderMatch(m, i, true))}
       </BracketRound>
-      <BracketConnectors count={2} />
-      <BracketRound size="2" title={i18n.FINALS_2}>
+      <BracketConnectors count={2} fluid={fluid} />
+      <BracketRound size="2" title={i18n.FINALS_2} fluid={fluid}>
         {byGroup("FINALS_2").map((m, i) => renderMatch(m, i, true))}
       </BracketRound>
-      <BracketConnectors count={2} />
+      <BracketConnectors count={2} fluid={fluid} />
       <section className="flex flex-col items-center gap-4 w-full [--finals-card-bg:#e1e1e1]">
         <div className="font-bold text-base tracking-[0.02em]">{i18n.FINAL}</div>
         {finalMatch && (

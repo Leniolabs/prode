@@ -15,18 +15,49 @@ const sizeClass: Record<BracketRoundSize, string> = {
 
 // Uniform, readable match boxes. Each round centers its matches, so the tree
 // funnels by row count (16 -> 8 -> 4 -> 2 -> final) while box size stays fixed.
-const matchesRow =
-  "flex flex-wrap justify-around gap-x-5 gap-y-[14px] w-full [&>*]:flex-[0_0_calc(25%-15px)] [&>*]:max-w-[210px] [&>*]:min-w-[170px]";
+// Each match sits in a 25% flex slot, so the bracket keeps 4 columns per row
+// regardless of container width. The capped (default) variant sizes the card
+// itself to <=210px (room-finals narrow column); `fluid` keeps the card at
+// 210px but makes the slot the 25% sizing element and centers the card inside,
+// so the four columns spread across a wide container (the view page) with even
+// gaps instead of the card stretching to fill the slot.
+const matchesRow = (fluid?: boolean) =>
+  className(
+    "flex flex-wrap justify-around gap-x-5 gap-y-[14px] w-full [&>*]:flex-[0_0_calc(25%-15px)] [&>*]:min-w-[170px]",
+    fluid ? null : "[&>*]:max-w-[210px]"
+  );
 
 // Final + third place sit side by side with extra breathing room.
-const finalPairRow =
-  "flex flex-wrap justify-center gap-16 w-full [&>div]:flex-[0_0_calc(25%-15px)] [&>div]:max-w-[210px] [&>div]:min-w-[170px]";
+const finalPairRow = (fluid?: boolean) =>
+  className(
+    "flex flex-wrap justify-center gap-16 w-full [&>div]:flex-[0_0_calc(25%-15px)] [&>div]:min-w-[170px]",
+    fluid ? null : "[&>div]:max-w-[210px]"
+  );
 
 interface BracketRoundProps {
   title: React.ReactNode;
   size: BracketRoundSize;
   finalPair?: boolean;
+  fluid?: boolean;
   className?: string;
+}
+
+// In fluid mode wrap each match in a centering slot so the slot (not the card)
+// is the 25% flex item; the card keeps its 210px size and centers, leaving the
+// extra width as inter-column gaps. The slot carries the card's CSS `order` so
+// the funnel column alignment is preserved.
+function fluidSlots(children: React.ReactNode) {
+  return React.Children.map(children, (child) => {
+    if (!React.isValidElement<{ order?: number }>(child)) return child;
+    return (
+      <div
+        style={{ order: child.props.order ?? 0 }}
+        className="flex justify-center [&>*]:max-w-[210px] [&>*]:w-full"
+      >
+        {child}
+      </div>
+    );
+  });
 }
 
 export function BracketRound(
@@ -44,7 +75,7 @@ export function BracketRound(
       {/* Title sits in the first match-box slot via an invisible sizer row that
           mirrors the matches layout, so it aligns above box 1 even when the
           round is under-filled (e.g. 2 semifinal boxes spread by justify-around). */}
-      <div className={matchesRow}>
+      <div className={matchesRow(props.fluid)}>
         <div className="font-bold text-base tracking-[0.02em] whitespace-nowrap">
           {props.title}
         </div>
@@ -52,8 +83,8 @@ export function BracketRound(
           <div key={i} aria-hidden />
         ))}
       </div>
-      <div className={props.finalPair ? finalPairRow : matchesRow}>
-        {props.children}
+      <div className={props.finalPair ? finalPairRow(props.fluid) : matchesRow(props.fluid)}>
+        {props.fluid ? fluidSlots(props.children) : props.children}
       </div>
     </section>
   );

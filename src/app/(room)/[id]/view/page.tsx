@@ -17,15 +17,11 @@ import {
   GroupsContainer,
 } from "@/components/view/Groups";
 import {
-  BracketIcon,
-  bracketOffsetQuarter,
-  BracketsContainer,
   BracketsMobileContainer,
-  BracketTitle,
+  FinalsBracket,
   FinalsContainer,
 } from "@/components/view/Finals";
 import { UserMatchFinalsInput } from "@/components/common/UserMatchFinalsInput";
-import { className } from "@/utils/classname";
 import {
   Collapsable,
   CollapsableContainer,
@@ -34,7 +30,6 @@ import { UserImage } from "@/components/common/UserImage";
 import { Meta } from "@/components/common/Meta";
 import { LocaleSelect } from "@/components/common/LocaleSelect";
 import { useLocalizedText } from "@/locale";
-import { getMatchOrder } from "@/utils/finals";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useBodyRedirect } from "@/hooks";
@@ -130,6 +125,11 @@ export default function ViewPage() {
   const roundOf32Matches = (finalsMatches || [])
     .filter((m) => m.stage.startsWith("FINALS_16_"))
     .sort((a, b) => (a.date > b.date ? 1 : -1));
+
+  // Read-only bracket: every input disabled, no save handler.
+  const bracketMatches = (finalsMatches || []).map((m) => ({ ...m, disabled: true }));
+  const now = Date.now();
+  const noopChange = () => () => {};
 
   const stageSwitcher = (
     <div className="relative flex w-full flex-wrap items-center gap-x-4 gap-y-2 min-h-[1em]">
@@ -269,8 +269,7 @@ export default function ViewPage() {
             />
             <Card
               gridArea="matches"
-              className="self-start !bg-[#f6f5f5cc] [&>div:first-child]:!hidden"
-              title={<>{formattedR32Title}</>}
+              className="self-start !bg-[#f6f5f5cc]"
             >
               <CardContent className="p-4">
                 <div className="grid grid-cols-2 min-[1024px]:grid-cols-4 gap-4 w-full justify-items-center [&>*]:w-full [&>*]:max-w-[260px]">
@@ -311,58 +310,13 @@ export default function ViewPage() {
               className={`${headerDarkTitle} !mb-[12px] max-lg:!mt-0`}
               title={stageSwitcher}
             />
-            <BracketsContainer gridArea="matches">
-              <BracketTitle full order={0}>{i18n.FINALS_8}</BracketTitle>
-              {(finalsMatches || []).filter((x) => x.stage.includes("FINALS_8_")).sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match) => (
-                <UserMatchFinalsInput disabled={true} key={match.id} date={new Date(match.date)}
-                  userCountryLeftId={match.countryLeftId} userGoalsLeft={match.userGoalsLeft}
-                  userCountryRightId={match.countryRightId} userGoalsRight={match.userGoalsRight}
-                  userPenaltisLeft={match.userPenaltisLeft} userPenaltisRight={match.userPenaltisRight}
-                  penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                  goalsLeft={match.goalsLeft} goalsRight={match.goalsRight}
-                  countryLeftId={match.countryLeftId} countryRightId={match.countryRightId}
-                  order={getMatchOrder(match.stage)} filled={match.filled} />
-              ))}
-              <BracketIcon order={9} /><BracketIcon order={9} /><BracketIcon order={9} /><BracketIcon order={9} />
-              <BracketTitle order={9} full>{i18n.FINALS_4}</BracketTitle>
-              {(finalsMatches || []).filter((x) => x.stage.includes("FINALS_4_")).sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match) => (
-                <UserMatchFinalsInput showCountryStatus disabled={true} key={match.id} date={new Date(match.date)}
-                  userCountryLeftId={match.userCountryLeftId} userGoalsLeft={match.userGoalsLeft}
-                  userCountryRightId={match.userCountryRightId} userGoalsRight={match.userGoalsRight}
-                  userPenaltisLeft={match.userPenaltisLeft} userPenaltisRight={match.userPenaltisRight}
-                  penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                  goalsLeft={match.goalsLeft} goalsRight={match.goalsRight}
-                  countryLeftId={match.countryLeftId} countryRightId={match.countryRightId}
-                  order={getMatchOrder(match.stage)} filled={match.filled} />
-              ))}
-              <BracketIcon order={14} big /><BracketIcon order={14} big />
-              <BracketTitle className={bracketOffsetQuarter} order={14} full>{i18n.FINALS_2}</BracketTitle>
-              {(finalsMatches || []).filter((x) => x.stage.includes("FINALS_2_")).sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match, index) => (
-                <UserMatchFinalsInput showCountryStatus key={match.id} disabled={true}
-                  className={className(index === 0 && bracketOffsetQuarter)} date={new Date(match.date)}
-                  userCountryLeftId={match.userCountryLeftId} userGoalsLeft={match.userGoalsLeft}
-                  userCountryRightId={match.userCountryRightId} userGoalsRight={match.userGoalsRight}
-                  userPenaltisLeft={match.userPenaltisLeft} userPenaltisRight={match.userPenaltisRight}
-                  penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                  goalsLeft={match.goalsLeft} goalsRight={match.goalsRight}
-                  countryLeftId={match.countryLeftId} countryRightId={match.countryRightId}
-                  order={getMatchOrder(match.stage)} filled={match.filled} />
-              ))}
-              <BracketIcon className={className(bracketOffsetQuarter)} order={17} big />
-              <BracketTitle className={className(bracketOffsetQuarter)} order={17}>{i18n.FINAL}</BracketTitle>
-              <BracketTitle order={17}>{i18n.THIRD_PLACE}</BracketTitle>
-              {(finalsMatches || []).filter((x) => x.stage === "FINALS" || x.stage === "THIRD_PLACE").sort((a, b) => (a.stage > b.stage ? 1 : -1)).map((match, index) => (
-                <UserMatchFinalsInput showCountryStatus className={className(index === 0 && bracketOffsetQuarter)}
-                  disabled={true} key={match.id} date={new Date(match.date)}
-                  userCountryLeftId={match.userCountryLeftId} userGoalsLeft={match.userGoalsLeft}
-                  userCountryRightId={match.userCountryRightId} userGoalsRight={match.userGoalsRight}
-                  userPenaltisLeft={match.userPenaltisLeft} userPenaltisRight={match.userPenaltisRight}
-                  penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
-                  goalsLeft={match.goalsLeft} goalsRight={match.goalsRight}
-                  countryLeftId={match.countryLeftId} countryRightId={match.countryRightId}
-                  order={getMatchOrder(match.stage)} filled={match.filled} />
-              ))}
-            </BracketsContainer>
+            <FinalsBracket
+              matches={bracketMatches}
+              now={now}
+              onChange={noopChange}
+              includeRoundOf32={false}
+              fluid
+            />
             <BracketsMobileContainer gridArea="matches">
               <CollapsableContainer>
                 <Collapsable title={i18n.FINALS_8}>
