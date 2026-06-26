@@ -194,7 +194,10 @@ export function FinalsBracket({
             </div>
           </div>
         )}
-        <div className="w-full max-w-[520px] border-t border-[#c9d4e3]" />
+        <div
+          className="w-full"
+          style={{ maxWidth: 520, borderTop: "1px solid #c9d4e3" }}
+        />
         <div className="font-bold text-base tracking-[0.02em]">
           {i18n.THIRD_PLACE}
         </div>
