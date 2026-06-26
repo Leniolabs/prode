@@ -1,5 +1,4 @@
 import { Match } from '@/generated/prisma';
-import { FinalsStageGroup, getFinalsStageGroup } from '@/utils/finals';
 
 function parseTimezoneOffset(timezone?: string) {
   if (!timezone) return null;
@@ -53,32 +52,21 @@ export function isGroupMatchLocked(
 }
 
 /**
- * The lock time of the knockout tier a finals match belongs to: the first
- * kickoff of its tier (see FINALS_TIER_DEADLINES in config/matchdays.ts).
- * Unlike groups, finals matches lock by stage tier rather than by date, because
- * within a tier the matches are spread across several days but must all close
- * together at the tier's opener. Returns null for non-finals stages.
+ * The lock time of a finals match: its own kickoff. Knockout matches now lock
+ * individually at the moment they start, the same as group matches, rather than
+ * as a tier block at the round's first kickoff.
  */
-export function finalsTierLockTime(
-  stage: string,
-  deadlines: Record<FinalsStageGroup, Date>,
-): Date | null {
-  const group = getFinalsStageGroup(stage);
-  return group ? deadlines[group] ?? null : null;
+export function finalsMatchLockTime(matchDate: Date) {
+  return new Date(matchDate);
 }
 
 /**
- * True once the tier containing `stage` has kicked off, i.e. its first match
- * has started. All matches of a tier lock together at that moment; later tiers
- * stay open until their own first kickoff.
+ * True once `matchDate` has been reached, i.e. the finals match has kicked off.
+ * Each knockout match locks independently at its own kickoff; later same-tier
+ * matches stay editable until they start.
  */
-export function isFinalsMatchLocked(
-  stage: string,
-  deadlines: Record<FinalsStageGroup, Date>,
-  now: Date = new Date(),
-) {
-  const lock = finalsTierLockTime(stage, deadlines);
-  return lock !== null && lock.getTime() <= now.getTime();
+export function isFinalsMatchLocked(matchDate: Date, now: Date = new Date()) {
+  return matchDate.getTime() <= now.getTime();
 }
 
 export function formatDate(date: Date, locale: string, timezone?: string) {

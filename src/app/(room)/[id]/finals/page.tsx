@@ -44,8 +44,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { getMatchOrder } from "@/utils/finals";
-import { finalsTierLockTime, isFinalsMatchLocked } from "@/utils/date";
-import { FINALS_TIER_DEADLINES } from "@/config/matchdays";
+import { finalsMatchLockTime, isFinalsMatchLocked } from "@/utils/date";
 
 type UIMatch = Pick<
   Match,
@@ -104,20 +103,17 @@ export default function RoomFinalsPage() {
   const [now, setNow] = React.useState(() => Date.now());
   useInterval(() => setNow(Date.now()), 60000);
 
-  // Finals lock per knockout tier at the tier's first kickoff (mirrors the group
-  // fecha rule). A match's input is disabled once its tier has started; the tier
-  // deadline drives the countdown shown on each input.
+  // Finals lock per match at kickoff (mirrors the group rule). A match's input
+  // is disabled once it has started; its own kickoff drives the countdown shown
+  // on each input.
   const lockNow = React.useMemo(() => new Date(now), [now]);
   const isLocked = React.useCallback(
-    (stage: string) => isFinalsMatchLocked(stage, FINALS_TIER_DEADLINES, lockNow),
+    (dateIso: string | Date) => isFinalsMatchLocked(new Date(dateIso), lockNow),
     [lockNow]
   );
   const tierDeadline = React.useCallback(
-    (stage: string) =>
-      finalsTierLockTime(stage, FINALS_TIER_DEADLINES)?.toISOString() ??
-      props?.submissionEndsAt ??
-      "",
-    [props?.submissionEndsAt]
+    (dateIso: string | Date) => finalsMatchLockTime(new Date(dateIso)).toISOString(),
+    []
   );
 
   const [updating, setUpdating] = React.useState(false);
@@ -187,7 +183,7 @@ export default function RoomFinalsPage() {
   // Saving is allowed while any modified match still belongs to an open tier;
   // the server drops locked ones (getAllowedFinalMatchesToModify).
   const hasEditableChanges = React.useMemo(
-    () => differentMatches.some((match) => !isLocked(match.stage)),
+    () => differentMatches.some((match) => !isLocked(match.date)),
     [differentMatches, isLocked]
   );
 
@@ -254,7 +250,7 @@ export default function RoomFinalsPage() {
   // user-predicted teams) is missing a score prediction.
   const hasIncompleteMatches = React.useMemo(() => {
     return matches.some((match) => {
-      if (match.disabled || isLocked(match.stage)) return false;
+      if (match.disabled || isLocked(match.date)) return false;
       const hasMatchup =
         (match.userCountryLeftId ?? match.countryLeftId) &&
         (match.userCountryRightId ?? match.countryRightId);
@@ -369,7 +365,7 @@ export default function RoomFinalsPage() {
             <CollapsableContainer>
               <Collapsable title={i18n.FINALS_8}>
                 {matches.filter((x) => x.stage.includes("FINALS_8_")).sort((a, b) => (a.date > b.date ? 1 : -1)).map((match, index) => (
-                  <UserMatchFinalsInput disabled={match.disabled || isLocked(match.stage)} submissionEndsAt={tierDeadline(match.stage)}
+                  <UserMatchFinalsInput disabled={match.disabled || isLocked(match.date)} submissionEndsAt={tierDeadline(match.date)}
                     key={match.id} date={new Date(match.date)} userCountryLeftId={match.countryLeftId} userGoalsLeft={match.userGoalsLeft}
                     userCountryRightId={match.countryRightId} userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}
                     userPenaltisRight={match.userPenaltisRight} penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
@@ -379,7 +375,7 @@ export default function RoomFinalsPage() {
               </Collapsable>
               <Collapsable title={i18n.FINALS_4}>
                 {matches.filter((x) => x.stage.includes("FINALS_4_")).sort((a, b) => (a.date > b.date ? 1 : -1)).map((match, index) => (
-                  <UserMatchFinalsInput showCountryStatus disabled={match.disabled || isLocked(match.stage)} submissionEndsAt={tierDeadline(match.stage)}
+                  <UserMatchFinalsInput showCountryStatus disabled={match.disabled || isLocked(match.date)} submissionEndsAt={tierDeadline(match.date)}
                     key={match.id} date={new Date(match.date)} userCountryLeftId={match.userCountryLeftId} userGoalsLeft={match.userGoalsLeft}
                     userCountryRightId={match.userCountryRightId} userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}
                     userPenaltisRight={match.userPenaltisRight} penaltisLeft={match.penaltisLeft} penaltisRight={match.penaltisRight}
@@ -389,8 +385,8 @@ export default function RoomFinalsPage() {
               </Collapsable>
               <Collapsable title={i18n.FINALS_2}>
                 {matches.filter((x) => x.stage.includes("FINALS_2_")).sort((a, b) => (a.date > b.date ? 1 : -1)).map((match, index) => (
-                  <UserMatchFinalsInput showCountryStatus key={match.id} disabled={match.disabled || isLocked(match.stage)}
-                    submissionEndsAt={tierDeadline(match.stage)} date={new Date(match.date)}
+                  <UserMatchFinalsInput showCountryStatus key={match.id} disabled={match.disabled || isLocked(match.date)}
+                    submissionEndsAt={tierDeadline(match.date)} date={new Date(match.date)}
                     userCountryLeftId={match.userCountryLeftId} userGoalsLeft={match.userGoalsLeft}
                     userCountryRightId={match.userCountryRightId} userGoalsRight={match.userGoalsRight}
                     userPenaltisLeft={match.userPenaltisLeft} userPenaltisRight={match.userPenaltisRight}
@@ -401,8 +397,8 @@ export default function RoomFinalsPage() {
               </Collapsable>
               <Collapsable title={i18n.FINAL}>
                 {matches.filter((x) => x.stage === "FINALS" || x.stage === "THIRD_PLACE").sort((a, b) => (a.date > b.date ? 1 : -1)).map((match, index) => (
-                  <UserMatchFinalsInput showCountryStatus disabled={match.disabled || isLocked(match.stage)}
-                    submissionEndsAt={tierDeadline(match.stage)} key={match.id} date={new Date(match.date)}
+                  <UserMatchFinalsInput showCountryStatus disabled={match.disabled || isLocked(match.date)}
+                    submissionEndsAt={tierDeadline(match.date)} key={match.id} date={new Date(match.date)}
                     userCountryLeftId={match.userCountryLeftId} userGoalsLeft={match.userGoalsLeft}
                     userCountryRightId={match.userCountryRightId} userGoalsRight={match.userGoalsRight}
                     userPenaltisLeft={match.userPenaltisLeft} userPenaltisRight={match.userPenaltisRight}
@@ -419,8 +415,8 @@ export default function RoomFinalsPage() {
               {(todayMatches || nextMatches)?.length ? (
                 <DailyMatches>
                   {(todayMatches || nextMatches)?.map((match) => (
-                    <DailyMatchFinalInput disabled={match.disabled || isLocked(match.stage)}
-                      submissionEndsAt={tierDeadline(match.stage)} key={match.id} today={!!todayMatches}
+                    <DailyMatchFinalInput disabled={match.disabled || isLocked(match.date)}
+                      submissionEndsAt={tierDeadline(match.date)} key={match.id} today={!!todayMatches}
                       date={new Date(match.date)} userCountryLeftId={match.countryLeftId}
                       userGoalsLeft={match.userGoalsLeft} userCountryRightId={match.countryRightId}
                       userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}

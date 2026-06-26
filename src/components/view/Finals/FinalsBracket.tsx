@@ -4,8 +4,7 @@ import { useLocalizedText } from "@/locale";
 import { UserMatchFinalsInput } from "@/components/common/UserMatchFinalsInput";
 import { MatchFinalsInput } from "@/components/common/MatchFinalsInput";
 import { getFinalsStageGroup, getFinalsStageOrder } from "@/utils/finals";
-import { finalsTierLockTime, isFinalsMatchLocked } from "@/utils/date";
-import { FINALS_TIER_DEADLINES } from "@/config/matchdays";
+import { finalsMatchLockTime, isFinalsMatchLocked } from "@/utils/date";
 import { BracketsContainer } from "./BracketsContainer";
 import { BracketRound } from "./BracketRound";
 import { BracketIcon } from "./BracketIcon";
@@ -153,8 +152,8 @@ export function FinalsBracket({
       key={match.id}
       showCountryStatus={advanced}
       highlight={match.stage === "FINALS"}
-      disabled={match.disabled || isFinalsMatchLocked(match.stage, FINALS_TIER_DEADLINES, lockNow)}
-      submissionEndsAt={finalsTierLockTime(match.stage, FINALS_TIER_DEADLINES)?.toISOString() ?? ""}
+      disabled={match.disabled || isFinalsMatchLocked(new Date(match.date), lockNow)}
+      submissionEndsAt={finalsMatchLockTime(new Date(match.date)).toISOString()}
       date={new Date(match.date)}
       userCountryLeftId={advanced ? match.userCountryLeftId : match.countryLeftId}
       userCountryRightId={advanced ? match.userCountryRightId : match.countryRightId}

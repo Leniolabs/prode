@@ -34,8 +34,7 @@ import Link from "next/link";
 import { GapIcon } from "@/components/common/Icons";
 import { useQuery } from "@tanstack/react-query";
 import { getMatchOrder } from "@/utils/finals";
-import { finalsTierLockTime, isFinalsMatchLocked } from "@/utils/date";
-import { FINALS_TIER_DEADLINES } from "@/config/matchdays";
+import { finalsMatchLockTime, isFinalsMatchLocked } from "@/utils/date";
 
 type UIMatch = Pick<
   Match,
@@ -99,15 +98,12 @@ export default function RoomRoundOf32Page() {
 
   const lockNow = React.useMemo(() => new Date(now), [now]);
   const isLocked = React.useCallback(
-    (stage: string) => isFinalsMatchLocked(stage, FINALS_TIER_DEADLINES, lockNow),
+    (dateIso: string | Date) => isFinalsMatchLocked(new Date(dateIso), lockNow),
     [lockNow]
   );
   const tierDeadline = React.useCallback(
-    (stage: string) =>
-      finalsTierLockTime(stage, FINALS_TIER_DEADLINES)?.toISOString() ??
-      props?.submissionEndsAt ??
-      "",
-    [props?.submissionEndsAt]
+    (dateIso: string | Date) => finalsMatchLockTime(new Date(dateIso)).toISOString(),
+    []
   );
 
   const [updating, setUpdating] = React.useState(false);
@@ -186,7 +182,7 @@ export default function RoomRoundOf32Page() {
   }, [originalMatches, matches]);
 
   const hasEditableChanges = React.useMemo(
-    () => differentMatches.some((match) => !isLocked(match.stage)),
+    () => differentMatches.some((match) => !isLocked(match.date)),
     [differentMatches, isLocked]
   );
 
@@ -194,7 +190,7 @@ export default function RoomRoundOf32Page() {
     return roundMatches.some(
       (match) =>
         !match.disabled &&
-        !isLocked(match.stage) &&
+        !isLocked(match.date) &&
         (match.userGoalsLeft == null || match.userGoalsRight == null)
     );
   }, [roundMatches, isLocked]);
@@ -376,8 +372,8 @@ export default function RoomRoundOf32Page() {
                   <UserMatchFinalsInput
                     key={match.id}
                     className="[--finals-card-bg:#ededed]"
-                    disabled={match.disabled || isLocked(match.stage)}
-                    submissionEndsAt={tierDeadline(match.stage)}
+                    disabled={match.disabled || isLocked(match.date)}
+                    submissionEndsAt={tierDeadline(match.date)}
                     date={new Date(match.date)}
                     userCountryLeftId={match.countryLeftId}
                     userGoalsLeft={match.userGoalsLeft}
@@ -417,8 +413,8 @@ export default function RoomRoundOf32Page() {
                     {(todayMatches || nextMatches)?.map((match) => (
                       <DailyMatchFinalInput
                         key={match.id}
-                        disabled={match.disabled || isLocked(match.stage)}
-                        submissionEndsAt={tierDeadline(match.stage)}
+                        disabled={match.disabled || isLocked(match.date)}
+                        submissionEndsAt={tierDeadline(match.date)}
                         today={!!todayMatches}
                         date={new Date(match.date)}
                         userCountryLeftId={match.countryLeftId}

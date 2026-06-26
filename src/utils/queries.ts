@@ -2,7 +2,7 @@ import { Match, ProdeRoom, User, UserProde } from "@/generated/prisma";
 import { prisma } from "../lib";
 import { matchCountriesMatchStatus, matchFinalResultStatus } from "./points";
 import { isGroupMatchLocked, isFinalsMatchLocked } from "./date";
-import { GROUP_MATCHDAY_DEADLINES, FINALS_TIER_DEADLINES } from "@/config/matchdays";
+import { GROUP_MATCHDAY_DEADLINES } from "@/config/matchdays";
 import { knockoutPhaseAccess } from "@/lib/bracket";
 export {
   computeGroupMatchPoints,
@@ -303,7 +303,7 @@ export async function getUserFinalMatches(
           ? matchFinalResultStatus(match, match.userFinalResults[0])
           : null,
 
-      disabled: isFinalsMatchLocked(match.stage, FINALS_TIER_DEADLINES),
+      disabled: isFinalsMatchLocked(match.date),
 
       goalsLeft: match.goalsLeft,
       penaltisLeft: match.penaltisLeft,
@@ -368,7 +368,7 @@ export async function getUserTemplateFinalMatches(user: User) {
       stage: match.stage,
       filled: match.filled,
 
-      disabled: isFinalsMatchLocked(match.stage, FINALS_TIER_DEADLINES),
+      disabled: isFinalsMatchLocked(match.date),
 
       countryStatus: match.userFinalResults[0]
         ? matchCountriesMatchStatus(match, match.userFinalResults[0])
@@ -857,11 +857,10 @@ export async function getAllowedGroupMatchesToModify(ids: string[]) {
 }
 
 /**
- * Finals variant of getAllowedGroupMatchesToModify. Locks per knockout tier: a
- * match is editable only while its tier has not kicked off (see
- * FINALS_TIER_DEADLINES in config/matchdays.ts). Like the group path and unlike
- * the old phase-wide finals deadline, this stays open across tiers so players
- * complete the bracket round by round.
+ * Finals variant of getAllowedGroupMatchesToModify. Locks per match at kickoff:
+ * a match is editable only while it has not started (see isFinalsMatchLocked in
+ * utils/date.ts). Like the group path, each knockout match closes individually,
+ * so later same-tier matches stay editable until their own kickoff.
  */
 export async function getAllowedFinalMatchesToModify(ids: string[]) {
   const now = new Date();
@@ -875,11 +874,11 @@ export async function getAllowedFinalMatchesToModify(ids: string[]) {
       },
       select: {
         id: true,
-        stage: true,
+        date: true,
       },
     })
   )
-    .filter((match) => !isFinalsMatchLocked(match.stage, FINALS_TIER_DEADLINES, now))
+    .filter((match) => !isFinalsMatchLocked(match.date, now))
     .map((match) => match.id);
 }
 
