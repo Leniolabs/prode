@@ -131,6 +131,14 @@ export default function ViewPage() {
   const now = Date.now();
   const noopChange = () => () => {};
 
+  // "Ir a mi Prode" jumps to my own predictions at the deepest open stage,
+  // mirroring the rooms-page "Entrar" logic (extended to the Round of 32).
+  const myProdeStage = props?.finalsBracketOpen
+    ? "finals"
+    : props?.roundOf32Open
+    ? "16avos"
+    : "groups";
+
   const stageSwitcher = (
     <div className="relative flex w-full flex-wrap items-center gap-x-4 gap-y-2 min-h-[1em]">
       <span className="min-w-0 flex-1 truncate">{stageMeta[activeStage].title}</span>
@@ -202,7 +210,7 @@ export default function ViewPage() {
                 <div className="shrink-0 ml-auto">
                   {props?.id && (
                     <Link
-                      href={`/${props.id}/groups`}
+                      href={`/${props.id}/${myProdeStage}`}
                       className="inline-flex shrink-0 items-center justify-center rounded-md border border-white/40 px-3 py-[5px] text-[13px] font-semibold leading-none text-white whitespace-nowrap transition hover:bg-white/10"
                     >
                       {i18n.buttonLabelGoToMyProde} ›
