@@ -142,4 +142,17 @@ export interface LocaleData {
 
   viewTitle: string;
   viewTitleAfter: string;
+
+  offlineMetaTitle: string;
+  offlineBadge: string;
+  offlineTitle: string;
+  offlineDescription: string;
+  offlineActionsTitle: string;
+  offlineActionRetry: string;
+  offlineActionSignin: string;
+  offlineActionInstall: string;
+  offlineRetryTitle: string;
+  offlineRetryBody: string;
+  offlineButtonHome: string;
+  offlineButtonRetry: string;
 }
