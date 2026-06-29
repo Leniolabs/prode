@@ -26,6 +26,69 @@ const STATUS_BG: Record<string, string> = {
   WRONG: "bg-wrong",
 };
 
+type EditableFinalsInput = {
+  countryLeftId: string | undefined;
+  goalsLeft: number | null;
+  countryRightId: string | undefined;
+  goalsRight: number | null;
+  penaltisLeft: number | null;
+  penaltisRight: number | null;
+};
+
+function getPenaltyWinnerSide({
+  penaltisLeft,
+  penaltisRight,
+}: Pick<EditableFinalsInput, "penaltisLeft" | "penaltisRight">) {
+  if (penaltisLeft == null || penaltisRight == null) return undefined;
+  if (penaltisLeft > penaltisRight) return "left";
+  if (penaltisLeft < penaltisRight) return "right";
+  return undefined;
+}
+
+function sanitizeEditableFinalsInput(value: EditableFinalsInput) {
+  if (
+    (!value.goalsLeft && value.goalsLeft !== 0) ||
+    (!value.goalsRight && value.goalsRight !== 0) ||
+    value.goalsLeft !== value.goalsRight
+  ) {
+    return {
+      ...value,
+      penaltisLeft: null,
+      penaltisRight: null,
+    };
+  }
+
+  return value;
+}
+
+function finalizeEditableFinalsInput(value: EditableFinalsInput) {
+  const parsed = sanitizeEditableFinalsInput(value);
+  if (
+    parsed.penaltisLeft != null &&
+    parsed.penaltisRight != null &&
+    parsed.penaltisLeft === parsed.penaltisRight
+  ) {
+    return {
+      ...parsed,
+      penaltisLeft: null,
+      penaltisRight: null,
+    };
+  }
+
+  return parsed;
+}
+
+function restoreInputValue(
+  input: HTMLInputElement,
+  value: number | null | undefined
+) {
+  const nextValue = value == null ? "" : value.toString();
+  input.value = nextValue;
+  window.requestAnimationFrame(() => {
+    input.value = nextValue;
+  });
+}
+
 export function getResultStatus(userMatch: {
   goalsLeft: number;
   goalsRight: number;
@@ -228,27 +291,6 @@ interface UserMatchFinalsInputProps {
   }) => void;
 }
 
-const parseResults = (value: {
-  countryLeftId: string | undefined;
-  goalsLeft: number | null;
-  countryRightId: string | undefined;
-  goalsRight: number | null;
-  penaltisLeft: number | null;
-  penaltisRight: number | null;
-}) => {
-  if (
-    (!value.goalsLeft && value.goalsLeft !== 0) ||
-    (!value.goalsRight && value.goalsRight !== 0) ||
-    value.goalsLeft !== value.goalsRight
-  )
-    return {
-      ...value,
-      penaltisLeft: null,
-      penaltisRight: null,
-    };
-  return value;
-};
-
 export function UserMatchFinalsInput(
   props: React.PropsWithChildren<UserMatchFinalsInputProps>
 ) {
@@ -335,9 +377,18 @@ export function UserMatchFinalsInput(
   const penaltisStatus = React.useMemo(() => {
     if (resultStatus === "WRONG") return "WRONG";
 
+    const userWinner = getPenaltyWinnerSide({
+      penaltisLeft: userPenaltisLeft ?? null,
+      penaltisRight: userPenaltisRight ?? null,
+    });
+    if (!userWinner) return;
+
+    const actualWinner = getPenaltyWinnerSide({
+      penaltisLeft: penaltisLeft ?? null,
+      penaltisRight: penaltisRight ?? null,
+    });
+
     if (
-      (!userPenaltisRight && userPenaltisRight !== 0) ||
-      (!userPenaltisLeft && userPenaltisLeft !== 0) ||
       (!penaltisRight && penaltisRight !== 0) ||
       (!penaltisLeft && penaltisLeft !== 0)
     )
@@ -349,20 +400,12 @@ export function UserMatchFinalsInput(
     )
       return "GOALS_MATCH";
 
-    if (
-      (userPenaltisRight >= userPenaltisLeft &&
-        penaltisRight >= penaltisLeft) ||
-      (userPenaltisRight <= userPenaltisLeft && penaltisRight <= penaltisLeft)
-    )
+    if (actualWinner && userWinner === actualWinner)
       return "WINNER_MATCH";
 
     return "WRONG";
   }, [
-    countryStatus,
-    goalsRight,
-    goalsLeft,
-    userGoalsRight,
-    userGoalsLeft,
+    resultStatus,
     penaltisLeft,
     penaltisRight,
     userPenaltisLeft,
@@ -390,7 +433,7 @@ export function UserMatchFinalsInput(
   const handleGoalsLeftChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onChange?.(
-        parseResults({
+        sanitizeEditableFinalsInput({
           countryLeftId: userCountryLeftId,
           goalsLeft: parseInt(e.target.value, 10),
           countryRightId: userCountryRightId,
@@ -413,7 +456,7 @@ export function UserMatchFinalsInput(
   const handleGoalsRightChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       onChange?.(
-        parseResults({
+        sanitizeEditableFinalsInput({
           countryLeftId: userCountryLeftId,
           goalsLeft: userGoalsLeft ?? null,
           countryRightId: userCountryRightId,
@@ -437,7 +480,7 @@ export function UserMatchFinalsInput(
     (e: React.FocusEvent<HTMLInputElement>) => {
       e.target.value = (userGoalsLeft ?? "").toString();
       onChange?.(
-        parseResults({
+        finalizeEditableFinalsInput({
           countryLeftId: userCountryLeftId,
           goalsLeft: userGoalsLeft ?? null,
           countryRightId: userCountryRightId,
@@ -462,7 +505,7 @@ export function UserMatchFinalsInput(
     (e: React.FocusEvent<HTMLInputElement>) => {
       e.target.value = (userGoalsRight ?? "").toString();
       onChange?.(
-        parseResults({
+        finalizeEditableFinalsInput({
           countryLeftId: userCountryLeftId,
           goalsLeft: userGoalsLeft ?? null,
           countryRightId: userCountryRightId,
@@ -485,16 +528,27 @@ export function UserMatchFinalsInput(
 
   const handlePenaltisLeftChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChange?.(
-        parseResults({
-          countryLeftId: userCountryLeftId,
-          goalsLeft: userGoalsLeft ?? null,
-          countryRightId: userCountryRightId,
-          goalsRight: userGoalsRight ?? null,
-          penaltisLeft: parseInt(e.target.value, 10),
-          penaltisRight: userPenaltisRight ?? null,
-        })
-      );
+      const penaltisLeft =
+        e.target.value === "" ? null : parseInt(e.target.value, 10);
+      const nextValue = sanitizeEditableFinalsInput({
+        countryLeftId: userCountryLeftId,
+        goalsLeft: userGoalsLeft ?? null,
+        countryRightId: userCountryRightId,
+        goalsRight: userGoalsRight ?? null,
+        penaltisLeft,
+        penaltisRight: userPenaltisRight ?? null,
+      });
+
+      if (
+        penaltisLeft != null &&
+        nextValue.penaltisRight != null &&
+        penaltisLeft === nextValue.penaltisRight
+      ) {
+        restoreInputValue(e.target, userPenaltisLeft);
+        return;
+      }
+
+      onChange?.(nextValue);
     },
     [
       onChange,
@@ -502,23 +556,33 @@ export function UserMatchFinalsInput(
       userGoalsLeft,
       userCountryRightId,
       userGoalsRight,
-      userPenaltisLeft,
       userPenaltisRight,
     ]
   );
 
   const handlePenaltisRightChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChange?.(
-        parseResults({
-          countryLeftId: userCountryLeftId,
-          goalsLeft: userGoalsLeft ?? null,
-          countryRightId: userCountryRightId,
-          goalsRight: userGoalsRight ?? null,
-          penaltisLeft: userPenaltisLeft ?? null,
-          penaltisRight: parseInt(e.target.value, 10),
-        })
-      );
+      const penaltisRight =
+        e.target.value === "" ? null : parseInt(e.target.value, 10);
+      const nextValue = sanitizeEditableFinalsInput({
+        countryLeftId: userCountryLeftId,
+        goalsLeft: userGoalsLeft ?? null,
+        countryRightId: userCountryRightId,
+        goalsRight: userGoalsRight ?? null,
+        penaltisLeft: userPenaltisLeft ?? null,
+        penaltisRight,
+      });
+
+      if (
+        penaltisRight != null &&
+        nextValue.penaltisLeft != null &&
+        penaltisRight === nextValue.penaltisLeft
+      ) {
+        restoreInputValue(e.target, userPenaltisRight);
+        return;
+      }
+
+      onChange?.(nextValue);
     },
     [
       onChange,
@@ -534,7 +598,7 @@ export function UserMatchFinalsInput(
     (e: React.FocusEvent<HTMLInputElement>) => {
       e.target.value = (userPenaltisLeft ?? "").toString();
       onChange?.(
-        parseResults({
+        finalizeEditableFinalsInput({
           countryLeftId: userCountryLeftId,
           goalsLeft: userGoalsLeft ?? null,
           countryRightId: userCountryRightId,
@@ -559,7 +623,7 @@ export function UserMatchFinalsInput(
     (e: React.FocusEvent<HTMLInputElement>) => {
       e.target.value = (userPenaltisRight ?? "").toString();
       onChange?.(
-        parseResults({
+        finalizeEditableFinalsInput({
           countryLeftId: userCountryLeftId,
           goalsLeft: userGoalsLeft ?? null,
           countryRightId: userCountryRightId,
