@@ -8,6 +8,73 @@ import { matchResultStatus } from "../../../utils/points";
 import { CountryFlag } from "../CountryFlag";
 import { LockIcon } from "../Icons";
 
+type EditableFinalsInput = {
+  countryLeftId: string | undefined;
+  goalsLeft: number | null;
+  countryRightId: string | undefined;
+  goalsRight: number | null;
+  penaltisLeft: number | null;
+  penaltisRight: number | null;
+};
+
+function getPenaltyWinnerSide({
+  penaltisLeft,
+  penaltisRight,
+}: Pick<EditableFinalsInput, "penaltisLeft" | "penaltisRight">) {
+  if (penaltisLeft == null || penaltisRight == null) return undefined;
+  if (penaltisLeft > penaltisRight) return "left";
+  if (penaltisLeft < penaltisRight) return "right";
+  return undefined;
+}
+
+function sanitizeEditableFinalsInput(value: EditableFinalsInput) {
+  if (
+    (!value.goalsLeft && value.goalsLeft !== 0) ||
+    (!value.goalsRight && value.goalsRight !== 0) ||
+    value.goalsLeft !== value.goalsRight
+  ) {
+    return {
+      ...value,
+      penaltisLeft: null,
+      penaltisRight: null,
+    };
+  }
+
+  return value;
+}
+
+function finalizeEditableFinalsInput(value: EditableFinalsInput) {
+  const parsed = sanitizeEditableFinalsInput(value);
+  if (
+    parsed.penaltisLeft != null &&
+    parsed.penaltisRight != null &&
+    parsed.penaltisLeft === parsed.penaltisRight
+  ) {
+    return {
+      ...parsed,
+      penaltisLeft: null,
+      penaltisRight: null,
+    };
+  }
+
+  return parsed;
+}
+
+function parseInputValue(value: string) {
+  return value === "" ? null : parseInt(value, 10);
+}
+
+function restoreInputValue(
+  input: HTMLInputElement,
+  value: number | null | undefined
+) {
+  const nextValue = value == null ? "" : value.toString();
+  input.value = nextValue;
+  window.requestAnimationFrame(() => {
+    input.value = nextValue;
+  });
+}
+
 export function getResultStatus(userMatch: {
   goalsLeft: number;
   goalsRight: number;
@@ -208,27 +275,6 @@ interface DailyMatchFinalInputProps {
   }) => void;
 }
 
-const parseResults = (value: {
-  countryLeftId: string | undefined;
-  goalsLeft: number | null;
-  countryRightId: string | undefined;
-  goalsRight: number | null;
-  penaltisLeft: number | null;
-  penaltisRight: number | null;
-}) => {
-  if (
-    (!value.goalsLeft && value.goalsLeft !== 0) ||
-    (!value.goalsRight && value.goalsRight !== 0) ||
-    value.goalsLeft !== value.goalsRight
-  )
-    return {
-      ...value,
-      penaltisLeft: null,
-      penaltisRight: null,
-    };
-  return value;
-};
-
 const scoreInputClass =
   "text-[20px] bg-transparent w-10 h-10 rounded-[2px] outline-none text-black text-center border border-[#767676] [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:opacity-80";
 
@@ -273,6 +319,9 @@ export function DailyMatchFinalInput(
     return countries?.find((row) => row.id === props.userCountryRightId);
   }, [props.userCountryRightId, countries]);
 
+  const displayCountryLeft = userCountryLeft ?? countryLeft;
+  const displayCountryRight = userCountryRight ?? countryRight;
+
   const submissionEndsAt = React.useMemo(() => {
     return props.submissionEndsAt ? new Date(props.submissionEndsAt) : null;
   }, [props.submissionEndsAt]);
@@ -304,11 +353,16 @@ export function DailyMatchFinalInput(
   const penaltisStatus = React.useMemo(() => {
     if (resultStatus === "WRONG") return "WRONG";
 
-    if (
-      (!props.userPenaltisRight && props.userPenaltisRight !== 0) ||
-      (!props.userPenaltisLeft && props.userPenaltisLeft !== 0)
-    )
-      return "";
+    const userWinner = getPenaltyWinnerSide({
+      penaltisLeft: props.userPenaltisLeft ?? null,
+      penaltisRight: props.userPenaltisRight ?? null,
+    });
+    if (!userWinner) return "";
+
+    const actualWinner = getPenaltyWinnerSide({
+      penaltisLeft: props.penaltisLeft ?? null,
+      penaltisRight: props.penaltisRight ?? null,
+    });
 
     if (
       (!props.penaltisRight && props.penaltisRight !== 0) ||
@@ -323,21 +377,12 @@ export function DailyMatchFinalInput(
     )
       return "GOALS_MATCH";
 
-    if (
-      (props.userPenaltisRight >= props.userPenaltisLeft &&
-        props.penaltisRight >= props.penaltisLeft) ||
-      (props.userPenaltisRight <= props.userPenaltisLeft &&
-        props.penaltisRight <= props.penaltisLeft)
-    )
+    if (actualWinner && userWinner === actualWinner)
       return "WINNER_MATCH";
 
     return "WRONG";
   }, [
     resultStatus,
-    props.goalsRight,
-    props.goalsLeft,
-    props.userGoalsRight,
-    props.userGoalsLeft,
     props.penaltisLeft,
     props.penaltisRight,
     props.userPenaltisLeft,
@@ -347,9 +392,9 @@ export function DailyMatchFinalInput(
   const handleGoalsLeftChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       props.onChange?.(
-        parseResults({
+        sanitizeEditableFinalsInput({
           countryLeftId: props.userCountryLeftId,
-          goalsLeft: parseInt(e.target.value, 10),
+          goalsLeft: parseInputValue(e.target.value),
           countryRightId: props.userCountryRightId,
           goalsRight: props.userGoalsRight ?? null,
           penaltisLeft: props.userPenaltisLeft ?? null,
@@ -370,11 +415,11 @@ export function DailyMatchFinalInput(
   const handleGoalsRightChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       props.onChange?.(
-        parseResults({
+        sanitizeEditableFinalsInput({
           countryLeftId: props.userCountryLeftId,
           goalsLeft: props.userGoalsLeft ?? null,
           countryRightId: props.userCountryRightId,
-          goalsRight: parseInt(e.target.value, 10),
+          goalsRight: parseInputValue(e.target.value),
           penaltisLeft: props.userPenaltisLeft ?? null,
           penaltisRight: props.userPenaltisRight ?? null,
         })
@@ -394,7 +439,7 @@ export function DailyMatchFinalInput(
     (e: React.FocusEvent<HTMLInputElement>) => {
       e.target.value = (props.userGoalsLeft ?? "").toString();
       props.onChange?.(
-        parseResults({
+        finalizeEditableFinalsInput({
           countryLeftId: props.userCountryLeftId,
           goalsLeft: props.userGoalsLeft ?? null,
           countryRightId: props.userCountryRightId,
@@ -419,7 +464,7 @@ export function DailyMatchFinalInput(
     (e: React.FocusEvent<HTMLInputElement>) => {
       e.target.value = (props.userGoalsRight ?? "").toString();
       props.onChange?.(
-        parseResults({
+        finalizeEditableFinalsInput({
           countryLeftId: props.userCountryLeftId,
           goalsLeft: props.userGoalsLeft ?? null,
           countryRightId: props.userCountryRightId,
@@ -442,16 +487,26 @@ export function DailyMatchFinalInput(
 
   const handlePenaltisLeftChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      props.onChange?.(
-        parseResults({
-          countryLeftId: props.userCountryLeftId,
-          goalsLeft: props.userGoalsLeft ?? null,
-          countryRightId: props.userCountryRightId,
-          goalsRight: props.userGoalsRight ?? null,
-          penaltisLeft: parseInt(e.target.value, 10),
-          penaltisRight: props.userPenaltisRight ?? null,
-        })
-      );
+      const penaltisLeft = parseInputValue(e.target.value);
+      const nextValue = sanitizeEditableFinalsInput({
+        countryLeftId: props.userCountryLeftId,
+        goalsLeft: props.userGoalsLeft ?? null,
+        countryRightId: props.userCountryRightId,
+        goalsRight: props.userGoalsRight ?? null,
+        penaltisLeft,
+        penaltisRight: props.userPenaltisRight ?? null,
+      });
+
+      if (
+        penaltisLeft != null &&
+        nextValue.penaltisRight != null &&
+        penaltisLeft === nextValue.penaltisRight
+      ) {
+        restoreInputValue(e.target, props.userPenaltisLeft);
+        return;
+      }
+
+      props.onChange?.(nextValue);
     },
     [
       props.onChange,
@@ -466,16 +521,26 @@ export function DailyMatchFinalInput(
 
   const handlePenaltisRightChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      props.onChange?.(
-        parseResults({
-          countryLeftId: props.userCountryLeftId,
-          goalsLeft: props.userGoalsLeft ?? null,
-          countryRightId: props.userCountryRightId,
-          goalsRight: props.userGoalsRight ?? null,
-          penaltisLeft: props.userPenaltisLeft ?? null,
-          penaltisRight: parseInt(e.target.value, 10),
-        })
-      );
+      const penaltisRight = parseInputValue(e.target.value);
+      const nextValue = sanitizeEditableFinalsInput({
+        countryLeftId: props.userCountryLeftId,
+        goalsLeft: props.userGoalsLeft ?? null,
+        countryRightId: props.userCountryRightId,
+        goalsRight: props.userGoalsRight ?? null,
+        penaltisLeft: props.userPenaltisLeft ?? null,
+        penaltisRight,
+      });
+
+      if (
+        penaltisRight != null &&
+        nextValue.penaltisLeft != null &&
+        penaltisRight === nextValue.penaltisLeft
+      ) {
+        restoreInputValue(e.target, props.userPenaltisRight);
+        return;
+      }
+
+      props.onChange?.(nextValue);
     },
     [
       props.onChange,
@@ -491,7 +556,7 @@ export function DailyMatchFinalInput(
     (e: React.FocusEvent<HTMLInputElement>) => {
       e.target.value = (props.userPenaltisLeft ?? "").toString();
       props.onChange?.(
-        parseResults({
+        finalizeEditableFinalsInput({
           countryLeftId: props.userCountryLeftId,
           goalsLeft: props.userGoalsLeft ?? null,
           countryRightId: props.userCountryRightId,
@@ -516,7 +581,7 @@ export function DailyMatchFinalInput(
     (e: React.FocusEvent<HTMLInputElement>) => {
       e.target.value = (props.userPenaltisRight ?? "").toString();
       props.onChange?.(
-        parseResults({
+        finalizeEditableFinalsInput({
           countryLeftId: props.userCountryLeftId,
           goalsLeft: props.userGoalsLeft ?? null,
           countryRightId: props.userCountryRightId,
@@ -600,14 +665,14 @@ export function DailyMatchFinalInput(
     >
       {/* Left team */}
       <div className="flex items-center flex-1 min-w-0 gap-[6px]">
-        {countryLeft && <CountryFlag code={countryLeft.code} />}
+        {displayCountryLeft && <CountryFlag code={displayCountryLeft.code} />}
         <label
           className="text-[14px] font-bold whitespace-nowrap relative cursor-default group"
-          data-tooltip={countryLeft?.name}
+          data-tooltip={displayCountryLeft?.name}
         >
-          {countryLeft?.shortName}
+          {displayCountryLeft?.shortName}
           <span className="absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2 bg-black/85 text-white text-[11px] font-normal whitespace-nowrap px-[7px] py-[3px] rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-10">
-            {countryLeft?.name}
+            {displayCountryLeft?.name}
           </span>
         </label>
       </div>
@@ -627,7 +692,7 @@ export function DailyMatchFinalInput(
                 scoreInputClass,
                 resultStatus ? scoreInputStatusClass[resultStatus] : ""
               )}
-              defaultValue={props.userGoalsLeft ?? ""}
+              value={props.userGoalsLeft ?? ""}
               onChange={handleGoalsLeftChange}
               disabled={props.disabled}
               onBlur={handleLeftInputBlur}
@@ -636,6 +701,7 @@ export function DailyMatchFinalInput(
               <>
                 <div className="penaltis-divider" />
                 <input
+                  key={`daily-pen-left-${showPenaltis ? "on" : "off"}`}
                   min={0}
                   max={99}
                   type="number"
@@ -645,7 +711,7 @@ export function DailyMatchFinalInput(
                     penaltisInputClass,
                     penaltisStatus ? scoreInputStatusClass[penaltisStatus] : ""
                   )}
-                  defaultValue={props.userPenaltisLeft ?? ""}
+                  value={props.userPenaltisLeft ?? ""}
                   onChange={handlePenaltisLeftChange}
                   disabled={!userCountryLeft || props.disabled}
                   onBlur={handlePenaltisLeftInputBlur}
@@ -665,7 +731,7 @@ export function DailyMatchFinalInput(
                 scoreInputClass,
                 resultStatus ? scoreInputStatusClass[resultStatus] : ""
               )}
-              defaultValue={props.userGoalsRight ?? ""}
+              value={props.userGoalsRight ?? ""}
               onChange={handleGoalsRightChange}
               disabled={props.disabled}
               onBlur={handleRightInputBlur}
@@ -674,6 +740,7 @@ export function DailyMatchFinalInput(
               <>
                 <div className="penaltis-divider" />
                 <input
+                  key={`daily-pen-right-${showPenaltis ? "on" : "off"}`}
                   min={0}
                   max={99}
                   type="number"
@@ -683,7 +750,7 @@ export function DailyMatchFinalInput(
                     penaltisInputClass,
                     penaltisStatus ? scoreInputStatusClass[penaltisStatus] : ""
                   )}
-                  defaultValue={props.userPenaltisRight ?? ""}
+                  value={props.userPenaltisRight ?? ""}
                   onChange={handlePenaltisRightChange}
                   disabled={!userCountryRight || props.disabled}
                   onBlur={handlePenaltisRightInputBlur}
@@ -728,14 +795,14 @@ export function DailyMatchFinalInput(
       <div className="flex items-center flex-1 min-w-0 gap-[6px] justify-end">
         <label
           className="text-[14px] font-bold whitespace-nowrap relative cursor-default group"
-          data-tooltip={countryRight?.name}
+          data-tooltip={displayCountryRight?.name}
         >
-          {countryRight?.shortName}
+          {displayCountryRight?.shortName}
           <span className="absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2 bg-black/85 text-white text-[11px] font-normal whitespace-nowrap px-[7px] py-[3px] rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-10">
-            {countryRight?.name}
+            {displayCountryRight?.name}
           </span>
         </label>
-        {countryRight && <CountryFlag code={countryRight?.code} />}
+        {displayCountryRight && <CountryFlag code={displayCountryRight?.code} />}
       </div>
 
       {/* Timer strip */}

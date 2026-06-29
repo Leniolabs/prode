@@ -43,8 +43,13 @@ import { GapIcon } from "@/components/common/Icons";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { getMatchOrder } from "@/utils/finals";
+import { getFinalsStageGroup, getMatchOrder } from "@/utils/finals";
 import { finalsMatchLockTime, isFinalsMatchLocked } from "@/utils/date";
+
+const usesPredictedFinalists = (stage: string) => {
+  const group = getFinalsStageGroup(stage);
+  return group === "FINALS_4" || group === "FINALS_2" || group === "FINAL";
+};
 
 type UIMatch = Pick<
   Match,
@@ -417,8 +422,8 @@ export default function RoomFinalsPage() {
                   {(todayMatches || nextMatches)?.map((match) => (
                     <DailyMatchFinalInput disabled={match.disabled || isLocked(match.date)}
                       submissionEndsAt={tierDeadline(match.date)} key={match.id} today={!!todayMatches}
-                      date={new Date(match.date)} userCountryLeftId={match.countryLeftId}
-                      userGoalsLeft={match.userGoalsLeft} userCountryRightId={match.countryRightId}
+                      date={new Date(match.date)} userCountryLeftId={usesPredictedFinalists(match.stage) ? match.userCountryLeftId : match.countryLeftId}
+                      userGoalsLeft={match.userGoalsLeft} userCountryRightId={usesPredictedFinalists(match.stage) ? match.userCountryRightId : match.countryRightId}
                       userGoalsRight={match.userGoalsRight} userPenaltisLeft={match.userPenaltisLeft}
                       userPenaltisRight={match.userPenaltisRight} penaltisLeft={match.penaltisLeft}
                       penaltisRight={match.penaltisRight} goalsLeft={match.goalsLeft} goalsRight={match.goalsRight}
