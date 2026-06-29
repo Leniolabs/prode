@@ -10,10 +10,11 @@ export function Layout(props: React.PropsWithChildren<LayoutProps>) {
   return (
     <section
       className={className(
-        "text-dark-navy bg-app-gradient min-h-[100dvh] flex flex-col",
-        props.dark &&
-          "bg-brand-blue bg-[url('/bg-trophy.png')] bg-no-repeat bg-[center_60%] bg-cover bg-fixed text-white relative isolate",
-        props.className
+        "text-dark-navy min-h-[100dvh] flex flex-col",
+        props.dark
+          ? "bg-brand-blue bg-[url('/bg-trophy.png')] bg-no-repeat bg-[center_60%] bg-cover bg-fixed text-white relative isolate"
+          : "bg-app-gradient",
+        props.className,
       )}
     >
       {props.children}

@@ -142,7 +142,20 @@
     "createPointsPodioLabel": "Puntos por podio",
 
     "viewTitle": "PRODE DE ",
-    "viewTitleAfter": ""
+    "viewTitleAfter": "",
+
+    "offlineMetaTitle": "Modo Offline",
+    "offlineBadge": "Modo Offline",
+    "offlineTitle": "La conexión se cortó justo antes del próximo partido.",
+    "offlineDescription": "La app sigue instalada, pero esta vista necesita red para cargar tu sesión, tus grupos y los pronósticos más recientes.",
+    "offlineActionsTitle": "¿Qué podés hacer ahora?",
+    "offlineActionRetry": "Volver a intentar cuando recuperes internet.",
+    "offlineActionSignin": "Abrir la portada para iniciar sesión apenas vuelva la conexión.",
+    "offlineActionInstall": "Dejar la app instalada para entrar rápido desde el celular o escritorio.",
+    "offlineRetryTitle": "Reintento rápido",
+    "offlineRetryBody": "Cuando la red vuelva, recargá esta pantalla o regresá a la portada para continuar.",
+    "offlineButtonHome": "Ir al inicio",
+    "offlineButtonRetry": "Reintentar"
   },
   "en": {
     "headerTitle": "Welcome to Prode!",
@@ -287,6 +300,19 @@
     "createPointsPodioLabel": "Points for podium",
 
     "viewTitle": "",
-    "viewTitleAfter": "'s PRODE"
+    "viewTitleAfter": "'s PRODE",
+
+    "offlineMetaTitle": "Offline Mode",
+    "offlineBadge": "Offline Mode",
+    "offlineTitle": "The connection dropped right before the next match.",
+    "offlineDescription": "The app is still installed, but this view needs a network connection to load your session, your groups, and your latest predictions.",
+    "offlineActionsTitle": "What can you do now?",
+    "offlineActionRetry": "Try again when your internet connection is back.",
+    "offlineActionSignin": "Open the home page to sign in as soon as the connection returns.",
+    "offlineActionInstall": "Keep the app installed so you can get back in quickly from your phone or desktop.",
+    "offlineRetryTitle": "Quick retry",
+    "offlineRetryBody": "When the network is back, reload this screen or return to the home page to continue.",
+    "offlineButtonHome": "Go home",
+    "offlineButtonRetry": "Retry"
   }
 }
