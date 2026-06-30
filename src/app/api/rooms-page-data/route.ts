@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from '@/lib'
+import { getTournamentLandingStage } from '@/lib/bracket'
 import { getUserByEmail } from '@/utils/queries'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -55,11 +56,13 @@ export async function GET(req: NextRequest) {
     }),
     prisma.prode.findFirst({ select: { prodeEnd: true } }),
   ])
+  const landingStage = await getTournamentLandingStage()
 
   const { finalsStarted } = await import('@/utils/queries')
 
   return NextResponse.json({
     finalsStarted: await finalsStarted(),
+    landingStage,
     prodeEnd: prode?.prodeEnd?.toISOString() ?? null,
     rooms: rooms.map((room) => {
       const isCreator = room.userId === user.id

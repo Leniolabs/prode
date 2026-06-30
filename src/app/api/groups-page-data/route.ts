@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from '@/lib'
+import { getTournamentLandingStage } from '@/lib/bracket'
 import {
   finalsStarted,
   getUserByEmail,
@@ -26,11 +27,13 @@ export async function GET(req: NextRequest) {
   const prode = await prisma.prode.findFirst()
   const nextMatches = getNextMatches(matches, timezone)
   const todayMatches = getTodayMatches(matches, timezone)
+  const landingStage = await getTournamentLandingStage()
 
   return NextResponse.json({
     userProdeId,
     submissionEndsAt: prode?.groupSubmissionsEnd.toISOString() ?? new Date().toISOString(),
     finalsStarted: await finalsStarted(),
+    landingStage,
     canEditResults: user.role === 'ADMIN',
     userRanking: {
       id: user.id,

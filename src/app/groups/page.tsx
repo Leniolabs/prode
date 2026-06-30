@@ -54,6 +54,7 @@ interface GroupsData {
   submissionEndsAt: string;
   groupsStarted: boolean;
   finalsStarted: boolean;
+  landingStage: "groups" | "16avos" | "finals";
   canEditResults: boolean;
   matches?: UIMatch[];
   userRanking: Pick<
@@ -180,7 +181,11 @@ export default function GroupsPage() {
         <Button invert href={`/rooms`}>
           {i18n.buttonLabelProdeList}
         </Button>
-        <Button disabled={!props?.finalsStarted} invert href={`/finals`}>
+        <Button
+          disabled={!props?.finalsStarted}
+          invert
+          href={`/${props?.landingStage ?? "groups"}`}
+        >
           {i18n.buttonLabelFinalsPhase}
         </Button>
       </RoomWelcomeBar>

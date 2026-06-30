@@ -365,6 +365,7 @@ export default function RoomFinalsPage() {
             now={now}
             onChange={handleMatchChange}
             includeRoundOf32={false}
+            fluid
           />
           <BracketsMobileContainer gridArea="matches">
             <CollapsableContainer>

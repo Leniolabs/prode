@@ -49,6 +49,7 @@ type EditableRoom = Pick<
 
 interface RoomsData {
   finalsStarted: boolean;
+  landingStage: "groups" | "16avos" | "finals";
   prodeEnd?: string | null;
   rooms: (Pick<ProdeRoom, "id" | "name"> & {
     hasPassword?: boolean;
@@ -153,10 +154,10 @@ export default function RoomsPage() {
         if (hasPassword) {
           setPasswordModalId(id);
         } else
-          router.push(`/${id}/${props?.finalsStarted ? "finals" : "groups"}`);
+          router.push(`/${id}/${props?.landingStage ?? "groups"}`);
       };
     },
-    [props?.finalsStarted, router],
+    [props?.landingStage, router],
   );
 
   const handlePassword = React.useCallback(
@@ -168,12 +169,12 @@ export default function RoomsPage() {
           setPasswordModalId("");
           if (allowed) {
             router.push(
-              `/${passwordModalId}/${props?.finalsStarted ? "finals" : "groups"}`,
+              `/${passwordModalId}/${props?.landingStage ?? "groups"}`,
             );
           }
         });
-    },
-    [passwordModalId, props?.finalsStarted, router],
+      },
+    [passwordModalId, props?.landingStage, router],
   );
 
   const handleEditRoomClose = React.useCallback(() => {

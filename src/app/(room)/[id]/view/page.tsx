@@ -79,6 +79,7 @@ interface ViewData {
   finalsStarted: boolean;
   roundOf32Open: boolean;
   finalsBracketOpen: boolean;
+  landingStage: "groups" | "16avos" | "finals";
   userRanking?: Pick<User, "id" | "name" | "image" | "email" | "prodePublic" | "background" | "dark"> & {
     points?: number; ranking?: number;
   };
@@ -131,13 +132,9 @@ export default function ViewPage() {
   const now = Date.now();
   const noopChange = () => () => {};
 
-  // "Ir a mi Prode" jumps to my own predictions at the deepest open stage,
-  // mirroring the rooms-page "Entrar" logic (extended to the Round of 32).
-  const myProdeStage = props?.finalsBracketOpen
-    ? "finals"
-    : props?.roundOf32Open
-    ? "16avos"
-    : "groups";
+  // "Ir a mi Prode" jumps to my own predictions at the earliest active stage,
+  // mirroring the rooms-page "Entrar" logic.
+  const myProdeStage = props?.landingStage ?? "groups";
 
   const stageSwitcher = (
     <div className="relative flex w-full flex-wrap items-center gap-x-4 gap-y-2 min-h-[1em]">

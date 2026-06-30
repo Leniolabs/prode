@@ -84,8 +84,9 @@ interface FinalsBracketProps {
   includeRoundOf32?: boolean;
   /**
    * Stretch the four bracket columns to fill the container width (drops the
-   * per-box 210px cap). The view page renders the bracket full width; the room
-   * finals page keeps the capped default.
+   * per-box 210px cap). The view page renders the bracket full width, and the
+   * room finals page also uses this mode to keep the Octavos row stable across
+   * monitor widths.
    */
   fluid?: boolean;
 }

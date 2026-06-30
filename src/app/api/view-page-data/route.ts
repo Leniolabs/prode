@@ -8,7 +8,7 @@ import {
   getUserFinalMatches,
 } from '@/utils/queries'
 import { NextRequest, NextResponse } from 'next/server'
-import { knockoutPhaseAccess } from '@/lib/bracket'
+import { knockoutPhaseAccess, getTournamentLandingStage } from '@/lib/bracket'
 
 export async function GET(req: NextRequest) {
   const userProdeId = req.nextUrl.searchParams.get('id') ?? ''
@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
   const matches = await getUserGroupMatches(room, viewUser)
   const finalsMatches = await getUserFinalMatches(room, viewUser)
   const phaseAccess = await knockoutPhaseAccess()
+  const landingStage = await getTournamentLandingStage()
 
   return NextResponse.json({
     id: room.id,
@@ -60,6 +61,7 @@ export async function GET(req: NextRequest) {
     finalsStarted: phaseAccess.roundOf32Open,
     roundOf32Open: phaseAccess.roundOf32Open,
     finalsBracketOpen: phaseAccess.finalsBracketOpen,
+    landingStage,
     userRanking: user
       ? {
           id: user.id,

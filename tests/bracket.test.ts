@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   computeGroupStandings,
+  getTournamentLandingStageFromMatches,
   rankThirdPlaced,
   resolveRoundOf32,
   R32_SLOTS,
@@ -218,5 +219,29 @@ describe("finalsSourceStages official linkage", () => {
     // Final and third place draw from the two semifinals.
     expect(finalsSourceStages.FINALS).toMatchObject({ left: "FINALS_2_1", right: "FINALS_2_2", mode: "winner" });
     expect(finalsSourceStages.THIRD_PLACE).toMatchObject({ left: "FINALS_2_1", right: "FINALS_2_2", mode: "loser" });
+  });
+});
+
+describe("getTournamentLandingStageFromMatches", () => {
+  it("prefers the earliest upcoming stage rather than the deepest seeded one", () => {
+    const now = new Date("2026-06-30T12:00:00.000Z");
+    const matches = [
+      { stage: "FINALS_8_1", date: new Date("2026-07-05T12:00:00.000Z") },
+      { stage: "FINALS_16_1", date: new Date("2026-07-03T12:00:00.000Z") },
+      { stage: "FINALS", date: new Date("2026-07-20T12:00:00.000Z") },
+    ];
+
+    expect(getTournamentLandingStageFromMatches(matches, now)).toBe("16avos");
+  });
+
+  it("falls back to the latest played stage when nothing is upcoming", () => {
+    const now = new Date("2026-08-01T12:00:00.000Z");
+    const matches = [
+      { stage: "GROUP_A", date: new Date("2026-06-01T12:00:00.000Z") },
+      { stage: "FINALS_16_1", date: new Date("2026-06-10T12:00:00.000Z") },
+      { stage: "FINALS", date: new Date("2026-07-20T12:00:00.000Z") },
+    ];
+
+    expect(getTournamentLandingStageFromMatches(matches, now)).toBe("finals");
   });
 });
