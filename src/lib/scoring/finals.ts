@@ -28,7 +28,7 @@ export const matchFinalResultStatus = (
   >,
   userMatch: Pick<
     ProdeUserFinalsMatch,
-    "matchId" | "goalsLeft" | "goalsRight" | "countryLeftId" | "countryRightId"
+    "goalsLeft" | "goalsRight" | "countryLeftId" | "countryRightId"
   >
 ) => {
   if (
