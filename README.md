@@ -18,7 +18,7 @@ Follow these steps to set up the project from zero:
 docker compose up -d
 ```
 
-This starts both the main dev database (port 5432) and test database (port 5433).
+This starts both the main dev database (port 5434) and test database (port 5433).
 
 ### 2. Create your `.env` file
 
@@ -31,7 +31,7 @@ cp .env.example .env
 Edit `.env` and set at minimum:
 
 ```bash
-DATABASE_URL=postgresql://leniolabs:leniolabs@localhost:5432/prode
+DATABASE_URL=postgresql://leniolabs:leniolabs@localhost:5434/prode
 AUTH_SECRET=<generate-with-command-below>
 GOOGLE_ID=<your-google-oauth-client-id>
 GOOGLE_SECRET=<your-google-oauth-client-secret>
@@ -123,8 +123,8 @@ If the app runs on another port (for example `3001`), add that callback URI too.
 Useful checks:
 
 ```bash
-PGPASSWORD=leniolabs psql "postgresql://leniolabs:leniolabs@localhost:5432/prode" -c "\dt"
-PGPASSWORD=leniolabs psql "postgresql://leniolabs:leniolabs@localhost:5432/prode" -c "show search_path;"
+PGPASSWORD=leniolabs psql "postgresql://leniolabs:leniolabs@localhost:5434/prode" -c "\dt"
+PGPASSWORD=leniolabs psql "postgresql://leniolabs:leniolabs@localhost:5434/prode" -c "show search_path;"
 ```
 
 If a DB client (for example DBeaver) shows empty tables but `psql` does not:

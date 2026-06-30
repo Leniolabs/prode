@@ -71,10 +71,10 @@ const parseResults = (value: {
 
 // Shared input classes for goal/penalty inputs in the finals card
 const GOALS_INPUT_CLS =
-  "match-input-number ml-[6px] w-[34px] h-full rounded-[2px] border border-[#233042] bg-transparent outline-none text-center text-[#233042] p-[6px] disabled:opacity-80";
+  "match-input-number ml-[6px] w-[34px] h-full rounded-[2px] border bg-transparent outline-none text-center text-[#233042] p-[6px] disabled:opacity-80";
 
 const PENALTIS_INPUT_CLS =
-  "match-input-number text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] rounded-[2px] border border-[#233042] bg-transparent outline-none text-center text-[#233042] disabled:opacity-80";
+  "match-input-number text-[10px] absolute right-0 bottom-0 h-[16px] w-[16px] rounded-[2px] border bg-transparent outline-none text-center text-[#233042] disabled:opacity-80";
 
 function MatchFinalsInputComponent(
   props: React.PropsWithChildren<MatchFinalsInputProps>
@@ -350,6 +350,16 @@ function MatchFinalsInputComponent(
     return formatDate(props.date, i18n.locale);
   }, [props.date, i18n.locale]);
 
+  const isMatchActive = React.useMemo(() => {
+    const now = new Date();
+    const matchDate = new Date(props.date);
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow1pm = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 13, 0, 0);
+    return matchDate >= startOfToday && matchDate <= tomorrow1pm;
+  }, [props.date]);
+
+  const borderCls = isMatchActive && !props.disabled ? "border-red-500 border-2" : "border-[#233042]";
+
   return (
     <div
       className={className(props.className, "flex flex-col relative text-[16px]")}
@@ -364,7 +374,7 @@ function MatchFinalsInputComponent(
           />
         )}
         {!props.countryInput && (
-          <div className="p-[2px] w-full h-[34px] flex items-center border border-[#233042]">
+          <div className={className("p-[2px] w-full h-[34px] flex items-center border", borderCls)}>
             {countryLeft?.code && (
               <CountryFlag
                 className="[&_img]:w-[27px] [&_img]:h-[27px]"
@@ -378,7 +388,7 @@ function MatchFinalsInputComponent(
           type="number"
           inputMode={"decimal"}
           data-testid="finals-match-goals-left"
-          className={GOALS_INPUT_CLS}
+          className={className(GOALS_INPUT_CLS, borderCls)}
           defaultValue={props.goalsLeft}
           onChange={handleGoalsLeftChange}
           disabled={props.disabled}
@@ -389,7 +399,7 @@ function MatchFinalsInputComponent(
             type="number"
             inputMode={"decimal"}
             data-testid="finals-match-penalties-left"
-            className={PENALTIS_INPUT_CLS}
+            className={className(PENALTIS_INPUT_CLS, borderCls)}
             defaultValue={props.penaltisLeft ?? ""}
             onChange={handlePenaltisLeftChange}
             disabled={props.disabled}
@@ -407,7 +417,7 @@ function MatchFinalsInputComponent(
           />
         )}
         {!props.countryInput && (
-          <div className="p-[2px] w-full h-[34px] flex items-center border border-[#233042]">
+          <div className={className("p-[2px] w-full h-[34px] flex items-center border", borderCls)}>
             {countryRight?.code && (
               <CountryFlag
                 className="[&_img]:w-[27px] [&_img]:h-[27px]"
@@ -421,7 +431,7 @@ function MatchFinalsInputComponent(
           type="number"
           inputMode={"decimal"}
           data-testid="finals-match-goals-right"
-          className={GOALS_INPUT_CLS}
+          className={className(GOALS_INPUT_CLS, borderCls)}
           defaultValue={props.goalsRight}
           onChange={handleGoalsRightChange}
           disabled={props.disabled}
@@ -432,7 +442,7 @@ function MatchFinalsInputComponent(
             type="number"
             inputMode={"decimal"}
             data-testid="finals-match-penalties-right"
-            className={PENALTIS_INPUT_CLS}
+            className={className(PENALTIS_INPUT_CLS, borderCls)}
             defaultValue={props.penaltisRight ?? ""}
             onChange={handlePenaltisRightChange}
             disabled={props.disabled}

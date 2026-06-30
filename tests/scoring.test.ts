@@ -14,6 +14,7 @@ import {
   computeFinalMatchPoints,
   finalMatchPoints,
 } from "@/utils/queries";
+import { buildRankingStats } from "@/lib/ranking";
 
 import {
   GROUP_MATCH_SCORING,
@@ -234,5 +235,78 @@ describe("getAdminFinalsMatchLooser", () => {
   it.each(ADMIN_FINALS_LOOSER)("$name", ({ match, expected }) => {
     const result = getAdminFinalsMatchLooser(match);
     expect(result).toBe(expected);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// buildRankingStats
+// ---------------------------------------------------------------------------
+
+describe("buildRankingStats", () => {
+  it("aggregates result and exact-goal hits across the whole tournament", () => {
+    const stats = buildRankingStats(
+      [{ id: "user-1", points: 12 }],
+      [
+        {
+          userProdeId: "user-1",
+          goalsLeft: 2,
+          goalsRight: 0,
+          match: { goalsLeft: 1, goalsRight: 0, filled: true },
+        },
+        {
+          userProdeId: "user-1",
+          goalsLeft: 1,
+          goalsRight: 1,
+          match: { goalsLeft: 1, goalsRight: 1, filled: true },
+        },
+      ] as any,
+      [
+        {
+          userProdeId: "user-1",
+          goalsLeft: 0,
+          goalsRight: 0,
+          penaltisLeft: null,
+          penaltisRight: null,
+          countryLeftId: "BRA",
+          countryRightId: "ARG",
+          match: {
+            id: "final-1",
+            goalsLeft: 1,
+            goalsRight: 1,
+            countryLeftId: "BRA",
+            countryRightId: "ARG",
+            filled: true,
+          },
+        },
+        {
+          userProdeId: "user-1",
+          goalsLeft: 3,
+          goalsRight: 1,
+          penaltisLeft: null,
+          penaltisRight: null,
+          countryLeftId: "GER",
+          countryRightId: "FRA",
+          match: {
+            id: "final-2",
+            goalsLeft: 3,
+            goalsRight: 1,
+            countryLeftId: "GER",
+            countryRightId: "FRA",
+            filled: true,
+          },
+        },
+      ] as any,
+      "user-1",
+    );
+
+    expect(stats.groupOutcomeHits).toEqual([
+      { label: "2", value: 2, count: 1 },
+    ]);
+    expect(stats.exactFinalGoals).toEqual([{ label: "2", value: 2, count: 1 }]);
+    expect(stats.viewer).toEqual({
+      points: 12,
+      groupOutcomeHits: 2,
+      exactFinalGoals: 2,
+    });
   });
 });

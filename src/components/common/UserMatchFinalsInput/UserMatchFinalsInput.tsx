@@ -122,11 +122,28 @@ export function getResultStatus(userMatch: {
   if (
     match.goalsLeft === userMatch.goalsLeft &&
     match.goalsRight === userMatch.goalsRight &&
-    (match.penaltisLeft || match.penaltisLeft === 0) &&
-    (match.penaltisRight || match.penaltisRight === 0)
-  )
-    //empate resuelto por penales: goles exactos, pero penales distintos
-    return "GOALS_MATCH";
+    match.goalsLeft === match.goalsRight
+  ) {
+    if (
+      (match.penaltisLeft || match.penaltisLeft === 0) &&
+      (match.penaltisRight || match.penaltisRight === 0) &&
+      (userMatch.penaltisLeft || userMatch.penaltisLeft === 0) &&
+      (userMatch.penaltisRight || userMatch.penaltisRight === 0)
+    ) {
+      const actualLeftWins = match.penaltisLeft > match.penaltisRight;
+      const actualRightWins = match.penaltisLeft < match.penaltisRight;
+      const userLeftWins = userMatch.penaltisLeft > userMatch.penaltisRight;
+      const userRightWins = userMatch.penaltisLeft < userMatch.penaltisRight;
+
+      if (
+        (actualLeftWins && userLeftWins) ||
+        (actualRightWins && userRightWins)
+      )
+        return "GOALS_MATCH";
+    }
+
+    return "WRONG";
+  }
 
   if (
     match.goalsLeft !== match.goalsRight &&

@@ -11,6 +11,7 @@
     "lint:fix": "eslint . --fix",
     "api-sports:fifa2026": "tsx experiments/api-sports/fifa-2026.ts",
     "api-sports:seed-countries": "tsx prisma/seed/api-sports-countries.ts",
+    "seed:histograms": "tsx prisma/seed/random-histograms.ts",
     "build-prod": "./setup.sh && next build",
     "test": "vitest run",
     "test:watch": "vitest",

@@ -267,10 +267,17 @@ export function finalMatchPoints(
   if (
     match.goalsLeft === userMatch.goalsLeft &&
     match.goalsRight === userMatch.goalsRight &&
+    match.goalsLeft === match.goalsRight &&
     (match.penaltisLeft || match.penaltisLeft === 0) &&
-    (match.penaltisRight || match.penaltisRight === 0)
+    (match.penaltisRight || match.penaltisRight === 0) &&
+    (userMatch.penaltisLeft || userMatch.penaltisLeft === 0) &&
+    (userMatch.penaltisRight || userMatch.penaltisRight === 0) &&
+    ((match.penaltisLeft > match.penaltisRight &&
+      userMatch.penaltisLeft > userMatch.penaltisRight) ||
+      (match.penaltisLeft < match.penaltisRight &&
+        userMatch.penaltisLeft < userMatch.penaltisRight))
   )
-    //empate resuelto por penales: goles exactos, pero penales distintos
+    //empate resuelto por penales: goles exactos y ganador por penales correcto
     return room.pointsGoals;
 
   if (
@@ -349,8 +356,8 @@ export function finalMatchPoints(
             userMatch.goalsLeft === match.goalsLeft &&
             userMatch.goalsRight === match.goalsRight
           ) {
-            //goles exactos pero penales no exactos
-            return room.pointsGoals;
+            //goles exactos pero penales no exactos no dan puntos si el ganador es incorrecto
+            return 0;
           }
 
           return room.pointsWinner;
@@ -376,8 +383,8 @@ export function finalMatchPoints(
             userMatch.goalsLeft === match.goalsLeft &&
             userMatch.goalsRight === match.goalsRight
           ) {
-            //goles exactos pero penales no exactos
-            return room.pointsGoals;
+            //goles exactos pero penales no exactos no dan puntos si el ganador es incorrecto
+            return 0;
           }
 
           return room.pointsWinner;

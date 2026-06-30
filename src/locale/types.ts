@@ -75,6 +75,16 @@ export interface LocaleData {
   ranking2Column: string;
   ranking1Column: string;
   rankingTotalColumn: string;
+  rankingViewListLabel: string;
+  rankingViewStatsLabel: string;
+  rankingStatsTitle: string;
+  rankingStatsPointsTitle: string;
+  rankingStatsPointsSubtitle: string;
+  rankingStatsOutcomeTitle: string;
+  rankingStatsOutcomeSubtitle: string;
+  rankingStatsExactFinalTitle: string;
+  rankingStatsExactFinalSubtitle: string;
+  rankingStatsEmptyLabel: string;
 
   groupsWarning: string;
   groupsWarningLink: string;

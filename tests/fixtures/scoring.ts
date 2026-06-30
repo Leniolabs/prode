@@ -476,7 +476,7 @@ export const FINALS_SCORING = [
     expected: 3,
   },
   {
-    name: "draw with exact goals + wrong penalty winner side → pointsGoals",
+    name: "draw with exact goals + wrong penalty winner side → 0 points",
     room: DEFAULT_ROOM,
     userMatch: makeFinalUserMatch(
       "m1",
@@ -495,7 +495,7 @@ export const FINALS_SCORING = [
       4,
       3
     ),
-    expected: 3,
+    expected: 0,
   },
   {
     name: "incomplete actual data — no goals entered yet → 0 points",
@@ -696,7 +696,7 @@ export const FINALS_SCORING = [
     expected: 10,
   },
   {
-    name: "wrong penalty side: actual draw right wins on pens, user predicts draw but exact goals still score → pointsGoals",
+    name: "wrong penalty side: actual draw right wins on pens, user predicts draw but wrong penalty winner → 0 points",
     room: DEFAULT_ROOM,
     userMatch: makeFinalUserMatch(
       "m1",
@@ -715,7 +715,7 @@ export const FINALS_SCORING = [
       5,
       3 // user says left wins pens (wrong side)
     ),
-    expected: 3,
+    expected: 0,
   },
   {
     name: "user predicts regulation right win (0-2) but actual is draw resolved by right winning on pens → 0 points (must predict via penalties to score)",
@@ -738,7 +738,7 @@ export const FINALS_SCORING = [
     expected: 0,
   },
   {
-    name: "pinned current behavior: actual draw with equal penalty counts (tied pens) → pointsGoals",
+    name: "pinned current behavior: actual draw with equal penalty counts (tied pens) → 0 points",
     room: DEFAULT_ROOM,
     userMatch: makeFinalUserMatch(
       "m1",
@@ -757,7 +757,7 @@ export const FINALS_SCORING = [
       1,
       1
     ),
-    expected: 3,
+    expected: 0,
   },
   {
     name: "actual draw with no penalty info yet (draw but penaltis are null) → 0 points (match incomplete path?)",

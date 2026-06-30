@@ -11,6 +11,8 @@ import {
 } from '@/utils/queries'
 import { NextRequest, NextResponse } from 'next/server'
 import { knockoutPhaseAccess } from '@/lib/bracket'
+import { prisma } from '@/lib/prisma'
+import { buildRankingStats } from '@/lib/ranking'
 
 function shouldPasswordCheck(room: { password: string | null }) {
   return !!room.password
@@ -49,7 +51,69 @@ export async function GET(req: NextRequest) {
   const totalUsers = await countUsersInProdeRoom(room.id)
   const totalPages = Math.ceil((totalUsers || 0) / (pageLength || 1))
 
-  const ranking = (await getFullRanking(room, page, pageLength)).map((rank) => ({
+  const [ranking, allRanking, groupPredictions, finalPredictions] = await Promise.all([
+    getFullRanking(room, page, pageLength),
+    getFullRanking(room, 0, Math.max(totalUsers, 1)),
+    prisma.prodeUserGroupMatch.findMany({
+      where: {
+        userProde: {
+          prodeRoomId: room.id,
+          deletedAt: null,
+        },
+      },
+      select: {
+        userProdeId: true,
+        goalsLeft: true,
+        goalsRight: true,
+        match: {
+          select: {
+            goalsLeft: true,
+            goalsRight: true,
+            filled: true,
+          },
+        },
+      },
+    }),
+    prisma.prodeUserFinalsMatch.findMany({
+      where: {
+        userProde: {
+          prodeRoomId: room.id,
+          deletedAt: null,
+        },
+      },
+      select: {
+        userProdeId: true,
+        goalsLeft: true,
+        goalsRight: true,
+        penaltisLeft: true,
+        penaltisRight: true,
+        countryLeftId: true,
+        countryRightId: true,
+        match: {
+          select: {
+            id: true,
+            goalsLeft: true,
+            goalsRight: true,
+            countryLeftId: true,
+            countryRightId: true,
+            filled: true,
+          },
+        },
+      },
+    }),
+  ])
+
+  const stats = buildRankingStats(
+    allRanking.map((rank) => ({
+      id: rank.id,
+      points: rank.points,
+    })),
+    groupPredictions,
+    finalPredictions,
+    userProdeId,
+  )
+
+  const rankingRows = ranking.map((rank) => ({
     ...rank,
     isAdmin: rank.userId === room.userId,
   }))
@@ -87,6 +151,7 @@ export async function GET(req: NextRequest) {
     page,
     totalPages,
     totalPlayers: totalUsers,
-    ranking,
+    ranking: rankingRows,
+    stats,
   })
 }

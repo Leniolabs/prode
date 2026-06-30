@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: "leniolabs"
       POSTGRES_PASSWORD: "leniolabs"
     ports:
-      - "5432:5432"
+      - "5434:5432"
     expose:
       - "5432"
 
