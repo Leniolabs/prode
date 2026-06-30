@@ -328,7 +328,7 @@ export default function RankingPage() {
       else nextSearchParams.delete("view");
 
       const nextQuery = nextSearchParams.toString();
-      router.replace(nextQuery ? `${pathname}?${nextQuery}` : pathname, {
+      router.replace(nextQuery ? `${pathname!}?${nextQuery}` : pathname!, {
         scroll: false,
       });
     },
