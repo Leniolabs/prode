@@ -159,8 +159,10 @@ export function getRankingQuery(
   const limitClause = options?.limit
     ? Prisma.sql` limit ${options.limit}`
     : Prisma.empty;
+  // Dense ranking keeps tied scores on the same position and closes gaps
+  // (1, 2, 2, 3 instead of 1, 2, 2, 4).
   return Prisma.sql`select *,
-  RANK () OVER (
+  DENSE_RANK () OVER (
     ORDER BY rq."points" DESC
 ) ranking
   FROM (select
@@ -214,8 +216,10 @@ export function getFullRankingQuery(
   const limitClause = options?.limit
     ? Prisma.sql` limit ${options.limit}`
     : Prisma.empty;
+  // Dense ranking keeps tied scores on the same position and closes gaps
+  // (1, 2, 2, 3 instead of 1, 2, 2, 4).
   return Prisma.sql`select *,
-  RANK () OVER (
+  DENSE_RANK () OVER (
     ORDER BY rq."points" DESC
 ) ranking
   FROM (select
