@@ -5,6 +5,7 @@
 // histograms show a real spread.
 
 import { loadHarnessEnv } from "../../harness/env";
+import type { PrismaClient } from "@/generated/prisma";
 
 const GROUP_STAGES = [
   "GROUP_A", "GROUP_B", "GROUP_C", "GROUP_D",
@@ -175,7 +176,7 @@ function parseCount(argv: string[]) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 24;
 }
 
-async function ensureTournament(prisma: any) {
+async function ensureTournament(prisma: PrismaClient) {
   const { seedCountries } = await import("./countries");
   const { seedFixture } = await import("./fixture");
   const { seedBracket } = await import("./bracket");
