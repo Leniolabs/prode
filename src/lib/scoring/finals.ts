@@ -265,6 +265,15 @@ export function finalMatchPoints(
     return room.pointsPenal;
 
   if (
+    match.goalsLeft === userMatch.goalsLeft &&
+    match.goalsRight === userMatch.goalsRight &&
+    (match.penaltisLeft || match.penaltisLeft === 0) &&
+    (match.penaltisRight || match.penaltisRight === 0)
+  )
+    //empate resuelto por penales: goles exactos, pero penales distintos
+    return room.pointsGoals;
+
+  if (
     match.goalsLeft !== match.goalsRight &&
     match.goalsLeft === userMatch.goalsLeft &&
     match.goalsRight === userMatch.goalsRight

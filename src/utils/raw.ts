@@ -63,6 +63,11 @@ export function getSubqueryFinals(room: ProdeRoom, stages?: Stage[]) {
      --resultado exacto con penales
      WHEN pugm."goalsLeft" = m."goalsLeft" and pugm."goalsRight" = m."goalsRight" and pugm."penaltisLeft" = m."penaltisLeft" and pugm."penaltisRight" = m."penaltisRight"
      THEN ${room.pointsPenal}
+     --empate resuelto por penales: goles exactos, aunque los penales no coincidan
+     WHEN pugm."goalsLeft" = m."goalsLeft" and pugm."goalsRight" = m."goalsRight"
+       and (m."penaltisLeft" is not null or m."penaltisLeft" = 0)
+       and (m."penaltisRight" is not null or m."penaltisRight" = 0)
+     THEN ${room.pointsGoals}
      --gana left con goles exactos sin penales
      WHEN pugm."goalsLeft" > pugm."goalsRight" and m."goalsLeft" > m."goalsRight" and pugm."goalsLeft" = m."goalsLeft" and pugm."goalsRight" = m."goalsRight"
      THEN ${room.pointsGoals}
