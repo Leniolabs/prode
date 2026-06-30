@@ -151,11 +151,35 @@ Use idempotent seed scripts, not ad-hoc SQL inserts.
 
 - Countries seed: `prisma/seed/countries.ts`
 - Group matches seed: `prisma/seed/fixture.ts`
+- Knockout bracket seed: `prisma/seed/bracket.ts`
 - Entry point: `prisma/seed/index.ts`
 
-Run:
+### Standard seed (countries, fixture, bracket):
 
 ```bash
 npx prisma db seed
 ```
+
+This creates 48 countries, 72 group-stage matches, and 32 knockout matches.
+
+### Demo seed (fully-played tournament with predictions):
+
+For testing the `/groups` and `/finals` pages with all results filled in:
+
+```bash
+npx tsx prisma/seed/demo-results.ts [email@example.com]
+```
+
+This:
+- Populates all group and knockout matches with final results
+- Flips the prode to FINALS phase
+- Seeds template predictions for the specified user (or all users if no email provided)
+
+Example:
+
+```bash
+npx tsx prisma/seed/demo-results.ts you@example.com
+```
+
+Re-running is safe; it overwrites the template predictions each time.
 
