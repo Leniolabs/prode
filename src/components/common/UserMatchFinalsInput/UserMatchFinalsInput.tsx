@@ -758,7 +758,7 @@ export function UserMatchFinalsInput(
           {date}
         </span>
         <div className="flex shrink-0 gap-[6px] text-[11px] font-semibold text-[#767676] leading-none">
-          <span className="w-[30px] text-center">{"90'"}</span>
+          <span className="w-[30px] text-center">FT</span>
           <span className="w-[30px] text-center">P</span>
         </div>
       </div>
