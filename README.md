@@ -159,8 +159,3 @@ Run:
 npx prisma db seed
 ```
 
-Why this is best:
-
-- repeatable across all dev machines
-- safe to run more than once (`upsert` for countries)
-- keeps fixture dates/stages consistent with application logic
